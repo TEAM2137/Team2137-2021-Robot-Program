@@ -20,6 +20,8 @@ public class Constants {
     public static double dblBaseV = 0.0;
     public static double dblBaseA = 0.0;
     public static double dblBaseEncoderCPR = 4096.0; // The counts per rotation that the encoders have on the base
+    public static double dblLowGearMaxVelocity = 5000.0;
+    public static double dblHighHearMinVelocity = 5000.0;
 
     /**
      * Clips the robot base speed with in the range by @link dblMaxBaseSpeed and @link dblMinBaseSpeed
