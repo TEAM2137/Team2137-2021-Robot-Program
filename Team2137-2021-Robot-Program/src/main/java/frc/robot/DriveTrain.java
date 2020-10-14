@@ -7,6 +7,7 @@ import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import frc.robot.base.HardwareDriveTrain;
 import frc.robot.Constants;
@@ -29,12 +30,15 @@ public class DriveTrain extends HardwareDriveTrain {
     private double P, I, D;
     private double S, V, A;
 
+    private Solenoid baseShifter;
+    private ShifterStates shifterState;
+
     @Override
 	public void init() {
-        leftMotor1 = new CANSparkMax(Constants.mintLM1ID, MotorType.kBrushless);
-        leftMotor2 = new CANSparkMax(Constants.mintLM2ID, MotorType.kBrushless);
-        rightMotor1 = new CANSparkMax(Constants.mintRM1ID, MotorType.kBrushless);
-        rightMotor2 = new CANSparkMax(Constants.mintRM2ID, MotorType.kBrushless);
+        leftMotor1 = new CANSparkMax(Constants.intLM1ID, MotorType.kBrushless);
+        leftMotor2 = new CANSparkMax(Constants.intLM2ID, MotorType.kBrushless);
+        rightMotor1 = new CANSparkMax(Constants.intRM1ID, MotorType.kBrushless);
+        rightMotor2 = new CANSparkMax(Constants.intRM2ID, MotorType.kBrushless);
 
         this.leftMotor2.follow(this.leftMotor1);
         this.rightMotor2.follow(this.rightMotor1);
@@ -73,6 +77,34 @@ public class DriveTrain extends HardwareDriveTrain {
         
         this.leftPIDController.setFeedbackDevice(this.leftEncoder);
         this.rightPIDController.setFeedbackDevice(this.rightEncoder);
+
+        this.shifterState = ShifterStates.Low;
+        this.baseShifter = new Solenoid(Constants.intSolenoidID);
+    }
+
+    public boolean smartVoltageGearShift() {
+        double averageVoltage = (this.leftMotor1.getBusVoltage() + this.rightMotor1.getBusVoltage()) / 2;
+
+        if (averageVoltage >= Constants.dblHighGearVoltageLimit && this.shifterState != ShifterStates.Low) {
+            shiftGear(ShifterStates.Low);
+            return true;
+        }
+
+        return false;
+    }
+    public void smartVelocityGearShift(){
+        if(smartVoltageGearShift()) return;
+        double averageVelocity = (this.leftEncoder.getVelocity() + this.rightEncoder.getVelocity()) / 2;
+
+        if (averageVelocity >= Constants.dblLowGearMaxVelocity && this.shifterState != ShifterStates.High) {
+            shiftGear(ShifterStates.High);
+        } else if (averageVelocity <= Constants.dblHighHearMinVelocity && this.shifterState != ShifterStates.Low) {
+            shiftGear(ShifterStates.Low);
+        }
+    }
+
+    public void shiftGear(ShifterStates state){
+        this.baseShifter.se
     }
 
     public void setPIDVelocityOutput(double leftVelocity, double rightVelocity) {
