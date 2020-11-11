@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.hardware;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -9,10 +9,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import frc.robot.base.Feedforward;
 import frc.robot.base.HardwareDriveTrain;
 import frc.robot.Constants;
 
-public class DriveTrain extends HardwareDriveTrain {
+public class Base6Wheel extends HardwareDriveTrain {
 
     private CANSparkMax leftMotor1;
     private CANSparkMax leftMotor2;    
@@ -25,10 +26,7 @@ public class DriveTrain extends HardwareDriveTrain {
     private CANPIDController leftPIDController;
     private CANPIDController rightPIDController;
     
-    private SimpleMotorFeedforward simpleMotorFeedforward;
-
-    private double P, I, D;
-    private double S, V, A;
+    private Feedforward feedforward;
 
     private Solenoid baseShifter;
     private ShifterStates shifterState;
@@ -51,26 +49,10 @@ public class DriveTrain extends HardwareDriveTrain {
         this.leftEncoder = new CANEncoder(this.leftMotor1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
         this.rightEncoder = new CANEncoder(this.rightMotor1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
 
-        this.P = Constants.dblBaseP;
-        this.I = Constants.dblBaseI;
-        this.D = Constants.dblBaseD;
-     
-        this.S = Constants.dblBaseS;
-        this.V = Constants.dblBaseV;
-        this.A = Constants.dblBaseA;
-
-        this.leftPIDController = new CANPIDController(this.leftMotor1);
-        this.rightPIDController = new CANPIDController(this.rightMotor1);
+        this.leftPIDController = this.leftMotor1.getPIDController();
+        this.rightPIDController = this.rightMotor1.getPIDController();
         
-        this.simpleMotorFeedforward = new SimpleMotorFeedforward(this.S, this.V, this.A);
-
-        this.leftPIDController.setP(this.P);
-        this.leftPIDController.setI(this.I);
-        this.leftPIDController.setD(this.D);
-
-        this.rightPIDController.setP(this.P);
-        this.rightPIDController.setI(this.I);
-        this.rightPIDController.setD(this.D);
+        this.feedforward = new Feedforward(0.0, 0.0, 0.0);
         
         this.leftPIDController.setOutputRange(Constants.dblMinBaseSpeed, Constants.dblMaxBaseSpeed);
         this.rightPIDController.setOutputRange(Constants.dblMinBaseSpeed, Constants.dblMaxBaseSpeed);
@@ -102,17 +84,9 @@ public class DriveTrain extends HardwareDriveTrain {
             shiftGear(ShifterStates.Low);
         }
     }
-
     public void shiftGear(ShifterStates state){
-        this.baseShifter.se
-    }
-
-    public void setPIDVelocityOutput(double leftVelocity, double rightVelocity) {
-        this.leftPIDController.setFF(this.simpleMotorFeedforward.calculate(leftVelocity));
-        this.rightPIDController.setFF(this.simpleMotorFeedforward.calculate(rightVelocity));
-
-        this.leftPIDController.setReference(leftVelocity, ControlType.kVelocity);
-        this.rightPIDController.setReference(rightVelocity, ControlType.kVelocity);
+        boolean shiftTo = (state == ShifterStates.High);
+        this.baseShifter.set(Constants.boolShifterInvert ? !shiftTo : shiftTo);
     }
 
     public void setAllPower(double power){
@@ -126,5 +100,26 @@ public class DriveTrain extends HardwareDriveTrain {
     public void setRightPower(double power){
         rightMotor1.set(Constants.clipBaseSpeed(power));
         rightMotor2.set(Constants.clipBaseSpeed(power));
+    }
+
+    public void setPIDVelocityOutput(double leftVelocity, double rightVelocity) {
+        this.leftPIDController.setFF(this.feedforward.calculate(leftVelocity));
+        this.rightPIDController.setFF(this.feedforward.calculate(rightVelocity));
+
+        this.leftPIDController.setReference(leftVelocity, ControlType.kVelocity);
+        this.rightPIDController.setReference(rightVelocity, ControlType.kVelocity);
+    }
+    public void setPIDValues(ShifterStates state) {
+        int PIDState = (state == ShifterStates.High) ? 1 : 0;
+
+        this.leftPIDController.setP(Constants.dblBaseP[PIDState]);
+        this.leftPIDController.setI(Constants.dblBaseI[PIDState]);
+        this.leftPIDController.setD(Constants.dblBaseD[PIDState]);
+
+        this.rightPIDController.setP(Constants.dblBaseP[PIDState]);
+        this.rightPIDController.setI(Constants.dblBaseI[PIDState]);
+        this.rightPIDController.setD(Constants.dblBaseD[PIDState]);
+
+        this.feedforward.setSVA(Constants.dblBaseS[PIDState], Constants.dblBaseV[PIDState], Constants.dblBaseA[PIDState]);
     }
 }
