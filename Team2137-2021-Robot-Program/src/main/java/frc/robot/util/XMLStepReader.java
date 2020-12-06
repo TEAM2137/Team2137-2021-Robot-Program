@@ -38,12 +38,6 @@ public class XMLStepReader {
         for (int i = 0; i < tmpStep.getLength(); i++) {
             this.steps.put(i, parseSteps(tmpStep.item(i)));
         }
-
-        NodeList list = ((Element) doc.getElementsByTagName("Settings")).getChildNodes();
-        
-        for (int i = 0; i < list.getLength(); i++) {
-            this.settings.put(list.item(i).getNodeName(), list.item(i).getTextContent());
-        }
     }
 
     public HashMap<Integer, Step> getSteps() {

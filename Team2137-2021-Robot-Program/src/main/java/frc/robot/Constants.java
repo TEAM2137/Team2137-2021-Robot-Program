@@ -1,6 +1,7 @@
 package frc.robot;
 
-import frc.robot.util.HardwareMotorLayout;
+import org.opencv.core.Point;
+import frc.robot.util.Motor;
 
 public class Constants {
     public static final int intLM1ID = 0;
@@ -31,33 +32,17 @@ public class Constants {
     public static final double dblHighHearMinVelocity = 5000.0;
     public static final double dblHighGearVoltageLimit = 10.0;
 
+    /**
+     * Default Swerve Values
+     */
+    public static final double dblDefaultPiviotMotorCountsPerDegree = 0.0;
+
+    public static final double dblDefaultRobotWheelBase = 0.0;
+    public static final double dblDefaultRobotAxelTrack = 0.0;
+
     public static final String strLogDirectory = "\\home\\lvuser\\Logs\\";
     public static final String strStepFileDirectory = "\\home\\lvuser\\Steps\\";
-
-    public enum Base6WheelMotorLayout implements HardwareMotorLayout{
-        HELLO;
-
-
-		@Override
-		public int getLeftFrontMotorID() {
-			return 0;
-		}
-
-		@Override
-		public int getLeftBackMotorID() {
-			return 0;
-		}
-
-		@Override
-		public int getRightFrontMotorID() {
-			return 0;
-		}
-
-		@Override
-		public int getRightBackMotorID() {
-			return 0;
-		}
-    }
+    public static final String strSettingFileDirectory = "\\home\\lvuser\\Settings\\";
 
     /**
      * Clips the robot base speed with in the range by @link dblMaxBaseSpeed and @link dblMinBaseSpeed
@@ -74,7 +59,7 @@ public class Constants {
      * @param min Min value
      * @param max Max value
      */
-    public static double clip(final double input, final double min, final double max){
+    public static double clip(final double input, final double min, final double max) {
         if (input >= max) {
             return max;
         } else if (input <= min) {
@@ -82,6 +67,40 @@ public class Constants {
         } else {
             return input;
         }
+    }
+
+    public static boolean withinClip(double value, double goal, double width) {
+        return value <= goal + width && value >= goal - width;
+    }
+
+    public static Point[] translateCenterToWheelPoints(Point centerPoint, double steeringWidth, double steeringBase) {
+        Point leftFrontPoint = new Point(centerPoint.x - (steeringWidth / 2), centerPoint.y + (steeringBase / 2));
+        Point leftBackPoint = new Point(centerPoint.x - (steeringWidth / 2), centerPoint.y - (steeringBase / 2));
+        Point rightFrontPoint = new Point(centerPoint.x + (steeringWidth / 2), centerPoint.y + (steeringBase / 2));
+        Point rightBackPoint = new Point(centerPoint.x + (steeringWidth / 2), centerPoint.y - (steeringBase / 2));
+        Point[] tmp = {leftFrontPoint, leftBackPoint, rightFrontPoint, rightBackPoint};
+        return tmp;
+    }
+
+    public static double[] translateWheelAnglePositive(Point piviotPoint, Point positionPoint, double steeringWidth, double steeringBase) {
+        Point[] wheelPoints = translateCenterToWheelPoints(positionPoint, steeringWidth, steeringBase);
+
+        double frontBaseOriginDifferance = wheelPoints[0].y - piviotPoint.y; //C1 = FrontLeftWheelY - PiviotPointY
+        double backWidthOriginDifferance = wheelPoints[3].y - piviotPoint.y; //C2 = BackRightWheelX - PiviotPointX
+
+        double xDifferenceCenterOrigin = positionPoint.x - piviotPoint.x;
+
+        double left1WheelAngle = Math.atan((frontBaseOriginDifferance) / (xDifferenceCenterOrigin - (steeringWidth / 2)));
+        double left2WheelAngle = Math.atan((backWidthOriginDifferance) / (xDifferenceCenterOrigin - (steeringWidth / 2)));
+        double right1WheelAngle = Math.atan((frontBaseOriginDifferance) / (xDifferenceCenterOrigin + (steeringWidth / 2)));
+        double right2WheelAngle = Math.atan((backWidthOriginDifferance) / (xDifferenceCenterOrigin + (steeringWidth / 2)));
+        double[] tmp = {left1WheelAngle, left2WheelAngle, right1WheelAngle, right2WheelAngle};
+
+        return tmp;
+    }
+
+    public static double fromHeadingTo360(double a) {
+        return a < 0 ? a + 360 : a;
     }
 
     public enum MotorTypes {
@@ -95,6 +114,27 @@ public class Constants {
 
         MotorTypes (String str) {
             this.name = str;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+    }
+
+    public enum StepState {
+        STATE_INIT ("STATE_INIT"),
+        STATE_START ("STATE_START"),
+        STATE_RUNNING ("STATE_RUNNING"),
+        STATE_PAUSE ("STATE_PAUSE"),
+        STATE_COMPLETE ("STATE_COMPLETE"),
+        STATE_TIMEOUT ("STATE_TIMEOUT"),
+        STATE_ERROR ("STATE_ERROR"),
+        STATE_FINSIHED ("STATE_FINSIHED");
+
+        public String name = "";
+
+        StepState (String _name) {
+            this.name = _name;
         }
 
         public String toString() {

@@ -56,7 +56,7 @@ public class FileLogger {
 
     public synchronized void writeEventDS(int _debug, EventType eventType, String message) {
         writeEvent(_debug, eventType, message);
-        if (this.dStation != null) dStation.reportWarning(message, eventType == EventType.Error ? true : false);
+        if (this.dStation != null) DriverStation.reportWarning(message, eventType == EventType.Error);
     }
 
     /**

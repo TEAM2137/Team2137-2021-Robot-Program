@@ -8,12 +8,14 @@ import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import frc.robot.base.Feedforward;
 import frc.robot.base.HardwareDriveTrain;
+import frc.robot.util.FileLogger;
+import frc.robot.util.Motor;
+import frc.robot.util.XMLSettingReader;
 import frc.robot.Constants;
 
-public class Base6Wheel extends HardwareDriveTrain {
+public class Base6Wheel implements HardwareDriveTrain {
 
     private CANSparkMax leftMotor1;
     private CANSparkMax leftMotor2;    
@@ -31,20 +33,30 @@ public class Base6Wheel extends HardwareDriveTrain {
     private Solenoid baseShifter;
     private ShifterStates shifterState;
 
-    @Override
-	public void init() {
-        leftMotor1 = new CANSparkMax(Constants.intLM1ID, MotorType.kBrushless);
-        leftMotor2 = new CANSparkMax(Constants.intLM2ID, MotorType.kBrushless);
-        rightMotor1 = new CANSparkMax(Constants.intRM1ID, MotorType.kBrushless);
-        rightMotor2 = new CANSparkMax(Constants.intRM2ID, MotorType.kBrushless);
+    private double dblLeftMotor1TargetPosition = 0;
+    private double dblLeftMotor2TargetPosition = 0;
+    private double dblRightMotor1TargetPosition = 0;
+    private double dblRightMotor2TargetPosition = 0;
 
+    @Override
+	public void init(XMLSettingReader reader, FileLogger log) {
+        Motor tmpLM1 = reader.getMotor("LM1");
+        Motor tmpLM2 = reader.getMotor("LM2");
+        Motor tmpRM1 = reader.getMotor("RM1");
+        Motor tmpRM2 = reader.getMotor("RM2");
+
+        leftMotor1 = new CANSparkMax(tmpLM1.getMotorID(), MotorType.kBrushless);
+        leftMotor2 = new CANSparkMax(tmpLM2.getMotorID(), MotorType.kBrushless);
+        rightMotor1 = new CANSparkMax(tmpRM1.getMotorID(), MotorType.kBrushless);
+        rightMotor2 = new CANSparkMax(tmpRM2.getMotorID(), MotorType.kBrushless);
+        
         this.leftMotor2.follow(this.leftMotor1);
         this.rightMotor2.follow(this.rightMotor1);
 
-        this.leftMotor1.setInverted(Constants.boolLM1Invert);
-        this.leftMotor2.setInverted(Constants.boolLM2Invert);
-        this.rightMotor1.setInverted(Constants.boolRM1Invert);
-        this.rightMotor2.setInverted(Constants.boolRM2Invert);
+        this.leftMotor1.setInverted(tmpLM1.inverted());
+        this.leftMotor2.setInverted(tmpLM2.inverted());
+        this.rightMotor1.setInverted(tmpRM1.inverted());
+        this.rightMotor2.setInverted(tmpRM2.inverted());
 
         this.leftEncoder = new CANEncoder(this.leftMotor1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
         this.rightEncoder = new CANEncoder(this.rightMotor1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
@@ -86,22 +98,9 @@ public class Base6Wheel extends HardwareDriveTrain {
     }
     public void shiftGear(ShifterStates state){
         boolean shiftTo = (state == ShifterStates.High);
-        this.baseShifter.set(Constants.boolShifterInvert ? !shiftTo : shiftTo);
+        this.baseShifter.set(Constants.boolShifterInvert != shiftTo);
     }
-
-    public void setAllPower(double power){
-        setLeftPower(power);
-        setRightPower(power);
-    }
-    public void setLeftPower(double power){
-        leftMotor1.set(Constants.clipBaseSpeed(power));
-        leftMotor2.set(Constants.clipBaseSpeed(power));
-    }
-    public void setRightPower(double power){
-        rightMotor1.set(Constants.clipBaseSpeed(power));
-        rightMotor2.set(Constants.clipBaseSpeed(power));
-    }
-
+    
     public void setPIDVelocityOutput(double leftVelocity, double rightVelocity) {
         this.leftPIDController.setFF(this.feedforward.calculate(leftVelocity));
         this.rightPIDController.setFF(this.feedforward.calculate(rightVelocity));
@@ -122,4 +121,58 @@ public class Base6Wheel extends HardwareDriveTrain {
 
         this.feedforward.setSVA(Constants.dblBaseS[PIDState], Constants.dblBaseV[PIDState], Constants.dblBaseA[PIDState]);
     }
+
+	public double getLeftMotorPosition() {
+		return this.leftEncoder.getPosition();
+	}
+	public double getRightMotorPosition() {
+        return this.rightEncoder.getPosition();
+	}
+
+    @Override
+    public void setLeftMotor1TargetPosition(double target) {
+        dblLeftMotor1TargetPosition = target;
+    }
+    @Override
+    public void setLeftMotor2TargetPosition(double target) {
+        dblLeftMotor2TargetPosition = target;
+    }
+    @Override
+    public void setRightMotor1TargetPosition(double target) {
+        dblRightMotor1TargetPosition = target;
+    }
+    @Override
+    public void setRightMotor2TargetPosition(double target) {
+        dblRightMotor2TargetPosition = target;
+    }
+
+    @Override
+    public double getLeftMotor1TargetPosition() {
+        return dblLeftMotor1TargetPosition;
+    }
+    @Override
+    public double getLeftMotor2TargetPosition() {
+        return dblLeftMotor2TargetPosition;
+    }
+    @Override
+    public double getRightMotor1TargetPosition() {
+        return dblRightMotor1TargetPosition;
+    }
+    @Override
+    public double getRightMotor2TargetPosition() {
+        return dblRightMotor2TargetPosition;
+    }
+
+    public void setLeft1Power(double leftM1) {
+		leftMotor1.set(Constants.clipBaseSpeed(leftM1));
+	}
+	public void setLeft2Power(double leftM2) {
+		leftMotor2.set(Constants.clipBaseSpeed(leftM2));
+	}
+	public void setRight1Power(double rightM1) {
+		rightMotor1.set(Constants.clipBaseSpeed(rightM1));
+	}
+	public void setRight2Power(double rightM2) {
+		rightMotor2.set(Constants.clipBaseSpeed(rightM2));
+	}
 }

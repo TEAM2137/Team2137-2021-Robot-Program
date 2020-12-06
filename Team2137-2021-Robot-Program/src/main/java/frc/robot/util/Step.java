@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class Step {
@@ -64,7 +65,23 @@ public class Step {
         return Boolean.parseBoolean(this.values.get(StepValues.parallel.toString()));
     }
 
-    public double getParm(int parm) {
-        return Double.parseDouble(this.values.get(StepValues.parm.toString() + parm));
+    public Double getParm(int parm) {
+        if (this.values.containsKey(StepValues.parm.toString() + parm)) {
+            return Double.parseDouble(this.values.get(StepValues.parm.toString() + parm));
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public Double getParm(int parm, Double falseReturn) {
+        if (this.values.containsKey(StepValues.parm.toString() + parm)) {
+            return Double.parseDouble(this.values.get(StepValues.parm.toString() + parm));
+        } else {
+            return falseReturn;
+        }
+    }
+
+    public boolean checkParm(int parm) {
+        return this.values.containsKey(StepValues.parm.toString() + parm);
     }
 }

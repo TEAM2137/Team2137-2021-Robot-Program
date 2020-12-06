@@ -12,6 +12,13 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="WARN_ABOUT_CRLF" value="false" />
@@ -26,6 +33,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="vcs.Git" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
@@ -65,45 +73,61 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603488423282">
+    <state x="232" y="0" key="#Notifications" timestamp="1607221778736">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1603488423282" />
-    <state x="446" y="24" key="#com.intellij.ide.util.MemberChooser" timestamp="1603488636023">
+    <state x="232" y="0" key="#Notifications/0.0.1280.680@0.0.1280.680" timestamp="1607221778736" />
+    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607132903396">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="446" y="24" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1603488636022" />
+    <state x="96" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1607132903396" />
+    <state x="446" y="24" key="#com.intellij.ide.util.MemberChooser" timestamp="1607220987327">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="446" y="24" key="#com.intellij.ide.util.MemberChooser/0.0.1280.680@0.0.1280.680" timestamp="1607220987327" />
     <state x="371" y="124" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1603488404456">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="371" y="124" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1280.680@0.0.1280.680" timestamp="1603488404456" />
+    <state x="112" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1607135958030">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="112" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1280.680@0.0.1280.680" timestamp="1607135958030" />
+    <state x="367" y="201" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1607133237209">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="367" y="201" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1280.680@0.0.1280.680" timestamp="1607133237209" />
     <state x="376" y="102" key="EnvironmentVariablesDialog" timestamp="1603488370463">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="376" y="102" key="EnvironmentVariablesDialog/0.0.1280.680@0.0.1280.680" timestamp="1603488370463" />
-    <state width="1237" height="163" key="GridCell.Tab.0.bottom" timestamp="1603506866346">
+    <state width="1235" height="162" key="GridCell.Tab.0.bottom" timestamp="1607133901847">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1603506866346" />
-    <state width="1237" height="163" key="GridCell.Tab.0.center" timestamp="1603506866346">
+    <state width="1235" height="162" key="GridCell.Tab.0.bottom/0.0.1280.680@0.0.1280.680" timestamp="1607133901847" />
+    <state width="1235" height="162" key="GridCell.Tab.0.center" timestamp="1607133901847">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1603506866346" />
-    <state width="1237" height="163" key="GridCell.Tab.0.left" timestamp="1603506866346">
+    <state width="1235" height="162" key="GridCell.Tab.0.center/0.0.1280.680@0.0.1280.680" timestamp="1607133901847" />
+    <state width="1235" height="162" key="GridCell.Tab.0.left" timestamp="1607133901846">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1603506866346" />
-    <state width="1237" height="163" key="GridCell.Tab.0.right" timestamp="1603506866346">
+    <state width="1235" height="162" key="GridCell.Tab.0.left/0.0.1280.680@0.0.1280.680" timestamp="1607133901846" />
+    <state width="1235" height="162" key="GridCell.Tab.0.right" timestamp="1607133901847">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state width="1237" height="163" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1603506866346" />
+    <state width="1235" height="162" key="GridCell.Tab.0.right/0.0.1280.680@0.0.1280.680" timestamp="1607133901847" />
     <state x="142" y="0" key="SettingsEditor" timestamp="1603488540711">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="142" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1603488540711" />
-    <state x="337" y="164" key="com.intellij.ide.util.TipDialog" timestamp="1603488228018">
+    <state x="337" y="164" key="com.intellij.ide.util.TipDialog" timestamp="1607211088681">
       <screen x="0" y="0" width="1280" height="680" />
     </state>
-    <state x="337" y="164" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1603488228018" />
+    <state x="337" y="164" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1607211088681" />
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup" timestamp="1607192946442">
+      <screen x="0" y="0" width="1280" height="680" />
+    </state>
+    <state x="303" y="1" width="672" height="678" key="search.everywhere.popup/0.0.1280.680@0.0.1280.680" timestamp="1607192946442" />
   </component>
 </project>
