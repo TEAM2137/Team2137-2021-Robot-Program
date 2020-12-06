@@ -4,17 +4,19 @@ import org.opencv.core.Point;
 import frc.robot.util.Motor;
 
 public class Constants {
-    public static final int intLM1ID = 0;
-    public static final int intLM2ID = 1;
-    public static final int intRM1ID = 2;
-    public static final int intRM2ID = 3;
+    public static final int dblDefaultDriverControllerPort = 0;
+
+    public static final int intDefaultLM1ID = 0;
+    public static final int intDefaultLM2ID = 1;
+    public static final int intDefaultRM1ID = 2;
+    public static final int intRefaultRM2ID = 3;
     public static final int intSolenoidID = 0;
     public static final int intMaxLogFiles = 30;
 
-    public static final boolean boolLM1Invert = false;
-    public static final boolean boolLM2Invert = false;
-    public static final boolean boolRM1Invert = false;
-    public static final boolean boolRM2Invert = false;
+    public static final boolean boolDefaultLM1Invert = false;
+    public static final boolean boolDefaultLM2Invert = false;
+    public static final boolean boolDefaultRM1Invert = false;
+    public static final boolean boolDefaultRM2Invert = false;
     public static final boolean boolShifterInvert = false;
 
     public static final double dblMaxBaseSpeed = 1.0; // 1.0 Max & 0.0 Min

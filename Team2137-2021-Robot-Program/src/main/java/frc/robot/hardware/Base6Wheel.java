@@ -175,4 +175,13 @@ public class Base6Wheel implements HardwareDriveTrain {
 	public void setRight2Power(double rightM2) {
 		rightMotor2.set(Constants.clipBaseSpeed(rightM2));
 	}
+
+    @Override
+    public double getLeftMotor1Position() { return leftEncoder.getPosition(); }
+    @Override
+    public double getLeftMotor2Position() { return leftEncoder.getPosition(); }
+    @Override
+    public double getRightMotor1Position() { return rightEncoder.getPosition(); }
+    @Override
+    public double getRightMotor2Position() { return rightEncoder.getPosition(); }
 }
