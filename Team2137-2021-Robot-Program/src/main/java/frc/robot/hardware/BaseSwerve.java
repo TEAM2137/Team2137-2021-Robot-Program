@@ -123,17 +123,21 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.dblPivotCountPerDegree = reader.getSetting("PiviotMotorCountsPerDegree", Constants.dblDefaultPiviotMotorCountsPerDegree);
     }
 
-    public void setLeftTurret(double left1Position, double left2Position) {
-        double position1 = this.leftEncoder1.getPosition() - (left1Position * this.dblPivotCountPerDegree);   
-        double position2 = this.leftEncoder2.getPosition() - (left2Position * this.dblPivotCountPerDegree);   
+    public void setLeft1Turret(double pos) {
+        double position1 = this.leftEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);   
         this.leftPiviotPIDController1.setReference(position1, ControlType.kPosition);
-        this.leftPiviotPIDController2.setReference(position2, ControlType.kPosition);
     }
-    public void setRightTurret(double right1Position, double right2Position) {
-        double position1 = this.rightEncoder1.getPosition() - (right1Position * this.dblPivotCountPerDegree);  
-        double position2 = this.rightEncoder2.getPosition() - (right2Position * this.dblPivotCountPerDegree); 
+    public void setLeft2Turret(double pos) {
+        double position1 = this.leftEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);   
+        this.leftPiviotPIDController2.setReference(position1, ControlType.kPosition);
+    }
+    public void setRight1Turret(double pos) {
+        double position1 = this.rightEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);   
         this.rightPiviotPIDController1.setReference(position1, ControlType.kPosition);
-        this.rightPiviotPIDController2.setReference(position2, ControlType.kPosition);
+    }
+    public void setRight2Turret(double pos) {
+        double position1 = this.rightEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);   
+        this.rightPiviotPIDController2.setReference(position1, ControlType.kPosition);
     }
 
     public void strafeDriveV1(double x1, double y1, double x2, double axleDistance, double wheelBase) {

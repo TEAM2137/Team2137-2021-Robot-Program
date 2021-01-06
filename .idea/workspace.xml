@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ef9399ec-5687-45cd-980c-02107365938f" name="Default Changelist" comment="" />
+    <list default="true" id="ef9399ec-5687-45cd-980c-02107365938f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Autonomous.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Autonomous.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants$MotorTypes.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants$MotorTypes.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants$StepState.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants$StepState.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/Constants.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/TeleOp.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/TeleOp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/base/HardwareDriveTrain.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/base/HardwareDriveTrain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/hardware/Base6Wheel.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/hardware/Base6Wheel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/hardware/BaseSwerve.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/hardware/BaseSwerve.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Motor.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Motor.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Step$StepValues.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Step$StepValues.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Step.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/Step.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/XMLSettingReader.class" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/bin/main/frc/robot/util/XMLSettingReader.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/Autonomous.java" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/Autonomous.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/TeleOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/TeleOp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/hardware/BaseSwerve.java" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/hardware/BaseSwerve.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/util/Step.java" beforeDir="false" afterPath="$PROJECT_DIR$/Team2137-2021-Robot-Program/src/main/java/frc/robot/util/Step.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,12 +35,49 @@
   <component name="ProjectId" id="1lDXA5qwUXRfUre3QUoGW0x3Ja3" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="external.system.task.project.file.to.start" value="$PROJECT_DIR$/Team2137-2021-Robot-Program" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Team2137-2021-Robot-Program" />
+  </component>
+  <component name="RunManager" selected="Gradle.FRC">
+    <configuration name="FRC" type="GradleRunConfiguration" factoryName="Gradle">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Team2137-2021-Robot-Program" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list />
+        </option>
+        <option name="vmOptions" value="" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Unnamed" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="Team2137-2021-Robot-Program" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.FRC" />
+      <item itemvalue="JUnit.Unnamed" />
+    </list>
   </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
@@ -32,6 +91,7 @@
       </list>
     </option>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -42,25 +102,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1607132488911</updated>
+      <workItem from="1607782194694" duration="76000" />
+      <workItem from="1609899719911" duration="228000" />
     </task>
     <servers />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="94" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1607132684569">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="94" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1607132684569" />
-    <state x="369" y="123" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1607132683505">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="369" y="123" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1280.680@0.0.1280.680" timestamp="1607132683505" />
-    <state x="420" y="57" key="FileChooserDialogImpl" timestamp="1607132853506">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="420" y="57" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1607132853506" />
-    <state x="315" y="38" key="NewModule_or_Project.wizard" timestamp="1607132857961">
-      <screen x="0" y="0" width="1280" height="680" />
-    </state>
-    <state x="315" y="38" key="NewModule_or_Project.wizard/0.0.1280.680@0.0.1280.680" timestamp="1607132857961" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>

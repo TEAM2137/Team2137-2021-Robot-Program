@@ -15,7 +15,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.MotorTypes;
 
 public class XMLSettingReader {
-    private File settingFile;
+    private final File settingFile;
     private HashMap<String, String> settings;
     private HashMap<String, Motor> motors;
 

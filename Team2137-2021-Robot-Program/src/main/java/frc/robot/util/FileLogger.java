@@ -28,10 +28,10 @@ public class FileLogger {
         }
     }
 
-    private int debug;
+    private final int debug;
     private FileWriter writer;
     private DriverStation dStation;
-    private String logName;
+    private final String logName;
 
     public FileLogger(int _debug){
         this.debug = _debug;

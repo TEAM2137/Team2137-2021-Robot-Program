@@ -9,7 +9,7 @@ public class Constants {
     public static final int intDefaultLM1ID = 0;
     public static final int intDefaultLM2ID = 1;
     public static final int intDefaultRM1ID = 2;
-    public static final int intRefaultRM2ID = 3;
+    public static final int intDefaultRM2ID = 3;
     public static final int intSolenoidID = 0;
     public static final int intMaxLogFiles = 30;
 
@@ -39,8 +39,11 @@ public class Constants {
      */
     public static final double dblDefaultPiviotMotorCountsPerDegree = 0.0;
 
+
     public static final double dblDefaultRobotWheelBase = 0.0;
     public static final double dblDefaultRobotAxelTrack = 0.0;
+
+    public static final double dblDerivativeAccuracyFactor = 0.000001;
 
     public static final String strLogDirectory = "\\home\\lvuser\\Logs\\";
     public static final String strStepFileDirectory = "\\home\\lvuser\\Steps\\";
@@ -105,6 +108,18 @@ public class Constants {
         return a < 0 ? a + 360 : a;
     }
 
+    //      _____________      _______
+    //     / 2          2     / 2    2
+    //   \/ r  - (x + h)  - \/ r  - x 
+    // m = -----------------------------
+    //                 h              
+    public static double pointDerivativeHalfCircle(double radius, double x, double accuracyFactor, boolean invert) {
+        if (invert)
+            return ((Math.sqrt(Math.pow(radius, 2) - Math.pow(x + accuracyFactor, 2)) * -1) + Math.sqrt(Math.pow(radius, 2) - Math.pow(x, 2))) / accuracyFactor;
+        else
+            return (Math.sqrt(Math.pow(radius, 2) - Math.pow(x + accuracyFactor, 2)) - Math.sqrt(Math.pow(radius, 2) - Math.pow(x, 2))) / accuracyFactor;
+    }
+
     public enum MotorTypes {
         NEO ("NEO"),
         FALCON ("FALCON"),
@@ -131,7 +146,7 @@ public class Constants {
         STATE_COMPLETE ("STATE_COMPLETE"),
         STATE_TIMEOUT ("STATE_TIMEOUT"),
         STATE_ERROR ("STATE_ERROR"),
-        STATE_FINSIHED ("STATE_FINSIHED");
+        STATE_FINISHED ("STATE_FINISHED");
 
         public String name = "";
 

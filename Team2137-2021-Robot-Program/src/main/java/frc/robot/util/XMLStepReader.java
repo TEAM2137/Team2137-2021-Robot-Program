@@ -15,7 +15,7 @@ import org.w3c.dom.NodeList;
 import frc.robot.Constants;
 
 public class XMLStepReader {
-    private File stepFile;
+    private final File stepFile;
     private HashMap<Integer, Step> steps;
     private HashMap<String, String> settings;
 

@@ -65,6 +65,10 @@ public class Step {
         return Boolean.parseBoolean(this.values.get(StepValues.parallel.toString()));
     }
 
+    public void addParm(Double value) {
+        
+    }
+
     public Double getParm(int parm) {
         if (this.values.containsKey(StepValues.parm.toString() + parm)) {
             return Double.parseDouble(this.values.get(StepValues.parm.toString() + parm));
@@ -78,6 +82,14 @@ public class Step {
             return Double.parseDouble(this.values.get(StepValues.parm.toString() + parm));
         } else {
             return falseReturn;
+        }
+    }
+
+    public Integer getParmInt(int parm) {
+        if (this.values.containsKey(StepValues.parm.toString() + parm)) {
+            return Integer.valueOf(this.values.get(StepValues.parm.toString() + parm));
+        } else {
+            return null;
         }
     }
 
