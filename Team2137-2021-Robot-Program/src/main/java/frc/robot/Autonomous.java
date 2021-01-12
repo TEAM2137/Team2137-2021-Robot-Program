@@ -65,6 +65,7 @@ public class Autonomous extends OpMode {
 
         mStepFile.forEachStep(E -> {
             logger.writeEvent(0, EventType.Debug, "Running Step" );
+            getCommand(E.getCommand(), E);
         });
 
     }
@@ -121,17 +122,24 @@ public class Autonomous extends OpMode {
             case STATE_INIT:
                 this.mDriveTrain.addLeftMotorTargetPosition(step.getDistance());
                 this.mDriveTrain.addRightMotorTargetPosition(step.getDistance());
-                
+
+                if(this.mBaseSwerve != null) {
+                    this.mBaseSwerve.setLeft1Turret(0, 1);
+                    this.mBaseSwerve.setLeft2Turret(0, 1);
+                    this.mBaseSwerve.setRight1Turret(0, 1);
+                    this.mBaseSwerve.setRight2Turret(0, 1);
+                }
+
                 this.mStatePIDDrive = StepState.STATE_RUNNING;
                 break;
             case STATE_RUNNING:
-                this.mDriveTrain.setLeftPID(ControlType.kPosition, this.dblLeftWheelTargetPosition);
-                this.mDriveTrain.setRightPID(ControlType.kPosition, this.dblRightWheelTargetPosition);
+                this.mDriveTrain.setLeftPID(ControlType.kPosition, this.mDriveTrain.getLeftMotorTargetPosition());
+                this.mDriveTrain.setRightPID(ControlType.kPosition, this.mDriveTrain.getRightMotorPosition());
                 
-                if (Constants.withinClip(this.mDriveTrain.getLeftMotorPosition(), this.dblLeftWheelTargetPosition, step.getParm(0,0.0))) {
+                if (Constants.withinClip(this.mDriveTrain.getLeftMotorPosition(), this.mDriveTrain.getLeftMotorTargetPosition(), step.getParm(0,0.0))) {
                     this.mStatePIDDrive = StepState.STATE_FINISHED;
                 }
-                if (Constants.withinClip(this.mDriveTrain.getRightMotorPosition(), this.dblRightWheelTargetPosition, step.getParm(0,0.0))) {
+                if (Constants.withinClip(this.mDriveTrain.getRightMotorPosition(), this.mDriveTrain.getRightMotorTargetPosition(), step.getParm(0,0.0))) {
                     this.mStatePIDDrive = StepState.STATE_FINISHED;
                 }
                 break;
@@ -309,15 +317,15 @@ public class Autonomous extends OpMode {
                 double rm2X = Math.cos(Math.abs(this.dblRightMotor2StartPosition - mDriveTrain.getRightMotor2Position())/(this.dblSwerveRPM2RadiiFromPoint*2*Math.PI)) * this.dblSwerveRPM2RadiiFromPoint;
 
                 if (Math.abs(currentAngle - step.getDistance()) < 90) {
-                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, false) * 90);
-                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, false) * 90);
-                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, false) * 90);
-                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, false) * 90);
+                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, false) * 90, 1);
+                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
+                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
+                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
                 } else {
-                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, true) * 90);
-                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, true) * 90);
-                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, true) * 90);
-                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, true) * 90);
+                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
+                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
+                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
+                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
                 }
 
                 double tmpAMotorRadii = 0;

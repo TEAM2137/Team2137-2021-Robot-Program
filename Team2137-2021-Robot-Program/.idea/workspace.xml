@@ -4,50 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4025b867-bbc1-4e63-b152-8f68e837e9bc" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.0.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/Autonomous.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/Autonomous.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/Constants$MotorTypes.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/Constants$MotorTypes.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/Constants$StepState.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/Constants$StepState.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/TeleOp.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/TeleOp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/base/HardwareDriveTrain.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/base/HardwareDriveTrain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/hardware/Base6Wheel.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/hardware/Base6Wheel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/hardware/BaseSwerve.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/hardware/BaseSwerve.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/util/Motor.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/util/Motor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/util/Step$StepValues.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/util/Step$StepValues.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/util/Step.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/util/Step.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/main/frc/robot/util/XMLSettingReader.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/main/frc/robot/util/XMLSettingReader.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Autonomous$1.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Autonomous.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants$MotorTypes.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants$MotorTypes.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants$StepState.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants$StepState.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/frc/robot/Constants.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/base/HardwareBasicDriveTrain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/base/HardwareDriveTrain$ShifterStates.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/base/HardwareDriveTrain.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/base/LinearOpMode.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/base/OpMode.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/util/FileLogger.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/frc/robot/util/FileLogger.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/util/XMLSettingReader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/frc/robot/util/XMLStepReader.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Autonomous.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Autonomous.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/TeleOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/TeleOp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/hardware/BaseSwerve.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/hardware/BaseSwerve.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/util/FileLogger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/util/FileLogger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/util/Step.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/util/Step.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/util/XMLSettingReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/util/XMLSettingReader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/frc/robot/util/XMLStepReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/frc/robot/util/XMLStepReader.java" afterDir="false" />
-    </list>
+    <list default="true" id="4025b867-bbc1-4e63-b152-8f68e837e9bc" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,7 +38,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Team 2137 - 2020 Infinite Recharge Robot Program" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -92,7 +49,12 @@
     <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
   </component>
-  <component name="RunManager" selected="Application.Application">
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="frc.robot.LIDAR" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.Team2137-2021-Robot-Program">
     <configuration name="Application" type="Application" factoryName="Application">
       <option name="INCLUDE_PROVIDED_SCOPE" value="true" />
       <option name="MAIN_CLASS_NAME" value="frc.robot.Main" />
@@ -177,6 +139,11 @@
       <workItem from="1609899956214" duration="489000" />
       <workItem from="1609900481706" duration="129000" />
       <workItem from="1609900644781" duration="334000" />
+      <workItem from="1609975056551" duration="1712000" />
+      <workItem from="1610305354864" duration="24000" />
+      <workItem from="1610318222017" duration="4317000" />
+      <workItem from="1610402840939" duration="1303000" />
+      <workItem from="1610406392552" duration="792000" />
     </task>
     <servers />
   </component>
