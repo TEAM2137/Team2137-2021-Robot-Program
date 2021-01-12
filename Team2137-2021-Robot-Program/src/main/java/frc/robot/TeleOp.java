@@ -19,13 +19,17 @@ public class TeleOp extends OpMode {
 
 	@Override
 	public void init() {
-		this.settingReader = new XMLSettingReader("RobotSetting");
+		//this.settingReader = new XMLSettingReader("RobotSetting");
 		this.driveTrain = new BaseSwerve();
+		this.driveTrain.init(null, null);
 
-		driverController = new Gamepad((int) (settingReader.getSetting("DriverControllerPort", Constants.dblDefaultDriverControllerPort)));
+		//driverController = new Gamepad((int) (settingReader.getSetting("DriverControllerPort", Constants.dblDefaultDriverControllerPort)));
+		this.driverController = new Gamepad(0);
 
-		dblWheelBase = settingReader.getSetting("RobotWheelBase", Constants.dblDefaultRobotWheelBase);
-		dblWheelTrack = settingReader.getSetting("RobotAxelTrack", Constants.dblDefaultRobotAxelTrack);
+		//dblWheelBase = settingReader.getSetting("RobotWheelBase", Constants.dblDefaultRobotWheelBase);
+		//dblWheelTrack = settingReader.getSetting("RobotAxelTrack", Constants.dblDefaultRobotAxelTrack);
+		this.dblWheelBase = 36;
+		this.dblWheelTrack = 48;
 	}
 
 	@Override

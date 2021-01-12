@@ -14,6 +14,8 @@ import frc.robot.util.FileLogger;
 import frc.robot.util.Motor;
 import frc.robot.util.XMLSettingReader;
 
+import javax.annotation.Nullable;
+
 public class BaseSwerve implements HardwareDriveTrain {
 
     private CANSparkMax lm1;
@@ -55,18 +57,35 @@ public class BaseSwerve implements HardwareDriveTrain {
     private Feedforward feedforward;
     
 	@Override
-	public void init(XMLSettingReader reader, FileLogger log) {
-        this.dblPivotCountPerDegree = Double.parseDouble(reader.getSetting("PiviotMotorCountsPerDegree"));
+	public void init(@Nullable XMLSettingReader reader, @Nullable FileLogger log) {
+        if(reader != null)
+	        this.dblPivotCountPerDegree = Double.parseDouble(reader.getSetting("PiviotMotorCountsPerDegree"));
+        else
+            this.dblPivotCountPerDegree = 0;
 
-        Motor tmpLM1 = reader.getMotor("LM1");
-        Motor tmpLM2 = reader.getMotor("LM2");
-        Motor tmpRM1 = reader.getMotor("RM1");
-        Motor tmpRM2 = reader.getMotor("RM2");
+        Motor tmpLM1, tmpLM2, tmpRM1, tmpRM2, tmpLPM1, tmpLPM2, tmpRPM1, tmpRPM2;
 
-        Motor tmpLPM1 = reader.getMotor("LPM1");
-        Motor tmpLPM2 = reader.getMotor("LPM2");
-        Motor tmpRPM1 = reader.getMotor("RPM1");
-        Motor tmpRPM2 = reader.getMotor("RPM2");
+        if(reader != null) {
+            tmpLM1 = reader.getMotor("LM1");
+            tmpLM2 = reader.getMotor("LM2");
+            tmpRM1 = reader.getMotor("RM1");
+            tmpRM2 = reader.getMotor("RM2");
+
+            tmpLPM1 = reader.getMotor("LPM1");
+            tmpLPM2 = reader.getMotor("LPM2");
+            tmpRPM1 = reader.getMotor("RPM1");
+            tmpRPM2 = reader.getMotor("RPM2");
+        } else {
+            tmpLM1 = new Motor("LM1", 0, Constants.MotorTypes.NEO, false);
+            tmpLM2 = new Motor("LM2", 1, Constants.MotorTypes.NEO, false);
+            tmpRM1 = new Motor("RM1", 2, Constants.MotorTypes.NEO, false);
+            tmpRM2 = new Motor("RM2", 3, Constants.MotorTypes.NEO, false);
+
+            tmpLPM1 = new Motor("LPM1", 4, Constants.MotorTypes.NEO, false);
+            tmpLPM2 = new Motor("LPM1", 5, Constants.MotorTypes.NEO, false);
+            tmpRPM1 = new Motor("LPM1", 6, Constants.MotorTypes.NEO, false);
+            tmpRPM2 = new Motor("LPM1", 7, Constants.MotorTypes.NEO, false);
+        }
 
         this.lm1 = new CANSparkMax(tmpLM1.getMotorID(), MotorType.kBrushless);
         this.lm2 = new CANSparkMax(tmpLM2.getMotorID(), MotorType.kBrushless);
@@ -88,15 +107,15 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.rpm1.setInverted(tmpRPM1.inverted());
         this.rpm2.setInverted(tmpRPM2.inverted());
 
-        this.leftEncoder1 = new CANEncoder(this.lm1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.leftEncoder2 = new CANEncoder(this.lm2, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.rightEncoder1 = new CANEncoder(this.rm1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.rightEncoder2 = new CANEncoder(this.rm2, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
+        this.leftEncoder1 = this.lm1.getEncoder(EncoderType.kQuadrature, 4096);
+        this.leftEncoder2 = this.lm2.getEncoder(EncoderType.kQuadrature, 4096);
+        this.rightEncoder1 = this.rm1.getEncoder(EncoderType.kQuadrature, 4096);
+        this.rightEncoder2 = this.rm2.getEncoder(EncoderType.kQuadrature, 4096);
 
-        this.leftPivotEncoder1 = new CANEncoder(this.lm1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.leftPivotEncoder2 = new CANEncoder(this.lm2, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.rightPivotEncoder1 = new CANEncoder(this.rm1, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
-        this.rightPivotEncoder2 = new CANEncoder(this.rm2, EncoderType.kQuadrature, (int) Constants.dblBaseEncoderCPR);
+        this.leftPivotEncoder1 = new CANEncoder(this.lm1, EncoderType.kQuadrature, 4096);
+        this.leftPivotEncoder2 = new CANEncoder(this.lm2, EncoderType.kQuadrature, 4096);
+        this.rightPivotEncoder1 = new CANEncoder(this.rm1, EncoderType.kQuadrature, 4096);
+        this.rightPivotEncoder2 = new CANEncoder(this.rm2, EncoderType.kQuadrature, 4096);
 
         this.leftPIDController1 = this.lm1.getPIDController();
         this.leftPIDController2 = this.lm2.getPIDController();
@@ -120,27 +139,30 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.rightPIDController1.setFeedbackDevice(this.rightEncoder1);
         this.rightPIDController2.setFeedbackDevice(this.rightEncoder2);
 
-        this.dblPivotCountPerDegree = reader.getSetting("PivotMotorCountsPerDegree", Constants.dblDefaultPiviotMotorCountsPerDegree);
+        if(reader != null)
+            this.dblPivotCountPerDegree = reader.getSetting("PivotMotorCountsPerDegree", Constants.dblDefaultPiviotMotorCountsPerDegree);
+        else
+            this.dblPivotCountPerDegree = (4096.0 * 8.53) * 360.0; //TODO fix this
     }
 
     public void setLeft1Turret(double pos, double speed) {
         double position1 = this.leftEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);
-        this.lpm1.set(speed);
+//        this.lpm1.set(speed);
         this.leftPivotPIDController1.setReference(position1, ControlType.kPosition);
     }
     public void setLeft2Turret(double pos, double speed) {
         double position1 = this.leftEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);
-        this.lpm2.set(speed);
+//        this.lpm2.set(speed);
         this.leftPivotPIDController2.setReference(position1, ControlType.kPosition);
     }
     public void setRight1Turret(double pos, double speed) {
         double position1 = this.rightEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);
-        this.rpm1.set(speed);
+//        this.rpm1.set(speed);
         this.rightPivotPIDController1.setReference(position1, ControlType.kPosition);
     }
     public void setRight2Turret(double pos, double speed) {
         double position1 = this.rightEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);
-        this.rpm2.set(speed);
+//        this.rpm2.set(speed);
         this.rightPivotPIDController2.setReference(position1, ControlType.kPosition);
     }
 
