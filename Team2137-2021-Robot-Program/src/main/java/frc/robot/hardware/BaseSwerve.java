@@ -7,9 +7,13 @@ import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.Constants.EncoderTypes;
+import frc.robot.Constants.StepState;
 import frc.robot.base.Feedforward;
 import frc.robot.base.HardwareDriveTrain;
+import frc.robot.util.Encoder;
 import frc.robot.util.FileLogger;
 import frc.robot.util.Motor;
 import frc.robot.util.XMLSettingReader;
@@ -38,6 +42,11 @@ public class BaseSwerve implements HardwareDriveTrain {
     private CANEncoder rightPivotEncoder1;
     private CANEncoder rightPivotEncoder2;
 
+    private CANEncoder leftPivotRotationEncoder1;
+    private CANEncoder leftPivotRotationEncoder2;
+    private CANEncoder rightPivotRotationEncoder1;
+    private CANEncoder rightPivotRotationEncoder2;
+
     private CANPIDController leftPIDController1;
     private CANPIDController leftPIDController2;
     private CANPIDController rightPIDController1;
@@ -64,6 +73,7 @@ public class BaseSwerve implements HardwareDriveTrain {
             this.dblPivotCountPerDegree = 0;
 
         Motor tmpLM1, tmpLM2, tmpRM1, tmpRM2, tmpLPM1, tmpLPM2, tmpRPM1, tmpRPM2;
+        Encoder tmpLPE1, tmpLPE2, tmpRPE1, tmpRPE2; //Left Pivot Endcoder 1
 
         if(reader != null) {
             tmpLM1 = reader.getMotor("LM1");
@@ -85,6 +95,11 @@ public class BaseSwerve implements HardwareDriveTrain {
             tmpLPM2 = new Motor("LPM1", 5, Constants.MotorTypes.NEO, false);
             tmpRPM1 = new Motor("LPM1", 6, Constants.MotorTypes.NEO, false);
             tmpRPM2 = new Motor("LPM1", 7, Constants.MotorTypes.NEO, false);
+            
+            tmpLPE1 = new Encoder("LPE1", 8, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpLPE2 = new Encoder("LPE2", 9, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpRPE1 = new Encoder("RPE1", 10, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpRPE2 = new Encoder("RPE2", 11, EncoderTypes.CTRE_MAG_ABS, false);
         }
 
         this.lm1 = new CANSparkMax(tmpLM1.getMotorID(), MotorType.kBrushless);
@@ -117,6 +132,11 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.rightPivotEncoder1 = new CANEncoder(this.rm1, EncoderType.kQuadrature, 4096);
         this.rightPivotEncoder2 = new CANEncoder(this.rm2, EncoderType.kQuadrature, 4096);
 
+        //this.leftPivotRotationEncoder1 = new CANEncoder(EncoderType.kQuadrature, tmpLPE1.getEncoderID());
+        //this.leftPivotRotationEncoder2 = new CANEncoder(tmpLPE2.getEncoderID());
+        //this.rightPivotRotationEncoder1 = new CANEncoder(tmpRPE1.getEncoderID());
+        //this.rightPivotRotationEncoder2 = new CANEncoder(tmpRPE2.getEncoderID());
+
         this.leftPIDController1 = this.lm1.getPIDController();
         this.leftPIDController2 = this.lm2.getPIDController();
         this.rightPIDController1 = this.rm1.getPIDController();
@@ -126,6 +146,8 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.leftPivotPIDController2 = this.lpm2.getPIDController();
         this.rightPivotPIDController1 = this.rpm1.getPIDController();
         this.rightPivotPIDController2 = this.rpm2.getPIDController();
+
+        this.leftPivotPIDController1.setFeedbackDevice(this.leftPivotRotationEncoder1);
 
         this.feedforward = new Feedforward(0.0, 0.0, 0.0);
         
@@ -194,6 +216,60 @@ public class BaseSwerve implements HardwareDriveTrain {
         setLeft2Power(backLeftSpeed);
         setRight1Power(frontRightSpeed);
         setRight2Power(backRightSpeed);
+    }
+
+    public void tunePIDSystem(boolean driveTrain, StepState state) {
+        switch(state) {
+            case STATE_INIT:
+                SmartDashboard.putNumber("LM_P", 0);
+                SmartDashboard.putNumber("LM_I", 0);
+                SmartDashboard.putNumber("LM_D", 0);
+                SmartDashboard.putNumber("LM_FF", 0);
+                SmartDashboard.putNumber("LM_IZ", 0);
+                
+                SmartDashboard.putNumber("RM_P", 0);
+                SmartDashboard.putNumber("RM_I", 0);
+                SmartDashboard.putNumber("RM_D", 0);
+                SmartDashboard.putNumber("RM_FF", 0);
+                SmartDashboard.putNumber("RM_IZ", 0);
+
+                SmartDashboard.putNumber("LPM1_P", 0);
+                SmartDashboard.putNumber("LPM1_I", 0);
+                SmartDashboard.putNumber("LPM1_D", 0);
+                SmartDashboard.putNumber("LPM1_IZ", 0);
+
+                SmartDashboard.putNumber("LPM2_P", 0);
+                SmartDashboard.putNumber("LPM2_I", 0);
+                SmartDashboard.putNumber("LPM2_D", 0);
+                SmartDashboard.putNumber("LPM2_IZ", 0);
+
+                SmartDashboard.putNumber("RPM1_P", 0);
+                SmartDashboard.putNumber("RPM1_I", 0);
+                SmartDashboard.putNumber("RPM1_D", 0);
+                SmartDashboard.putNumber("RPM1_IZ", 0);
+
+                SmartDashboard.putNumber("RPM2_P", 0);
+                SmartDashboard.putNumber("RPM2_I", 0);
+                SmartDashboard.putNumber("RPM2_D", 0);
+                SmartDashboard.putNumber("RPM2_IZ", 0);
+                break;
+            case STATE_RUNNING:
+                this.leftPivotPIDController1.setP(SmartDashboard.getNumber("LPM1_P", 0));
+                this.leftPivotPIDController1.setI(SmartDashboard.getNumber("LPM1_I", 0));
+                this.leftPivotPIDController1.setD(SmartDashboard.getNumber("LPM1_D", 0));
+                
+                this.leftPivotPIDController2.setP(SmartDashboard.getNumber("LPM2_P", 0));
+                this.leftPivotPIDController2.setI(SmartDashboard.getNumber("LPM2_I", 0));
+                this.leftPivotPIDController2.setD(SmartDashboard.getNumber("LPM2_D", 0));
+                
+                this.rightPivotPIDController1.setP(SmartDashboard.getNumber("RPM1_P", 0));
+                this.rightPivotPIDController1.setI(SmartDashboard.getNumber("RPM1_I", 0));
+                this.rightPivotPIDController1.setD(SmartDashboard.getNumber("RPM1_D", 0));
+                
+                this.rightPivotPIDController2.setP(SmartDashboard.getNumber("RPM2_P", 0));
+                this.rightPivotPIDController2.setI(SmartDashboard.getNumber("RPM2_I", 0));
+                this.rightPivotPIDController2.setD(SmartDashboard.getNumber("RPM2_D", 0));
+        }
     }
 
     public void normalizeLeftWheel() {

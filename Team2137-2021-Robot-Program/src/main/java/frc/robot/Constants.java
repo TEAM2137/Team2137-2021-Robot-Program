@@ -138,6 +138,22 @@ public class Constants {
         }
     }
 
+    public enum EncoderTypes {
+        CTRE_MAG_ABS ("CTRE MAG ABS"),
+        REV_BORE ("REV BORE"),
+        NEO_MAG ("NEO MAG");
+
+        String name = "";
+
+        EncoderTypes (String str) {
+            this.name = str;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+    }
+
     public enum StepState {
         STATE_INIT ("STATE_INIT"),
         STATE_START ("STATE_START"),

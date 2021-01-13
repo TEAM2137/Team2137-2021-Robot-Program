@@ -1,5 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
+  "java.server.launchMode": "Standard",
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -11,6 +12,6 @@
     "**/.project": true,
     "**/.settings": true,
     "**/.factorypath": true,
-    "**/frc/robot/base": false
+    "**/*~": true
   }
 }
