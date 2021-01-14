@@ -28,7 +28,7 @@ public final class Main {
    * <p>If you change your main robot clasjs, change the parameter type.
    */
   public static void main(String... args) {
-    RobotBase.startRobot(RobotCommander::new);
     RobotCommander.RegisterOpModes(new Disabled(), new Autonomous(), new TeleOp());
+    RobotBase.startRobot(RobotCommander::new);
   }
 }

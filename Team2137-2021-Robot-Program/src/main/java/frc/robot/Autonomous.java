@@ -49,7 +49,7 @@ public class Autonomous extends OpMode {
     public HashMap<Consumer<Void>, StepState> mActiveCommandList = new HashMap<Consumer<Void>, StepState>();
 
 	@Override
-	public void init() {
+	public void init(boolean test) {
         this.mDS = DriverStation.getInstance();
 
         this.mintDebugLevel = (int) SmartDashboard.getNumber("debug", 0);
@@ -71,12 +71,12 @@ public class Autonomous extends OpMode {
     }
 
 	@Override
-	public void loop() {
+	public void loop(boolean test) {
 		
 	}
 
 	@Override
-	public void end() {
+	public void end(boolean test) {
 		
     }
 

@@ -86,20 +86,20 @@ public class BaseSwerve implements HardwareDriveTrain {
             tmpRPM1 = reader.getMotor("RPM1");
             tmpRPM2 = reader.getMotor("RPM2");
         } else {
-            tmpLM1 = new Motor("LM1", 0, Constants.MotorTypes.NEO, false);
-            tmpLM2 = new Motor("LM2", 1, Constants.MotorTypes.NEO, false);
-            tmpRM1 = new Motor("RM1", 2, Constants.MotorTypes.NEO, false);
-            tmpRM2 = new Motor("RM2", 3, Constants.MotorTypes.NEO, false);
+            tmpLM1 = new Motor("LM1", 10, Constants.MotorTypes.NEO, false);
+            tmpLM2 = new Motor("LM2", 15, Constants.MotorTypes.NEO, false);
+            tmpRM1 = new Motor("RM1", 20, Constants.MotorTypes.NEO, false);
+            tmpRM2 = new Motor("RM2", 25, Constants.MotorTypes.NEO, false);
 
-            tmpLPM1 = new Motor("LPM1", 4, Constants.MotorTypes.NEO, false);
-            tmpLPM2 = new Motor("LPM1", 5, Constants.MotorTypes.NEO, false);
-            tmpRPM1 = new Motor("LPM1", 6, Constants.MotorTypes.NEO, false);
-            tmpRPM2 = new Motor("LPM1", 7, Constants.MotorTypes.NEO, false);
+            tmpLPM1 = new Motor("LPM1", 11, Constants.MotorTypes.NEO, false);
+            tmpLPM2 = new Motor("LPM1", 16, Constants.MotorTypes.NEO, false);
+            tmpRPM1 = new Motor("LPM1", 21, Constants.MotorTypes.NEO, false);
+            tmpRPM2 = new Motor("LPM1", 26, Constants.MotorTypes.NEO, false);
             
-            tmpLPE1 = new Encoder("LPE1", 8, EncoderTypes.CTRE_MAG_ABS, false);
-            tmpLPE2 = new Encoder("LPE2", 9, EncoderTypes.CTRE_MAG_ABS, false);
-            tmpRPE1 = new Encoder("RPE1", 10, EncoderTypes.CTRE_MAG_ABS, false);
-            tmpRPE2 = new Encoder("RPE2", 11, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpLPE1 = new Encoder("LPE1", 12, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpLPE2 = new Encoder("LPE2", 17, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpRPE1 = new Encoder("RPE1", 22, EncoderTypes.CTRE_MAG_ABS, false);
+            tmpRPE2 = new Encoder("RPE2", 27, EncoderTypes.CTRE_MAG_ABS, false);
         }
 
         this.lm1 = new CANSparkMax(tmpLM1.getMotorID(), MotorType.kBrushless);
@@ -146,8 +146,6 @@ public class BaseSwerve implements HardwareDriveTrain {
         this.leftPivotPIDController2 = this.lpm2.getPIDController();
         this.rightPivotPIDController1 = this.rpm1.getPIDController();
         this.rightPivotPIDController2 = this.rpm2.getPIDController();
-
-        this.leftPivotPIDController1.setFeedbackDevice(this.leftPivotRotationEncoder1);
 
         this.feedforward = new Feedforward(0.0, 0.0, 0.0);
         
@@ -216,6 +214,16 @@ public class BaseSwerve implements HardwareDriveTrain {
         setLeft2Power(backLeftSpeed);
         setRight1Power(frontRightSpeed);
         setRight2Power(backRightSpeed);
+
+        // this.lm1.set(.5);
+        // this.lm2.set(.5);
+        // this.rm1.set(.5);
+        // this.rm2.set(.5);
+
+        // setLeft1Power(.5);
+        // setLeft2Power(.5);
+        // setRight1Power(.5);
+        // setRight2Power(.5);
     }
 
     public void tunePIDSystem(boolean driveTrain, StepState state) {
