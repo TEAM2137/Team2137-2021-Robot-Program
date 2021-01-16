@@ -8,13 +8,21 @@ public class Motor {
     MotorTypes type;
     boolean inverted;
     String[] parms;
+    int currentLimit;
+    double gearRatio = 1;
 
-    public Motor(String _name, int _id, MotorTypes _type, boolean _invert, String... _parms) {
+    public Motor(String _name, int _id, MotorTypes _type, boolean _invert, int _currentLimit, double _gearRatio, String... _parms) {
         this.name = _name;
         this.id = _id;
         this.type = _type;
         this.inverted = _invert;
         this.parms = _parms;
+        this.currentLimit = _currentLimit;
+        this.gearRatio = _gearRatio;
+    }
+
+    public double getGearRatio() {
+        return this.gearRatio;
     }
 
     public String getMotorName() {
@@ -39,5 +47,9 @@ public class Motor {
 
     public boolean inverted() {
         return this.inverted;
+    }
+
+    public int getCurrentLimit() {
+        return this.currentLimit;
     }
 }

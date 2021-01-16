@@ -124,10 +124,10 @@ public class Autonomous extends OpMode {
                 this.mDriveTrain.addRightMotorTargetPosition(step.getDistance());
 
                 if(this.mBaseSwerve != null) {
-                    this.mBaseSwerve.setLeft1Turret(0, 1);
-                    this.mBaseSwerve.setLeft2Turret(0, 1);
-                    this.mBaseSwerve.setRight1Turret(0, 1);
-                    this.mBaseSwerve.setRight2Turret(0, 1);
+                    this.mBaseSwerve.setLeft1Turret(0);
+                    this.mBaseSwerve.setLeft2Turret(0);
+                    this.mBaseSwerve.setRight1Turret(0);
+                    this.mBaseSwerve.setRight2Turret(0);
                 }
 
                 this.mStatePIDDrive = StepState.STATE_RUNNING;
@@ -317,15 +317,15 @@ public class Autonomous extends OpMode {
                 double rm2X = Math.cos(Math.abs(this.dblRightMotor2StartPosition - mDriveTrain.getRightMotor2Position())/(this.dblSwerveRPM2RadiiFromPoint*2*Math.PI)) * this.dblSwerveRPM2RadiiFromPoint;
 
                 if (Math.abs(currentAngle - step.getDistance()) < 90) {
-                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, false) * 90, 1);
-                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
-                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
-                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, false) * 90,1);
+                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, false) * 90);
+                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, false) * 90);
+                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, false) * 90);
+                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, false) * 90);
                 } else {
-                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
-                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
-                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
-                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, true) * 90,1);
+                    mBaseSwerve.setLeft1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM1RadiiFromPoint, lm1X, Constants.dblDerivativeAccuracyFactor, true) * 90);
+                    mBaseSwerve.setLeft2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveLPM2RadiiFromPoint, lm2X, Constants.dblDerivativeAccuracyFactor, true) * 90);
+                    mBaseSwerve.setRight1Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM1RadiiFromPoint, rm1X, Constants.dblDerivativeAccuracyFactor, true) * 90);
+                    mBaseSwerve.setRight2Turret(Constants.pointDerivativeHalfCircle(this.dblSwerveRPM2RadiiFromPoint, rm2X, Constants.dblDerivativeAccuracyFactor, true) * 90);
                 }
 
                 double tmpAMotorRadii = 0;

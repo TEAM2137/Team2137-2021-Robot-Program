@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.base.Gamepad;
 import frc.robot.base.OpMode;
+import frc.robot.base.Gamepad.Axis;
 import frc.robot.hardware.Base6Wheel;
 import frc.robot.hardware.BaseSwerve;
 import frc.robot.util.XMLSettingReader;
@@ -20,7 +21,7 @@ public class TeleOp extends OpMode {
     private double dblWheelBase = 0;
     private double dblWheelTrack = 0;
 
-    private XboxController driverController = null;
+    private Gamepad driverController = null;
 
 	@Override
 	public void init(boolean test) {
@@ -29,7 +30,7 @@ public class TeleOp extends OpMode {
 		this.driveTrain.init(null, null);
 
 		//driverController = new Gamepad((int) (settingReader.getSetting("DriverControllerPort", Constants.dblDefaultDriverControllerPort)));
-		this.driverController = new XboxController(0);
+		this.driverController = new Gamepad(0);
 
 		//dblWheelBase = settingReader.getSetting("RobotWheelBase", Constants.dblDefaultRobotWheelBase);
 		//dblWheelTrack = settingReader.getSetting("RobotAxelTrack", Constants.dblDefaultRobotAxelTrack);
@@ -39,9 +40,8 @@ public class TeleOp extends OpMode {
 
 	@Override
 	public void loop(boolean test) {
-		DriverStation.reportError("IN LOOP", false);
-		System.out.println(driverController.getX(Hand.kLeft));
-        driveTrain.strafeDriveV1(driverController.getX(GenericHID.Hand.kLeft), driverController.getY(GenericHID.Hand.kLeft), driverController.getX(GenericHID.Hand.kRight),  this.dblWheelTrack, this.dblWheelBase);
+		//System.out.println(driverController.getRawAxis(Axis.kLeftX.getPort()));
+        driveTrain.strafeDriveV1(driverController.getRawAxis(Axis.kLeftX.getPort()), driverController.getRawAxis(Axis.kLeftY.getPort()), driverController.getRawAxis(Axis.kRightX.getPort()),  this.dblWheelTrack, this.dblWheelBase);
 	}
 
 	@Override

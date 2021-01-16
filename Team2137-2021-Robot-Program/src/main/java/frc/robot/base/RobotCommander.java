@@ -199,15 +199,19 @@ public class RobotCommander extends RobotBase {
 
                 switch (robotStatus) {
                     case AUTONOMOUS:
+                        HAL.observeUserProgramAutonomous();
                         this.autonomousSubProgram.init(false);
                         break;
                     case TELEOP:
+                        HAL.observeUserProgramTeleop();
                         this.teleOpSubProgram.init(false);
                         break;
                     case TEST:
+                        HAL.observeUserProgramTest();
                         this.teleOpSubProgram.init(true);
                         break;
                     case DISABLED:
+                        HAL.observeUserProgramDisabled();
                         this.disabledSubProgram.init(false);
                         break;
                 }
@@ -215,7 +219,7 @@ public class RobotCommander extends RobotBase {
 
             switch (robotStatus) {
                 case AUTONOMOUS:
-                this.autonomousSubProgram.loop(false);
+                    this.autonomousSubProgram.loop(false);
                     break;
                 case TELEOP:
                     this.teleOpSubProgram.loop(false);
@@ -238,8 +242,8 @@ public class RobotCommander extends RobotBase {
     }
 
     public RobotStatus parseRobotStatus(RobotBase base) {
-        if (base.isAutonomous()) return RobotStatus.AUTONOMOUS;
-        if (base.isOperatorControl()) return RobotStatus.TELEOP;
+        if (base.isAutonomousEnabled()) return RobotStatus.AUTONOMOUS;
+        if (base.isOperatorControlEnabled()) return RobotStatus.TELEOP;
         if (base.isTest()) return RobotStatus.TEST;
         else return RobotStatus.DISABLED;
     }

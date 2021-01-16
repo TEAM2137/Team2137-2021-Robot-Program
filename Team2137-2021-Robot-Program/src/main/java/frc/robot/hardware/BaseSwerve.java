@@ -1,5 +1,6 @@
 package frc.robot.hardware;
 
+import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -42,10 +43,10 @@ public class BaseSwerve implements HardwareDriveTrain {
     private CANEncoder rightPivotEncoder1;
     private CANEncoder rightPivotEncoder2;
 
-    private CANEncoder leftPivotRotationEncoder1;
-    private CANEncoder leftPivotRotationEncoder2;
-    private CANEncoder rightPivotRotationEncoder1;
-    private CANEncoder rightPivotRotationEncoder2;
+    private CANCoder leftPivotRotationEncoder1;
+    private CANCoder leftPivotRotationEncoder2;
+    private CANCoder rightPivotRotationEncoder1;
+    private CANCoder rightPivotRotationEncoder2;
 
     private CANPIDController leftPIDController1;
     private CANPIDController leftPIDController2;
@@ -58,20 +59,21 @@ public class BaseSwerve implements HardwareDriveTrain {
     private CANPIDController rightPivotPIDController2;
 
     private double dblPivotCountPerDegree = 0;
+
     private double dblLeftMotor1TargetPosition = 0;
     private double dblLeftMotor2TargetPosition = 0;
     private double dblRightMotor1TargetPosition = 0;
     private double dblRightMotor2TargetPosition = 0;
 
+    private double dblLeftMotor1ZeroPosition = 0;
+    private double dblLeftMotor2ZeroPosition = 0;
+    private double dblRightMotor1ZeroPosition = 0;
+    private double dblRightMotor2ZeroPosition = 0;
+
     private Feedforward feedforward;
     
 	@Override
 	public void init(@Nullable XMLSettingReader reader, @Nullable FileLogger log) {
-        if(reader != null)
-	        this.dblPivotCountPerDegree = Double.parseDouble(reader.getSetting("PiviotMotorCountsPerDegree"));
-        else
-            this.dblPivotCountPerDegree = 0;
-
         Motor tmpLM1, tmpLM2, tmpRM1, tmpRM2, tmpLPM1, tmpLPM2, tmpRPM1, tmpRPM2;
         Encoder tmpLPE1, tmpLPE2, tmpRPE1, tmpRPE2; //Left Pivot Endcoder 1
 
@@ -86,15 +88,15 @@ public class BaseSwerve implements HardwareDriveTrain {
             tmpRPM1 = reader.getMotor("RPM1");
             tmpRPM2 = reader.getMotor("RPM2");
         } else {
-            tmpLM1 = new Motor("LM1", 10, Constants.MotorTypes.NEO, false);
-            tmpLM2 = new Motor("LM2", 15, Constants.MotorTypes.NEO, false);
-            tmpRM1 = new Motor("RM1", 20, Constants.MotorTypes.NEO, false);
-            tmpRM2 = new Motor("RM2", 25, Constants.MotorTypes.NEO, false);
+            tmpLM1 = new Motor("LM1", 10, Constants.MotorTypes.NEO, false, 80, s);
+            tmpLM2 = new Motor("LM2", 15, Constants.MotorTypes.NEO, false, 80, s);
+            tmpRM1 = new Motor("RM1", 20, Constants.MotorTypes.NEO, false, 80, s);
+            tmpRM2 = new Motor("RM2", 25, Constants.MotorTypes.NEO, false, 80, s);
 
-            tmpLPM1 = new Motor("LPM1", 11, Constants.MotorTypes.NEO, false);
-            tmpLPM2 = new Motor("LPM1", 16, Constants.MotorTypes.NEO, false);
-            tmpRPM1 = new Motor("LPM1", 21, Constants.MotorTypes.NEO, false);
-            tmpRPM2 = new Motor("LPM1", 26, Constants.MotorTypes.NEO, false);
+            tmpLPM1 = new Motor("LPM1", 11, Constants.MotorTypes.NEO, false, 80, 8.53); //TODO fix
+            tmpLPM2 = new Motor("LPM1", 16, Constants.MotorTypes.NEO, false, 80, 8.53);
+            tmpRPM1 = new Motor("LPM1", 21, Constants.MotorTypes.NEO, false, 80, 8.35);
+            tmpRPM2 = new Motor("LPM1", 26, Constants.MotorTypes.NEO, false, 80, 8.53);
             
             tmpLPE1 = new Encoder("LPE1", 12, EncoderTypes.CTRE_MAG_ABS, false);
             tmpLPE2 = new Encoder("LPE2", 17, EncoderTypes.CTRE_MAG_ABS, false);
@@ -165,24 +167,20 @@ public class BaseSwerve implements HardwareDriveTrain {
             this.dblPivotCountPerDegree = (4096.0 * 8.53) * 360.0; //TODO fix this
     }
 
-    public void setLeft1Turret(double pos, double speed) {
+    public void setLeft1Turret(double pos) {
         double position1 = this.leftEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);
-//        this.lpm1.set(speed);
         this.leftPivotPIDController1.setReference(position1, ControlType.kPosition);
     }
-    public void setLeft2Turret(double pos, double speed) {
+    public void setLeft2Turret(double pos) {
         double position1 = this.leftEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);
-//        this.lpm2.set(speed);
         this.leftPivotPIDController2.setReference(position1, ControlType.kPosition);
     }
-    public void setRight1Turret(double pos, double speed) {
+    public void setRight1Turret(double pos) {
         double position1 = this.rightEncoder1.getPosition() - (pos * this.dblPivotCountPerDegree);
-//        this.rpm1.set(speed);
         this.rightPivotPIDController1.setReference(position1, ControlType.kPosition);
     }
-    public void setRight2Turret(double pos, double speed) {
+    public void setRight2Turret(double pos) {
         double position1 = this.rightEncoder2.getPosition() - (pos * this.dblPivotCountPerDegree);
-//        this.rpm2.set(speed);
         this.rightPivotPIDController2.setReference(position1, ControlType.kPosition);
     }
 
@@ -205,113 +203,54 @@ public class BaseSwerve implements HardwareDriveTrain {
         double frontRightAngle = Constants.fromHeadingTo360((Math.atan2(b, d) / 3.14159) * 180);
         double frontLeftAngle = Constants.fromHeadingTo360((Math.atan2(b, c) / 3.14159) * 180);
 
-        setLeft1Turret(frontLeftAngle, 1);
-        setLeft2Turret(backLeftAngle, 1);
-        setRight1Turret(frontRightAngle, 1);
-        setRight2Turret(backRightAngle,1);
+        setLeft1Turret(frontLeftAngle);
+        setLeft2Turret(backLeftAngle);
+        setRight1Turret(frontRightAngle);
+        setRight2Turret(backRightAngle);
 
         setLeft1Power(frontLeftSpeed);
         setLeft2Power(backLeftSpeed);
         setRight1Power(frontRightSpeed);
         setRight2Power(backRightSpeed);
-
-        // this.lm1.set(.5);
-        // this.lm2.set(.5);
-        // this.rm1.set(.5);
-        // this.rm2.set(.5);
-
-        // setLeft1Power(.5);
-        // setLeft2Power(.5);
-        // setRight1Power(.5);
-        // setRight2Power(.5);
-    }
-
-    public void tunePIDSystem(boolean driveTrain, StepState state) {
-        switch(state) {
-            case STATE_INIT:
-                SmartDashboard.putNumber("LM_P", 0);
-                SmartDashboard.putNumber("LM_I", 0);
-                SmartDashboard.putNumber("LM_D", 0);
-                SmartDashboard.putNumber("LM_FF", 0);
-                SmartDashboard.putNumber("LM_IZ", 0);
-                
-                SmartDashboard.putNumber("RM_P", 0);
-                SmartDashboard.putNumber("RM_I", 0);
-                SmartDashboard.putNumber("RM_D", 0);
-                SmartDashboard.putNumber("RM_FF", 0);
-                SmartDashboard.putNumber("RM_IZ", 0);
-
-                SmartDashboard.putNumber("LPM1_P", 0);
-                SmartDashboard.putNumber("LPM1_I", 0);
-                SmartDashboard.putNumber("LPM1_D", 0);
-                SmartDashboard.putNumber("LPM1_IZ", 0);
-
-                SmartDashboard.putNumber("LPM2_P", 0);
-                SmartDashboard.putNumber("LPM2_I", 0);
-                SmartDashboard.putNumber("LPM2_D", 0);
-                SmartDashboard.putNumber("LPM2_IZ", 0);
-
-                SmartDashboard.putNumber("RPM1_P", 0);
-                SmartDashboard.putNumber("RPM1_I", 0);
-                SmartDashboard.putNumber("RPM1_D", 0);
-                SmartDashboard.putNumber("RPM1_IZ", 0);
-
-                SmartDashboard.putNumber("RPM2_P", 0);
-                SmartDashboard.putNumber("RPM2_I", 0);
-                SmartDashboard.putNumber("RPM2_D", 0);
-                SmartDashboard.putNumber("RPM2_IZ", 0);
-                break;
-            case STATE_RUNNING:
-                this.leftPivotPIDController1.setP(SmartDashboard.getNumber("LPM1_P", 0));
-                this.leftPivotPIDController1.setI(SmartDashboard.getNumber("LPM1_I", 0));
-                this.leftPivotPIDController1.setD(SmartDashboard.getNumber("LPM1_D", 0));
-                
-                this.leftPivotPIDController2.setP(SmartDashboard.getNumber("LPM2_P", 0));
-                this.leftPivotPIDController2.setI(SmartDashboard.getNumber("LPM2_I", 0));
-                this.leftPivotPIDController2.setD(SmartDashboard.getNumber("LPM2_D", 0));
-                
-                this.rightPivotPIDController1.setP(SmartDashboard.getNumber("RPM1_P", 0));
-                this.rightPivotPIDController1.setI(SmartDashboard.getNumber("RPM1_I", 0));
-                this.rightPivotPIDController1.setD(SmartDashboard.getNumber("RPM1_D", 0));
-                
-                this.rightPivotPIDController2.setP(SmartDashboard.getNumber("RPM2_P", 0));
-                this.rightPivotPIDController2.setI(SmartDashboard.getNumber("RPM2_I", 0));
-                this.rightPivotPIDController2.setD(SmartDashboard.getNumber("RPM2_D", 0));
-        }
+        
+        // System.out.println("LM1: " + lm1.get());
+        // System.out.println("LM2: " + lm2.get());
+        // System.out.println("RM1: " + rm1.get());
+        // System.out.println("RM2: " + rm2.get());
     }
 
     public void normalizeLeftWheel() {
-	    double pos = ((getLeft1PiviotMotorPosition() + getLeft2PiviotMotorPosition()) / 2) / this.dblPivotCountPerDegree;
-	    setLeft1Turret(pos,1);
-	    setLeft2Turret(pos,1);
+	    double pos = ((getLeft1PivotMotorPosition() + getLeft2PivotMotorPosition()) / 2) / this.dblPivotCountPerDegree;
+	    setLeft1Turret(pos);
+	    setLeft2Turret(pos);
     }
     public void normalizeRightWheel() {
-        double pos = ((getRight1PiviotMotorPosition() + getRight2PiviotMotorPosition()) / 2) / this.dblPivotCountPerDegree;
-        setRight1Turret(pos,1);
-        setRight2Turret(pos,1);
+        double pos = ((getRight1PivotMotorPosition() + getRight2PivotMotorPosition()) / 2) / this.dblPivotCountPerDegree;
+        setRight1Turret(pos);
+        setRight2Turret(pos);
     }
     public void normalizeAllWheel() {
-	    double pos = ((getLeft1PiviotMotorPosition() + getLeft2PiviotMotorPosition() +
-                getRight1PiviotMotorPosition() + getRight2PiviotMotorPosition()) / 4) * this.dblPivotCountPerDegree;
-	    setLeft1Turret(pos,1);
-	    setLeft2Turret(pos,1);
-	    setRight1Turret(pos,1);
-	    setRight2Turret(pos,1);
+	    double pos = ((getLeft1PivotMotorPosition() + getLeft2PivotMotorPosition() +
+                getRight1PivotMotorPosition() + getRight2PivotMotorPosition()) / 4) * this.dblPivotCountPerDegree;
+	    setLeft1Turret(pos);
+	    setLeft2Turret(pos);
+	    setRight1Turret(pos);
+	    setRight2Turret(pos);
     }
 
-    public double getLeft1PiviotMotorPosition() {  return leftPivotEncoder1.getPosition(); }
-    public double getLeft2PiviotMotorPosition() {  return leftPivotEncoder2.getPosition(); }
-    public double getRight1PiviotMotorPosition() { return rightPivotEncoder1.getPosition(); }
-    public double getRight2PiviotMotorPosition() { return rightPivotEncoder2.getPosition(); }
+    public double getLeft1PivotMotorPosition() {  return leftPivotEncoder1.getPosition(); }
+    public double getLeft2PivotMotorPosition() {  return leftPivotEncoder2.getPosition(); }
+    public double getRight1PivotMotorPosition() { return rightPivotEncoder1.getPosition(); }
+    public double getRight2PivotMotorPosition() { return rightPivotEncoder2.getPosition(); }
 
 	@Override
-	public void setLeft1Power(double leftM1) { lm1.set(Constants.clipBaseSpeed(leftM1)); }
+	public void setLeft1Power(double leftM1) { lm1.set(leftM1); }
 	@Override
-	public void setLeft2Power(double leftM2) { lm2.set(Constants.clipBaseSpeed(leftM2)); }
+	public void setLeft2Power(double leftM2) { lm2.set(leftM2); }
 	@Override
-	public void setRight1Power(double rightM1) { rm1.set(Constants.clipBaseSpeed(rightM1)); }
+	public void setRight1Power(double rightM1) { rm1.set(rightM1); }
 	@Override
-	public void setRight2Power(double rightM2) { rm2.set(Constants.clipBaseSpeed(rightM2)); }
+	public void setRight2Power(double rightM2) { rm2.set(rightM2); }
 
 
     @Override

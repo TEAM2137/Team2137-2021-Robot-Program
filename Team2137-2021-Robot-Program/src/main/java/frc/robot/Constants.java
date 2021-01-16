@@ -20,7 +20,7 @@ public class Constants {
     public static final boolean boolShifterInvert = false;
 
     public static final double dblMaxBaseSpeed = 1.0; // 1.0 Max & 0.0 Min
-    public static final double dblMinBaseSpeed = 0.0; // 0.0 Min & 1.0 Max
+    public static final double dblMinBaseSpeed = -1.0; // 0.0 Min & 1.0 Max
     
     public static final double[] dblBaseP = {0.0, 0.0}; // Low, High
     public static final double[] dblBaseI = {0.0, 0.0};

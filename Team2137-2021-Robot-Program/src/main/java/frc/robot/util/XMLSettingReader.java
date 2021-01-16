@@ -65,7 +65,7 @@ public class XMLSettingReader {
                         Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent()),
                         MotorTypes.valueOf(element.getElementsByTagName("Type").item(0).getTextContent()),
                         Boolean.valueOf(element.getElementsByTagName("Inverted").item(0).getTextContent()),
-                        tmpParms);
+                        80, tmpParms);
     }
 
     public Motor getMotor(String str) {
