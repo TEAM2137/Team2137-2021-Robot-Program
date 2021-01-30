@@ -8,6 +8,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.base.Hardware;
 import com.ctre.phoenix.sensors.CANCoder;
 import frc.robot.util.Constants;
@@ -35,9 +36,11 @@ public class SwerveModule {
     private CANEncoder primaryTurnEncoder;
     private CANCoder secondaryTurnEncoder;
 
-    private int turnMotorOffset = 0;
+    private double turnMotorOffset = 0;
 
     private boolean PIDEnabledDrive = true;
+
+    private String turnMotorName = "";
 
     public SwerveModule(Motor drive, Motor turn, Encoder secondaryTurn) {
         this.driveMotor = new CANSparkMax(drive.getMotorID(), drive.getMotorType().getREVType());
@@ -53,17 +56,19 @@ public class SwerveModule {
         this.turnMotor.setSmartCurrentLimit(turn.getCurrentLimit());
         this.turnMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
+        this.turnMotorName = turn.getMotorName();
+
         this.driveEncoder = driveMotor.getEncoder();
         this.primaryTurnEncoder = turnMotor.getEncoder();
         this.secondaryTurnEncoder = new CANCoder(secondaryTurn.getEncoderID());
 
-        this.turnMotorOffset = Integer.parseInt(secondaryTurn.getParm(0));
+        this.dblDriveMotorConversionFactor = drive.getGearRatio();
+        this.dblTurnMotorConversionFactor = turn.getGearRatio();
+
+        this.turnMotorOffset = (Double.parseDouble(secondaryTurn.getParm(0)) / 360) * 4096;
 
         this.secondaryTurnEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         this.secondaryTurnEncoder.configMagnetOffset(turnMotorOffset);
-
-        this.dblDriveMotorConversionFactor = drive.getGearRatio();
-        this.dblTurnMotorConversionFactor = turn.getGearRatio();
 
         dblDriveMotorStartPos = this.driveEncoder.getPosition();
         dblTurnMotorStartPos = this.primaryTurnEncoder.getPosition();
@@ -91,8 +96,13 @@ public class SwerveModule {
         return (((this.primaryTurnEncoder.getPosition() - dblTurnMotorStartPos) * this.dblTurnMotorConversionFactor) / 360);
     }
 
+    public double getSpeed() {
+        return this.driveMotor.get();
+    }
+
     public void setTurnMotorPosition(double angle) {
         Rotation2d encoderPosition = Rotation2d.fromDegrees(this.secondaryTurnEncoder.getAbsolutePosition() - this.turnMotorOffset);
+        SmartDashboard.putNumber("Encoder Position " + turnMotorName, encoderPosition.getDegrees());
         boolean reverseWheel = false;
 
         if (Math.abs(encoderPosition.minus(Rotation2d.fromDegrees(angle)).getDegrees()) > 90) {
@@ -103,6 +113,10 @@ public class SwerveModule {
         if (PIDEnabledDrive) {
             double setPoint = (Math.abs(encoderPosition.minus(Rotation2d.fromDegrees(angle)).getDegrees()) * (reverseWheel ? -1 : 1));
             this.turnPID.setReference(primaryTurnEncoder.getPosition() + (setPoint * this.dblTurnMotorConversionFactor), ControlType.kPosition);
+            SmartDashboard.putNumber("Position " + turnMotorName, (setPoint * this.dblTurnMotorConversionFactor));
+            SmartDashboard.putNumber("Set Point " + turnMotorName, setPoint);
+            SmartDashboard.putNumber("Current Position " + turnMotorName, this.primaryTurnEncoder.getPosition());
+            SmartDashboard.putNumber("Current CAN Coder " + turnMotorName, this.secondaryTurnEncoder.getPosition());
         }
     }
 

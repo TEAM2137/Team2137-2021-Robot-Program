@@ -2,6 +2,7 @@ package frc.robot.hardware;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.util.Constants;
 import frc.robot.util.Motor;
 import frc.robot.util.PID;
@@ -84,6 +85,10 @@ public class SwerveBase {
         this.rightFront.setDriveMotorSpeed(speeds[2].x);
         this.rightBack.setDriveMotorSpeed(speeds[3].x);
 
+        SmartDashboard.putNumber("LeftFront Power", leftFront.getSpeed());
+        SmartDashboard.putNumber("LeftBack Power", leftBack.getSpeed());
+        SmartDashboard.putNumber("RightFront Power", rightFront.getSpeed());
+        SmartDashboard.putNumber("RightBack Power", rightBack.getSpeed());
         // System.out.println("LM1: " + lm1.get());
         // System.out.println("LM2: " + lm2.get());
         // System.out.println("RM1: " + rm1.get());
@@ -95,11 +100,20 @@ public class SwerveBase {
         strafeDriveV1(translatedSpeeds[0], translatedSpeeds[1], translatedSpeeds[2]);
     }
 
-    public void setLeftVelocity(double goal) {
-
+    public void zeroModules() {
+        this.leftFront.setTurnMotorPosition(0);
+        this.leftBack.setTurnMotorPosition(0);
+        this.rightFront.setTurnMotorPosition(0);
+        this.rightBack.setTurnMotorPosition(0);
     }
 
-    public void setRightVelocity(double goal) {
-        
+    public void setLeftVelocity(double goal, double maxFPS) {
+        this.leftFront.setDriveMotorSpeed(goal * maxFPS);
+        this.leftBack.setDriveMotorSpeed(goal * maxFPS);
+    }
+
+    public void setRightVelocity(double goal, double maxFPS) {
+        this.rightFront.setDriveMotorSpeed(goal * maxFPS);
+        this.rightBack.setDriveMotorSpeed(goal * maxFPS);
     }
 }

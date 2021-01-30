@@ -27,12 +27,12 @@ public class TeleOp extends OpMode {
         Motor lpm1 = new Motor("LPM1", 11, Motor.MotorTypes.NEO, false, 60, 97); // Counts per degree, ratio is 8.53
         Motor lpm2 = new Motor("LPM2", 16, Motor.MotorTypes.NEO, false, 60, 97);
         Motor rpm1 = new Motor("RPM1", 21, Motor.MotorTypes.NEO, false, 60, 97);
-        Motor rpm2 = new Motor("RPM2", 27, Motor.MotorTypes.NEO, false, 60, 97);
+        Motor rpm2 = new Motor("RPM2", 26, Motor.MotorTypes.NEO, false, 60, 97);
 
-        Encoder le1 = new Encoder("LE1", 12, Encoder.EncoderTypes.CTRE_CAN_ABS, false);
-        Encoder le2 = new Encoder("LE2", 17, Encoder.EncoderTypes.CTRE_CAN_ABS, false);
-        Encoder re1 = new Encoder("RE1", 22, Encoder.EncoderTypes.CTRE_CAN_ABS, false);
-        Encoder re2 = new Encoder("RE2", 27, Encoder.EncoderTypes.CTRE_CAN_ABS, false);
+        Encoder le1 = new Encoder("LE1", 12, Encoder.EncoderTypes.CTRE_CAN_ABS, false, "-55.81");
+        Encoder le2 = new Encoder("LE2", 17, Encoder.EncoderTypes.CTRE_CAN_ABS, false, "179.56");
+        Encoder re1 = new Encoder("RE1", 22, Encoder.EncoderTypes.CTRE_CAN_ABS, false, "120.94");
+        Encoder re2 = new Encoder("RE2", 27, Encoder.EncoderTypes.CTRE_CAN_ABS, false, "9.59");
 
         PID turnPID = new PID(0.075, 0, -0.000000000000000000001);
         PID drivePID = new PID(0, 0, 0);

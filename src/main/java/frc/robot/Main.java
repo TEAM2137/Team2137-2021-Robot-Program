@@ -20,6 +20,7 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
+
     Robot.registerOpModes(new Autonomous(), new TeleOp(), new Disabled());
     RobotBase.startRobot(Robot::new);
   }

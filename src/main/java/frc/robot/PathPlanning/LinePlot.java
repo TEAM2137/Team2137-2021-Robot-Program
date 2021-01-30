@@ -665,23 +665,6 @@ public class LinePlot extends JPanel implements ClipboardOwner {
         }
     }
 
-    public void updateData(int series, double[][] data)
-    {
-        //add Data to link list
-        addData(data,null,null);
-
-        //copy data from new to old and line styles from list to new list.
-
-        link.get(series).x = link.getLast().x.clone();
-        link.get(series).y = link.getLast().y.clone();
-
-        //remove last data
-        link.removeLast();
-
-
-
-    }
-
     public static double[] getXVector(double[][] arr)
     {
         double[] temp = new double[arr.length];
