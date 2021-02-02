@@ -1,7 +1,9 @@
 package com.team2137.frc2021.program;
 
 import com.team2137.libs.GamePad;
-import com.team2137.libs.GamePad.*;
+import com.team2137.libs.GamePad.Axis;
+import com.team2137.libs.GamePad.Button;
+import com.team2137.libs.GamePad.DPad;
 import edu.wpi.first.wpilibj.GenericHID;
 
 /**

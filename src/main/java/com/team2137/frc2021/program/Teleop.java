@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Teleop extends RobotContainer implements OpMode {
     @Override
     public void init() {
-
+        drivetrain.selfTargetAllModuleAngles();
     }
 
     @Override

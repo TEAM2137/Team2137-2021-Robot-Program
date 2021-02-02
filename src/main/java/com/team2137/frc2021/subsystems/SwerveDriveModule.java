@@ -126,7 +126,7 @@ public class SwerveDriveModule extends SubsystemBase {
         }
 
         SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
-        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
+        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointRaw.getDegrees());
         SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
         SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.get());
 
@@ -191,6 +191,10 @@ public class SwerveDriveModule extends SubsystemBase {
 
     public SwerveModuleState getSwerveModuleState() {
         return new SwerveModuleState(getDriveVelocity(), getModuleRotation());
+    }
+
+    public void selfTargetAngle() {
+        setTurningTarget(getModuleRotation());
     }
 
     private enum DriveMode {

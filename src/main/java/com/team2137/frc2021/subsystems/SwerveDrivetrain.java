@@ -66,6 +66,8 @@ public class SwerveDrivetrain extends SubsystemBase {
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.05, 0.05, Units.degreesToRadians(5)), // State measurement standard deviations. X, Y, theta.
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(Units.degreesToRadians(0.01)), // Local measurement standard deviations. Gyro.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.5, 0.5, Units.degreesToRadians(30))); // Vision measurement standard deviations. X, Y, and theta.
+
+        SmartDashboard.putData("Field", field2d);
     }
 
     /**
@@ -77,6 +79,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 
         SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
         field2d.setRobotPose(getPose());
+        SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
+        SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
     }
 
     /**
@@ -197,7 +201,13 @@ public class SwerveDrivetrain extends SubsystemBase {
         frontRightModule.setDriveVelocity(velocity);
         backLeftModule.setDriveVelocity(velocity);
         backRightModule.setDriveVelocity(velocity);
+    }
 
+    public void selfTargetAllModuleAngles() {
+        frontLeftModule.selfTargetAngle();
+        frontRightModule.selfTargetAngle();
+        backLeftModule.selfTargetAngle();
+        backRightModule.selfTargetAngle();
     }
 
     public TrajectoryConfig getDefaultConstraint() {

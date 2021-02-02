@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -61,6 +63,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         this.thresholds = thresholds;
         this.currentHeadingTarget = initialHeadingTarget;
 
+        this.trajectoryMode = TrajectoryMode.MultiHeading;
+
         this.drivetrain = drivetrain;
         addRequirements(drivetrain);
     }
@@ -79,6 +83,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         Constants.PIDConstants translationConstants = Constants.Drivetrain.translationPIDConstants;
         this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
         this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
+
+        SendableRegistry.setName(this.xController, "xcontroller");
 
         Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
         TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
@@ -118,13 +124,17 @@ public class TrajectoryFollowCommand extends CommandBase {
                     if (currentSide != previousSide) {
                         currentHeadingTarget = currentThreshold.getTarget();
                         thresholdIndex++;
-                        previousSide = thresholds[thresholdIndex].getLineSide(drivetrain.getPose().getTranslation());
+                        if(thresholdIndex < thresholds.length) {
+                            previousSide = thresholds[thresholdIndex].getLineSide(drivetrain.getPose().getTranslation());
+                        }
                     }
                 }
+                SmartDashboard.putNumber("current threshold", thresholdIndex);
                 break;
         }
 
         var target_speeds = holonomicController.calculate(drivetrain.getPose(), desiredState, currentHeadingTarget);
+        SmartDashboard.putNumber("heading target", currentHeadingTarget.getDegrees());
 
         drivetrain.driveTranslationRotationVelocity(target_speeds);
     }
@@ -132,6 +142,7 @@ public class TrajectoryFollowCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         timer.stop();
+        drivetrain.setAllModuleDriveRawPower(0);
     }
 
     @Override
@@ -139,7 +150,7 @@ public class TrajectoryFollowCommand extends CommandBase {
         return timer.hasElapsed(trajectory.getTotalTimeSeconds());
     }
 
-    public class HeadingControlThreshold {
+    public static class HeadingControlThreshold {
         private double m;
         private double b;
         private Rotation2d target;
@@ -161,7 +172,7 @@ public class TrajectoryFollowCommand extends CommandBase {
          */
         public LineSide getLineSide(Translation2d position) {
             double lineY = m * position.getX() + b;
-            return position.getY() - lineY >= 0 ? LineSide.Positive : LineSide.Negative;
+            return position.getY() >= lineY ? LineSide.Positive : LineSide.Negative;
         }
 
         /**

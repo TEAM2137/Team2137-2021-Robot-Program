@@ -12,7 +12,7 @@ public class Constants {
         public static final double motorToWheelConversionFactor = (1 / 6.86) * Units.inchesToMeters(4 * Math.PI);
 
         public static final double driveMaxSpeed = Units.feetToMeters(13.5); // temp value
-        public static final double driveMaxAccel = Units.feetToMeters(8.0); // temp value
+        public static final double driveMaxAccel = Units.feetToMeters(4.0); // temp value
 
         public static final boolean invertDriveMotor = true;
         public static final boolean invertTurningMotor = false;
@@ -21,7 +21,7 @@ public class Constants {
 
         public static final double driveMotorRamp = 0.5;
 
-        public static PIDConstants turningPIDConstants = new PIDConstants(0.075, 0, -0.000000000000000000001); // in the air
+        public static PIDConstants turningPIDConstants = new PIDConstants(0.075, 0, .001); // in the air
 //        public static PIDConstants turningPIDConstants = new PIDConstants(0.1, 0, -0.0000000000000000000000001); // carpet
 //        public static PIDConstants turningPIDConstants = new PIDConstants(0.08, 0, 0); // carpet
 
@@ -33,9 +33,9 @@ public class Constants {
         public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, 179.56, "Back Left");
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 9.59, "Back Right");
 
-        public static PIDConstants translationPIDConstants = new PIDConstants(0, 0, 0);
-        public static PIDConstants thetaPIDConstants = new PIDConstants(0, 0, 0);
-        public static TrapezoidProfile.Constraints thetaPIDConstraints = new TrapezoidProfile.Constraints(2, 1);
+        public static PIDConstants translationPIDConstants = new PIDConstants(.02, 0, 0.25);
+        public static PIDConstants thetaPIDConstants = new PIDConstants(2, 0, 0);
+        public static TrapezoidProfile.Constraints thetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8);
 
         public static class SwerveModuleConstants {
             public final int driveID;
