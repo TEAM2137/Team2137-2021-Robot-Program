@@ -43,6 +43,11 @@ public class SpindexerControl extends CommandBase {
                 }
                 break;
             case Indexing:
+                if(spindexer.getHopperFirstPhotoeye() || spindexer.getHopperSecondPhotoeye()) {
+                    mainTimer.reset();
+                    mainTimer.start();
+                }
+                
                 if(spindexer.getFifthBallPhotoeye()) {
                     fifthBallTimer.start();
                 } else {
