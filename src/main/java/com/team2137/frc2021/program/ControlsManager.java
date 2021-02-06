@@ -20,6 +20,8 @@ public class ControlsManager {
         DriveAxis               (Axis.kLeftY, driverController),
         StrafeAxis              (Axis.kLeftX, driverController),
         RotationAxis            (Axis.kRightX, driverController),
+
+        IntakeButton            (Button.kA, driverController),
         ;
 
         private int id;
