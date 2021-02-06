@@ -4,6 +4,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team2137.frc2021.Constants;
+import com.team2137.frc2021.commands.SpindexerControl;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -14,6 +16,8 @@ public class Spindexer extends SubsystemBase {
     private TalonSRX motor;
 
     private CANifier canifier;
+
+    private SpindexerControl controlCommand;
 
     /**
      * Creates a Spindexer from the constants
@@ -27,6 +31,9 @@ public class Spindexer extends SubsystemBase {
         this.motor.configOpenloopRamp(Constants.Spindexer.voltageRamp);
 
         this.canifier = canifier;
+
+        this.controlCommand = new SpindexerControl(this);
+        setDefaultCommand(this.controlCommand);
     }
 
     @Override
