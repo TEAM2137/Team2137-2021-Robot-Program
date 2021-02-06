@@ -11,6 +11,8 @@ public class SetIntakeCommand extends CommandBase {
     public SetIntakeCommand(Intake intake, IntakeState state) {
         this.intake = intake;
         this.state = state;
+
+        addRequirements(intake);
     }
 
     @Override
