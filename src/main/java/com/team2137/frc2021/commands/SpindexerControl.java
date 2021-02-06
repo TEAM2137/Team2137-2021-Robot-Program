@@ -15,6 +15,8 @@ public class SpindexerControl extends CommandBase {
         this.spindexer = spindexer;
         this.mainTimer = new Timer();
         this.fifthBallTimer = new Timer();
+
+        addRequirements(spindexer);
     }
 
     @Override
