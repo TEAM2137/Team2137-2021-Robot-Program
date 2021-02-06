@@ -167,6 +167,24 @@ public class TrajectoryFollowCommand extends CommandBase {
         }
 
         /**
+         * @param point1 the first point of the threshold line
+         * @param point2 the second point of the threshold line
+         * @param target the angle to turn to after passing this line
+         */
+        public HeadingControlThreshold(Translation2d point1, Translation2d point2, Rotation2d target) {
+            // prevent a vertical line with an infinite/undefined slope, divide by zero error
+            if(point1.getX() == point2.getX()) {
+                point1 = point1.plus(new Translation2d(0.0001, 0));
+            }
+
+            //rise over run
+            this.m = (point1.getY() - point2.getY()) / (point1.getX() - point2.getX());
+            //determine y-intercept by rearranging y=mx+b
+            this.b = point2.getY() - (this.m * point2.getX());
+            this.target = target;
+        }
+
+        /**
          * @param position the position of the robot
          * @return the side of the line that the robot is on
          */
