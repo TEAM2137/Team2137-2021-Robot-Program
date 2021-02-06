@@ -6,7 +6,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import frc.robot.util.Motor;
+//import frc.robot.util.Motor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
 public class XMLSettingReader {
     private final File settingFile;
     private HashMap<String, String> settings;
-    private HashMap<String, Motor> motors;
+//    private HashMap<String, Motor> motors;
 
     public XMLSettingReader(String dir, String fileName) {
         this.settingFile = new File(dir + fileName);
@@ -39,8 +39,8 @@ public class XMLSettingReader {
             
             switch (tmp.getNodeName()) {
                 case "Motor":
-                    Motor mtmp = parseMotor(tmp);
-                    this.motors.put(mtmp.getMotorName(), mtmp);
+//                    Motor mtmp = parseMotor(tmp);
+//                    this.motors.put(mtmp.getMotorName(), mtmp);
                     break;
                 default:
                     this.settings.put(tmp.getNodeName(), tmp.getTextContent());
@@ -49,28 +49,28 @@ public class XMLSettingReader {
         }
     }
     
-    public Motor parseMotor(Node stepNode) {
-        Element element = (Element) stepNode;
-        
-        NodeList parmNodeList = element.getElementsByTagName("parm");
-        String[] tmpParms = new String[parmNodeList.getLength()];
+//    public Motor parseMotor(Node stepNode) {
+//        Element element = (Element) stepNode;
+//
+//        NodeList parmNodeList = element.getElementsByTagName("parm");
+//        String[] tmpParms = new String[parmNodeList.getLength()];
+//
+//        for (int i = 0; i < parmNodeList.getLength(); i++) {
+//            Element id = (Element) parmNodeList.item(0);
+//            tmpParms[Integer.parseInt(id.getAttribute("id"))] = parmNodeList.item(i).getTextContent();
+//        }
+//
+////        return new Motor(element.getElementsByTagName("Name").item(0).getTextContent(),
+////                        Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent()),
+////                        MotorTypes.valueOf(element.getElementsByTagName("Type").item(0).getTextContent()),
+////                        Boolean.valueOf(element.getElementsByTagName("Inverted").item(0).getTextContent()),
+////                        80, tmpParms);
+//        return null;
+//    }
 
-        for (int i = 0; i < parmNodeList.getLength(); i++) {
-            Element id = (Element) parmNodeList.item(0);
-            tmpParms[Integer.parseInt(id.getAttribute("id"))] = parmNodeList.item(i).getTextContent();
-        }
-
-//        return new Motor(element.getElementsByTagName("Name").item(0).getTextContent(),
-//                        Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent()),
-//                        MotorTypes.valueOf(element.getElementsByTagName("Type").item(0).getTextContent()),
-//                        Boolean.valueOf(element.getElementsByTagName("Inverted").item(0).getTextContent()),
-//                        80, tmpParms);
-        return null;
-    }
-
-    public Motor getMotor(String str) {
-        return this.motors.get(str);
-    }
+//    public Motor getMotor(String str) {
+//        return this.motors.get(str);
+//    }
 
     public String getSetting(String str) {
         if (this.settings.containsKey(str)) {
