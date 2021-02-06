@@ -8,22 +8,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class SetIntakeCommand extends CommandBase {
     private IntakeState state;
     private Intake intake;
-    public SetIntakeCommand() {
-        intake = new Intake();
-        state = intake.getIntakeState();
-
+    public SetIntakeCommand(Intake intake, IntakeState state) {
+        this.intake = intake;
+        this.state = state;
     }
 
     @Override
     public void initialize() {
-        if (state == IntakeState.Retracted) {
-            state = IntakeState.Running;
-            intake.setIntakeState(IntakeState.Running);
-        }
-        else {
-            state = IntakeState.Retracted;
-            intake.setIntakeState(IntakeState.Retracted);
-        }
-    }
+        intake.setIntakeState(state);
+    }   
 
+    @Override
+    public boolean isFinished() {
+        return true;
+    }
 }
