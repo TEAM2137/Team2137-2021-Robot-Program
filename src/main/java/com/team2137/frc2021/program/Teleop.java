@@ -21,9 +21,13 @@ public class Teleop extends RobotContainer implements OpMode {
         SmartDashboard.putNumber("strafe", strafe);
         SmartDashboard.putNumber("turn", turn);
         // ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, Math.PI / 2.0, Rotation2d.fromDegrees(45.0));
-        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
-        // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
-        drivetrain.driveTranslationRotationRaw(speeds);
+        if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
+            drivetrain.xLock();
+        } else {
+            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
+            // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
+            drivetrain.driveTranslationRotationRaw(speeds);
+        }
 //        drivetrain.setAllModuleRotations(new Rotation2d(Math.atan2(forward, strafe)));
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
     }

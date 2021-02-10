@@ -210,6 +210,19 @@ public class SwerveDrivetrain extends SubsystemBase {
         backRightModule.selfTargetAngle();
     }
 
+    /**
+     * Sets the drivetrain into x-locking mode, making it defense resistant
+     */
+    public void xLock() {
+        double length = Constants.Drivetrain.length / 2;
+        double width = Constants.Drivetrain.width / 2;
+        setAllModuleDriveRawPower(0);
+        frontLeftModule.setTurningTarget(new Rotation2d(Math.atan2(length, -width)));
+        frontRightModule.setTurningTarget(new Rotation2d(Math.atan2(length, width)));
+        backLeftModule.setTurningTarget(new Rotation2d(Math.atan2(-length, -width)));
+        backRightModule.setTurningTarget(new Rotation2d(Math.atan2(-length, width)));
+    }
+
     public TrajectoryConfig getDefaultConstraint() {
         return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
     }
