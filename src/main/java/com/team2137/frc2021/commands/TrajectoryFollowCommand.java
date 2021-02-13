@@ -2,6 +2,7 @@ package com.team2137.frc2021.commands;
 
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.subsystems.SwerveDrivetrain;
+import com.team2137.frc2021.util.PID;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.HolonomicDriveController;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -49,13 +50,13 @@ public class TrajectoryFollowCommand extends CommandBase {
 
         this.trajectory = trajectory;
 
-        Constants.PIDConstants translationConstants = Constants.Drivetrain.translationPIDConstants;
-        this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
-        this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
+        PID translationConstants = Constants.Drivetrain.translationPIDConstants;
+        this.xController = new PIDController(translationConstants.getP(), translationConstants.getI(), translationConstants.getD());
+        this.yController = new PIDController(translationConstants.getP(), translationConstants.getI(), translationConstants.getD());
 
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
+        PID thetaConstants = Constants.Drivetrain.thetaPIDConstants;
         TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
-        this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
+        this.thetaController = new ProfiledPIDController(thetaConstants.getP(), thetaConstants.getI(), thetaConstants.getD(), thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);
 
@@ -80,15 +81,15 @@ public class TrajectoryFollowCommand extends CommandBase {
 
         this.trajectory = trajectory;
 
-        Constants.PIDConstants translationConstants = Constants.Drivetrain.translationPIDConstants;
-        this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
-        this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
+        PID translationConstants = Constants.Drivetrain.translationPIDConstants;
+        this.xController = new PIDController(translationConstants.getP(), translationConstants.getI(), translationConstants.getD());
+        this.yController = new PIDController(translationConstants.getP(), translationConstants.getI(), translationConstants.getD());
 
         SendableRegistry.setName(this.xController, "xcontroller");
 
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
+        PID thetaConstants = Constants.Drivetrain.thetaPIDConstants;
         TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
-        this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
+        this.thetaController = new ProfiledPIDController(thetaConstants.getP(), thetaConstants.getI(), thetaConstants.getD(), thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);
 

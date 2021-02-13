@@ -5,6 +5,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team2137.frc2021.Constants;
+import com.team2137.frc2021.util.PID;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -73,13 +74,13 @@ public class SwerveDriveModule extends SubsystemBase {
         this.moduleName = moduleName;
 
         // Setup turning pid
-        Constants.PIDConstants turningPIDConstants = Constants.Drivetrain.turningPIDConstants;
-        this.turningPID = new PIDController(turningPIDConstants.P, turningPIDConstants.I, turningPIDConstants.D);
+        PID turningPIDConstants = Constants.Drivetrain.turningPIDConstants;
+        this.turningPID = new PIDController(turningPIDConstants.getP(), turningPIDConstants.getI(), turningPIDConstants.getD());
         this.turningPID.enableContinuousInput(-180, 180); // allows module to wrap properly
 
         // Setup drive pid
-        Constants.PIDConstants drivePIDConstants = Constants.Drivetrain.drivePIDConstants;
-        this.drivePID = new PIDController(drivePIDConstants.P, drivePIDConstants.I, drivePIDConstants.D);
+        PID drivePIDConstants = Constants.Drivetrain.drivePIDConstants;
+        this.drivePID = new PIDController(drivePIDConstants.getP(), drivePIDConstants.getI(), drivePIDConstants.getD());
         this.driveFeedForward = Constants.Drivetrain.driveFeedforward;
     }
 
