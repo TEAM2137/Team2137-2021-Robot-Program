@@ -28,7 +28,7 @@ public class Intake extends SubsystemBase {
     
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("IntakeSpeed", motor.getActiveTrajectoryVelocity());
+        SmartDashboard.putNumber("IntakeSpeed", motor.getMotorOutputPercent());
         SmartDashboard.putString("Cylinder State", cylinder.get().toString());
     }
 
