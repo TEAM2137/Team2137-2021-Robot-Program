@@ -34,8 +34,10 @@ public class Constants {
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 9.59, "Back Right");
 
         public static PIDConstants translationPIDConstants = new PIDConstants(.02, 0, 0.25);
-        public static PIDConstants thetaPIDConstants = new PIDConstants(2, 0, 0);
-        public static TrapezoidProfile.Constraints thetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8);
+        public static PIDConstants teleopThetaPIDConstants = new PIDConstants(0.8, 0, 5); // new
+        public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
+        public static PIDConstants autoThetaPIDConstants = new PIDConstants(2, 0, 0); // old
+        public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
 
         public static class SwerveModuleConstants {
             public final int driveID;

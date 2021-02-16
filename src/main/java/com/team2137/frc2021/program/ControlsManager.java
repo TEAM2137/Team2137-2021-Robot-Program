@@ -21,6 +21,8 @@ public class ControlsManager {
         StrafeAxis              (Axis.kLeftX, driverController),
         RotationAxis            (Axis.kRightX, driverController),
         XLockButton             (Button.kBumperRight, driverController),
+
+        HeadingTargetButton     (Button.kBumperLeft, driverController),
         ;
 
         private int id;

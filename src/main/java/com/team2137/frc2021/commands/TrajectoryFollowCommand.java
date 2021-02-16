@@ -53,8 +53,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
         this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
 
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
-        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
+        Constants.PIDConstants thetaConstants = Constants.Drivetrain.autoThetaPIDConstants;
+        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.autoThetaPIDConstraints;
         this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);
@@ -84,10 +84,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
         this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
 
-        SendableRegistry.setName(this.xController, "xcontroller");
-
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
-        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
+        Constants.PIDConstants thetaConstants = Constants.Drivetrain.autoThetaPIDConstants;
+        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.autoThetaPIDConstraints;
         this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);

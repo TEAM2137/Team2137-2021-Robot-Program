@@ -217,10 +217,11 @@ public class SwerveDrivetrain extends SubsystemBase {
         double length = Constants.Drivetrain.length / 2;
         double width = Constants.Drivetrain.width / 2;
         setAllModuleDriveRawPower(0);
-        frontLeftModule.setTurningTarget(new Rotation2d(Math.atan2(length, -width)));
-        frontRightModule.setTurningTarget(new Rotation2d(Math.atan2(length, width)));
-        backLeftModule.setTurningTarget(new Rotation2d(Math.atan2(-length, -width)));
-        backRightModule.setTurningTarget(new Rotation2d(Math.atan2(-length, width)));
+
+        frontLeftModule.setTurningTarget(new Rotation2d(Math.atan2(width, length)));
+        frontRightModule.setTurningTarget(new Rotation2d(Math.atan2(-width, length)));
+        backLeftModule.setTurningTarget(new Rotation2d(Math.atan2(width, -length)));
+        backRightModule.setTurningTarget(new Rotation2d(Math.atan2(-width, -length)));
     }
 
     public TrajectoryConfig getDefaultConstraint() {
