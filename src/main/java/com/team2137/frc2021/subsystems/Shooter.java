@@ -86,7 +86,8 @@ public class Shooter extends SubsystemBase {
         this.hoodMotor.setInverted(tmpHoodMotor.inverted());
     }//Base is 31 by 21.5
 
-    public void loop() {
+    @Override
+    public void periodic() {
         switch (this.mStateHoodHoming) {
             case STATE_INIT:
                 this.hoodMotor.set(-.5);

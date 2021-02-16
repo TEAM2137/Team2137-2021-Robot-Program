@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.sql.Driver;
 import java.util.HashMap;
 
+import org.opencv.core.Point;
+
 public class LimeLight extends SubsystemBase {
 
     public enum LimeLightValues {
@@ -39,13 +41,16 @@ public class LimeLight extends SubsystemBase {
     private double cameraHeight;
     private double targetHeight;
     private double cameraAngle;
+    private Point targetFeildCentricPosition;
+    private Point robotCentricCameraPosition;
 
-    public LimeLight(DriverStation station, double _cameraHeight, double _cameraAngle, double _targetHeight) {
+    public LimeLight(DriverStation station, double _cameraHeight, double _cameraAngle, double _targetHeight, Point _robotCentricCameraPosition) {
         limeLightTable = NetworkTableInstance.getDefault().getTable("limelight");
         driverStation = station;
         cameraHeight = _cameraHeight;
         targetHeight = _targetHeight;
         cameraAngle = _cameraAngle;
+        robotCentricCameraPosition = _robotCentricCameraPosition;
     }
 
     @Override
@@ -60,7 +65,31 @@ public class LimeLight extends SubsystemBase {
         return (targetHeight - cameraHeight) / Math.tan(cameraAngle + ty);
     }
 
-    public double getRobotYPosition(double angleCW) {
-        return 0.0;
+    public double getCameraYPosition() {
+        return Math.sin(tx) * getRobotRadius();
+    }
+
+    public double getCameraXPosition() {
+        return Math.cos(tx) * getRobotRadius();
+    }
+
+    public Point getCameraPoint() {
+        return new Point(getCameraXPosition(), getCameraYPosition());
+    }
+
+    public double translateCameraYToCenter(double gyroAngle) {
+        return Math.sin(gyroAngle) *  Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+    }
+
+    public double translateCameraXToCenter(double gyroAngle) {
+        return Math.cos(gyroAngle) * Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+    }
+
+    public Point getRobotPosition(double gyroAngle) {
+        return new Point(translateCameraXToCenter(gyroAngle), translateCameraYToCenter(gyroAngle));
+    }
+
+    public double getProbableArea(Point robotPosition) {
+        return Math.hypot(robotPosition.x - targetFeildCentricPosition.x, robotPosition.y - targetFeildCentricPosition.y) * ;
     }
 }
