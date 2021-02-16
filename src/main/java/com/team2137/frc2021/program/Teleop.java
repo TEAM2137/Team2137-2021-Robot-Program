@@ -10,6 +10,8 @@ public class Teleop extends RobotContainer implements OpMode {
     @Override
     public void init() {
         drivetrain.selfTargetAllModuleAngles();
+        if (!shooter.isHoodZeroed())
+            shooter.zeroHoodAngle();
     }
 
     @Override

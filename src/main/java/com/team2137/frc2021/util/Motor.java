@@ -1,6 +1,9 @@
 package com.team2137.frc2021.util;
 
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANSparkMaxLowLevel.*;
+
+import javax.annotation.Nullable;
 
 public class Motor {
     String name;
@@ -10,6 +13,7 @@ public class Motor {
     String[] parms;
     int currentLimit;
     double gearRatio = 1;
+    PID pidValues;
 
     /**
      * Create a new Motor Object for debug and better storage
@@ -21,7 +25,7 @@ public class Motor {
      * @param _gearRatio
      * @param _parms
      */
-    public Motor(String _name, int _id, MotorTypes _type, boolean _invert, int _currentLimit, double _gearRatio, String... _parms) {
+    public Motor(String _name, int _id, MotorTypes _type, boolean _invert, int _currentLimit, double _gearRatio, @Nullable PID pid, String... _parms) {
         this.name = _name;
         this.id = _id;
         this.type = _type;
@@ -29,6 +33,8 @@ public class Motor {
         this.parms = _parms;
         this.currentLimit = _currentLimit;
         this.gearRatio = _gearRatio;
+        if (pid != null)
+            this.pidValues = pid;
     }
 
     public double getGearRatio() {
@@ -55,12 +61,20 @@ public class Motor {
         return this.parms[i];
     }
 
+    public Double getParmDouble(int i) {
+        return Double.parseDouble(this.parms[1]);
+    }
+
     public boolean inverted() {
         return this.inverted;
     }
 
     public int getCurrentLimit() {
         return this.currentLimit;
+    }
+
+    public PID getPID() {
+        return this.pidValues;
     }
 
     public enum MotorTypes {

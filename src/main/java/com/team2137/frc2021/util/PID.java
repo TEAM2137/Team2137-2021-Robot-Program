@@ -1,5 +1,7 @@
 package com.team2137.frc2021.util;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+
 public class PID {
 
     double P, I, D, IZ, FF;
@@ -54,5 +56,13 @@ public class PID {
 
     public void setFF(double FF) {
         this.FF = FF;
+    }
+
+    public double[] getPIDArray() {
+        return new double[] {P, I, D};
+    }
+
+    public PIDController getWPIController() {
+        return new PIDController(P, I, D);
     }
 }

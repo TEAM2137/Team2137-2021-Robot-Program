@@ -9,93 +9,105 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.team2137.frc2021.Constants;
-import com.team2137.frc2021.util.Motor;
-import com.team2137.frc2021.util.Motor.MotorTypes;
-
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static com.team2137.frc2021.Constants.*;
+
+@SuppressWarnings("all")
 public class Shooter extends SubsystemBase {
-    
+
+    //Create the motors that are attach to the flywheel on the shooter
     private TalonFX flywheelMotor1;
     private TalonFX flywheelMotor2;
 
+    //Create the PreRoller motor and hood motor for the shooter
     private CANSparkMax preRollerMotor;
     private CANSparkMax hoodMotor;
-    
-    private PIDController flywheelPIDController = new PIDController(0.15, 0.06, 0.0005); //0.1 0 0 ~
-    private CANPIDController hoodPIDController;
 
+    //Create the two PID Controller needed for the shooter.
+    private PIDController flywheelPIDController; //Flywheel shooter to create fast recovery from shooting a ball
+    private CANPIDController hoodPIDController; //PID to position the hood using the integrated PID controller from REV
+
+    //To store the encoder that is built into the motor
     private CANEncoder hoodMotorEncoder;
 
-    private SimpleMotorFeedforward flywheelFeedForward = new SimpleMotorFeedforward(0.4, 0.106, 0.0225);
+    //Feed Forward for the shooter to add with the PID Loops
+    private SimpleMotorFeedforward flywheelFeedForward;
+    private SupplyCurrentLimitConfiguration flywheelCurrentLimit; //Current limited to prevent the motors from burning if jammed
 
-    private SupplyCurrentLimitConfiguration flywheelCurrentLimit;
+    //Store the state of the Hood. (Weather Homing or moving to position)
+    private StepState mStateHoodHoming = StepState.STATE_NOT_STARTED;
 
-    private Constants.StepState mStateHoodHoming = Constants.StepState.STATE_FINISH;
-
-    private int debug = 10; // 1 - 10
-
-    private double dblFlywheelVelocityGoal = 1757.8125;
-    private double dblHoodMotorHomingCurrentLimit = 20;
+    private double dblFlywheelVelocityGoal = 0; //Velocity Goal in RPM for the shooter
+    private double dblHoodMotorHomingCurrentLimit = 20; //The Current that is needed for the hood to be considered homed
+    private double dblHoodMotorTargetAngle = 0; //The goal for the hood position and needed if homing is called during a movement
 
     public Shooter() {
-        //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Vel
-        Motor tmpFlyWheelMotor1 = new Motor("flyWheelMotor1", 42, MotorTypes.FALCON, false, 60, 1, "1.5", ".1", "0", "0", "6000"); //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Vel
-        Motor tmpFlyWheelMotor2 = new Motor("flyWheelMotor2", 43, MotorTypes.FALCON, true, 60, 1, "1.5");
-        Motor tmpPreRollerMotor = new Motor("preRollerMotor", 44, MotorTypes.NEO550, true, 60, 1, "0");
-        //TODO fix gear ratio for hood motor (Rotation Per Degree)
-        Motor tmpHoodMotor      = new Motor("hoodMotor", 41, MotorTypes.NEO550, false, 60, 1, "0", "1", "0", "0", "45", "0", "30"); //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Position deg ~ Parm 5 Min Position deg ~ Parm 6 Zero Current
+        //Make sure to add current limiting for the hood motor so that it does not burn
+        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
 
-        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(tmpHoodMotor.getParm(6));
+        //Create the motor objects and store them to the respective variables
+        this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
+        this.flywheelMotor2     = new TalonFX(FlyWheelMotorObject2.getMotorID());
+        this.preRollerMotor     = new CANSparkMax(PreRollerMotorObject.getMotorID(), PreRollerMotorObject.getMotorType().getREVType());
+        this.hoodMotor          = new CANSparkMax(HoodMotorObject.getMotorID(), HoodMotorObject.getMotorType().getREVType());
 
-        this.flywheelMotor1     = new TalonFX(tmpFlyWheelMotor1.getMotorID());
-        this.flywheelMotor2     = new TalonFX(tmpFlyWheelMotor2.getMotorID());
-        this.preRollerMotor     = new CANSparkMax(tmpPreRollerMotor.getMotorID(), tmpPreRollerMotor.getMotorType().getREVType());
-        this.hoodMotor          = new CANSparkMax(tmpHoodMotor.getMotorID(), tmpHoodMotor.getMotorType().getREVType());
-
+        // Get and store the encoder and add teh Conversion Factor so the units while setting position is in degrees
         this.hoodMotorEncoder   = this.hoodMotor.getEncoder();
-        this.hoodMotorEncoder.setPositionConversionFactor(tmpHoodMotor.getGearRatio());
+        this.hoodMotorEncoder.setPositionConversionFactor(HoodMotorObject.getGearRatio());
 
+        // Set up the hood PID Controller
         this.hoodPIDController  = this.hoodMotor.getPIDController();
-        this.hoodPIDController.setP(Double.parseDouble(tmpHoodMotor.getParm(1)));
-        this.hoodPIDController.setI(Double.parseDouble(tmpHoodMotor.getParm(2)));
-        this.hoodPIDController.setD(Double.parseDouble(tmpHoodMotor.getParm(3)));
+        this.hoodPIDController.setP(Double.parseDouble(HoodMotorObject.getParm(1)));
+        this.hoodPIDController.setI(Double.parseDouble(HoodMotorObject.getParm(2)));
+        this.hoodPIDController.setD(Double.parseDouble(HoodMotorObject.getParm(3)));
 
-        this.flywheelCurrentLimit = new SupplyCurrentLimitConfiguration(true, tmpFlyWheelMotor1.getCurrentLimit(), 80, 2);
+        this.flywheelCurrentLimit = new SupplyCurrentLimitConfiguration(true, FlyWheelMotorObject1.getCurrentLimit(), 80, 2);
 
+        //Configure the Flywheel motor with al of the values
         this.flywheelMotor1.configFactoryDefault();
-        this.flywheelMotor1.configOpenloopRamp(Double.parseDouble(tmpFlyWheelMotor1.getParm(0)));
+        this.flywheelMotor1.configOpenloopRamp(Double.parseDouble(FlyWheelMotorObject1.getParm(0))); //Using Ramp to stop the belt from skipping and it is in Second to full speed
         this.flywheelMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         this.flywheelMotor1.configSupplyCurrentLimit(this.flywheelCurrentLimit);
-        this.flywheelMotor1.setInverted(tmpFlyWheelMotor1.inverted());
+        this.flywheelMotor1.setInverted(FlyWheelMotorObject1.inverted());
 
         this.flywheelMotor2.configFactoryDefault();
-        this.flywheelMotor2.configOpenloopRamp(Double.parseDouble(tmpFlyWheelMotor2.getParm(0)));
+        this.flywheelMotor2.configOpenloopRamp(Double.parseDouble(FlyWheelMotorObject2.getParm(0)));
         this.flywheelMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         this.flywheelMotor2.configSupplyCurrentLimit(this.flywheelCurrentLimit);
-        this.flywheelMotor2.setInverted(tmpFlyWheelMotor2.inverted());
-        
-        this.preRollerMotor.setSmartCurrentLimit(tmpPreRollerMotor.getCurrentLimit());
-        this.preRollerMotor.setOpenLoopRampRate(Double.parseDouble(tmpPreRollerMotor.getParm(0)));
-        this.preRollerMotor.setInverted(tmpPreRollerMotor.inverted());
+        this.flywheelMotor2.setInverted(FlyWheelMotorObject2.inverted());
 
-        this.hoodMotor.setSmartCurrentLimit(tmpHoodMotor.getCurrentLimit());
-        this.hoodMotor.setInverted(tmpHoodMotor.inverted());
+        this.flywheelPIDController = FlyWheelMotorObject1.getPID().getWPIController();
+        this.flywheelFeedForward = new SimpleMotorFeedforward(FlyWheelMotorObject1.getParmDouble(1), FlyWheelMotorObject1.getParmDouble(2), FlyWheelMotorObject1.getParmDouble(3));
+
+        this.preRollerMotor.setSmartCurrentLimit(PreRollerMotorObject.getCurrentLimit());
+        this.preRollerMotor.setOpenLoopRampRate(Double.parseDouble(PreRollerMotorObject.getParm(0)));
+        this.preRollerMotor.setInverted(PreRollerMotorObject.inverted());
+
+        this.hoodMotor.setSmartCurrentLimit(HoodMotorObject.getCurrentLimit());
+        this.hoodMotor.setInverted(HoodMotorObject.inverted());
     }//Base is 31 by 21.5
 
     @Override
     public void periodic() {
+        /*
+            For every loop go through a state machine
+            All other states than FINISH and NOT_STARTED are for homing the hood
+         */
         switch (this.mStateHoodHoming) {
             case STATE_INIT:
-                this.hoodMotor.set(-.5);
+                this.hoodMotor.set(-.5); //Reverse the hood back to zero direction
+                this.mStateHoodHoming = StepState.STATE_RUNNING; //Move to the looping stage
                 break;
             case STATE_RUNNING:
+                //If the motor is drawing to much power stop the power and set that as the home position and continue commands before it
                 if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit) {
                     this.hoodMotor.set(0);
                     this.hoodMotorEncoder.setPosition(0);
+                    this.hoodPIDController.setReference(dblHoodMotorTargetAngle, ControlType.kPosition);
                     this.mStateHoodHoming = Constants.StepState.STATE_FINISH;
                 }
                 break;
@@ -113,25 +125,68 @@ public class Shooter extends SubsystemBase {
         this.flywheelMotor2.set(ControlMode.PercentOutput, flywheelPower);
     }
 
+    /**
+     * Using integrated sensor get the velocity of the the motor
+     * @return Flywheel Speed in RPM
+     */
     public double getFlywheelVelocity() {
+        //Get the Integrated Sensor velocity divide by 2048 counts per rotation to get rotations per 100 milliseconds and times by 600 to get RPM
         return (this.flywheelMotor1.getSensorCollection().getIntegratedSensorVelocity() / 2048) * 600;
     }
+
+    /**
+     * Sets the velocity goal of the flywheel for the PID Controller
+     * @param velocity Velocity in RMP
+     */
     public void setFlywheelVelocity(double velocity) {
         dblFlywheelVelocityGoal = velocity;
     }
 
+    /**
+     * Sets raw power to the PreRoller on the shooter
+     * @param speed 0~1 value for PreRoller Speed
+     */
     public void setPreRollerPower(double speed) {
         this.preRollerMotor.set(speed);
     }
 
+    /**
+     * Sets raw power to the PreRoller on the shooter using {@link #setPreRollerPower(double)} to default power of 1
+     */
+    public void setPreRollerPower() {
+        setPreRollerPower(1);
+    }
+
+    /**
+     * Using the built in Hood motor encoder returns the position of the hood
+     * @return Position of the hood in degrees
+     */
     public double getHoodAngle() {
         return this.hoodMotorEncoder.getPosition();
     }
 
+    /**
+     * Sets the angle of the hood on the shooter and is overrided by a homing operation if in progress and will resume after homing is done
+     * @param angle Target angle of the shooter hood (>0)
+     */
     public void setHoodAngle(double angle) {
-        this.hoodPIDController.setReference(angle, ControlType.kPosition);
+        this.dblHoodMotorTargetAngle = angle; //Store the value in the variable so that once homing is done it will remember the position
+        if (this.mStateHoodHoming == StepState.STATE_FINISH || this.mStateHoodHoming == StepState.STATE_NOT_STARTED)
+            this.hoodPIDController.setReference(angle, ControlType.kPosition); //If the hood it homing then do not change the speed until it is done
     }
+
+    /**
+     * Initiates a homing command for the hood on the shooter and override a target position resuming after homing
+     */
     public void zeroHoodAngle() {
         this.mStateHoodHoming = Constants.StepState.STATE_INIT;
+    }
+
+    /**
+     * Returns if the hood has been homed during the match yet
+     * @return Hood Homing Status
+     */
+    public boolean isHoodZeroed() {
+        return this.mStateHoodHoming != StepState.STATE_NOT_STARTED;
     }
 }

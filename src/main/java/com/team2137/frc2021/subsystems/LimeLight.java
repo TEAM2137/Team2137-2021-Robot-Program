@@ -90,6 +90,6 @@ public class LimeLight extends SubsystemBase {
     }
 
     public double getProbableArea(Point robotPosition) {
-        return Math.hypot(robotPosition.x - targetFeildCentricPosition.x, robotPosition.y - targetFeildCentricPosition.y) * ;
+        return Math.hypot(robotPosition.x - targetFeildCentricPosition.x, robotPosition.y - targetFeildCentricPosition.y) * 0;
     }
 }

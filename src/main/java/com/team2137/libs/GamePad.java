@@ -8,7 +8,12 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public class GamePad extends GenericHID {
 
-    public enum Button {
+    public interface ControllerIO {
+        String toString();
+        int getPort();
+    }
+
+    public enum Button implements ControllerIO {
         kA(1, "A"),
         kB(2, "B"),
         kX(3, "X"),
@@ -29,10 +34,12 @@ public class GamePad extends GenericHID {
             this.name  = name;
         }
 
+        @Override
         public String toString(){
             return this.name;
         }
 
+        @Override
         public int getPort(){
             return this.value;
         }
@@ -41,7 +48,7 @@ public class GamePad extends GenericHID {
     /**
      * Represents an axis on an XboxController.
      */
-    public enum Axis {
+    public enum Axis implements ControllerIO{
         kLeftX(0, "Left X"),
         kLeftY(1, "Left Y"),
         kLeftTrigger(2, "Left Trigger"),
@@ -58,10 +65,12 @@ public class GamePad extends GenericHID {
             this.name  = name;
         }
 
+        @Override
         public String toString(){
             return this.name;
         }
 
+        @Override
         public int getPort(){
             return this.value;
         }
@@ -70,7 +79,7 @@ public class GamePad extends GenericHID {
     /**
      * Represents the D-Pad on an XboxController
      */
-    public enum DPad {
+    public enum DPad implements ControllerIO{
         kUp(0, "D-Pad Up"),
         kUpRight(45, "D-Pad Up Right"),
         kRight(90, "D-Pad Right"),
@@ -93,7 +102,8 @@ public class GamePad extends GenericHID {
             return this.name;
         }
 
-        public int getAngle(){
+        @Override
+        public int getPort() {
             return this.value;
         }
     }
