@@ -23,6 +23,8 @@ public class ControlsManager {
         XLockButton             (Button.kBumperRight, driverController),
 
         HeadingTargetButton     (Button.kBumperLeft, driverController),
+
+        IntakeButton            (Button.kA, driverController),
         ;
 
         private int id;

@@ -3,16 +3,22 @@ package com.team2137.frc2021.program;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
+import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import com.team2137.frc2021.subsystems.Intake.IntakeState;
+
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Teleop extends RobotContainer implements OpMode {
+    private boolean intakeButtonPreviouslyPressed = false;
+    private boolean intakePreviouslyDeployed = false;
+
     private ProfiledPIDController headingController;
 
     @Override
@@ -65,6 +71,16 @@ public class Teleop extends RobotContainer implements OpMode {
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
 
 
+        if(ControlsManager.getButton(Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
+            if(intakePreviouslyDeployed) {
+                new SetIntakeCommand(intake, IntakeState.Retracted).schedule();
+                intakePreviouslyDeployed = false;
+            } else {
+                new SetIntakeCommand(intake, IntakeState.Running).schedule();
+                intakePreviouslyDeployed = true;
+            }
+        }
+        intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);
     }
 
     @Override

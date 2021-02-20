@@ -68,4 +68,11 @@ public class Constants {
             this.D = d;
         }
     }
+
+    public static class Intake {
+        public static int motorID = 30;
+        
+        public static int cylinderForwardID = 0;
+        public static int cylinderReverseID = 1;
+    }
 }
