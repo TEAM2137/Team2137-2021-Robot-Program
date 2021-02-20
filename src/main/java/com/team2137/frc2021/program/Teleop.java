@@ -5,6 +5,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
+import com.team2137.frc2021.util.PID;
 import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -25,18 +26,23 @@ public class Teleop extends RobotContainer implements OpMode {
     public void init() {
         drivetrain.selfTargetAllModuleAngles();
 
-        Constants.PIDConstants headingConstants = Constants.Drivetrain.teleopThetaPIDConstants;
-        headingController = new ProfiledPIDController(headingConstants.P, headingConstants.I, headingConstants.I, Constants.Drivetrain.teleopThetaPIDConstraints);
+        PID headingConstants = Constants.Drivetrain.teleopThetaPIDConstants;
+        headingController = new ProfiledPIDController(headingConstants.getP(), headingConstants.getI(), headingConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstraints);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
-
-        SendableRegistry.setName(headingController, "theta");
     }
 
     @Override
     public void periodic() {
         double forward = 0.75 * -ControlsManager.getAxis(Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
-        double turn = 3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2);
+        double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
+
+        if (limeLight.hasTarget() && ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+            turn += limeLight.getRotationVector();
+        } else if (ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+            turn += .5;
+        }
+
         SmartDashboard.putNumber("forward", forward);
         SmartDashboard.putNumber("strafe", strafe);
         SmartDashboard.putNumber("turn", turn);
@@ -59,9 +65,6 @@ public class Teleop extends RobotContainer implements OpMode {
                     drivetrain.getRobotAngle());
 
             drivetrain.driveTranslationRotationRaw(speeds);
-
-
-
         } else {
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
