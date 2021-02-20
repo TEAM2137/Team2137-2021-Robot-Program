@@ -53,8 +53,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
         this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
 
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
-        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
+        Constants.PIDConstants thetaConstants = Constants.Drivetrain.autoThetaPIDConstants;
+        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.autoThetaPIDConstraints;
         this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);
@@ -84,10 +84,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         this.xController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
         this.yController = new PIDController(translationConstants.P, translationConstants.I, translationConstants.D);
 
-        SendableRegistry.setName(this.xController, "xcontroller");
-
-        Constants.PIDConstants thetaConstants = Constants.Drivetrain.thetaPIDConstants;
-        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.thetaPIDConstraints;
+        Constants.PIDConstants thetaConstants = Constants.Drivetrain.autoThetaPIDConstants;
+        TrapezoidProfile.Constraints thetaConstraints = Constants.Drivetrain.autoThetaPIDConstraints;
         this.thetaController = new ProfiledPIDController(thetaConstants.P, thetaConstants.I, thetaConstants.D, thetaConstraints);
 
         holonomicController = new HolonomicDriveController(xController, yController, thetaController);
@@ -163,6 +161,24 @@ public class TrajectoryFollowCommand extends CommandBase {
         public HeadingControlThreshold(double m, double b, Rotation2d target) {
             this.m = m;
             this.b = b;
+            this.target = target;
+        }
+
+        /**
+         * @param point1 the first point of the threshold line
+         * @param point2 the second point of the threshold line
+         * @param target the angle to turn to after passing this line
+         */
+        public HeadingControlThreshold(Translation2d point1, Translation2d point2, Rotation2d target) {
+            // prevent a vertical line with an infinite/undefined slope, divide by zero error
+            if(point1.getX() == point2.getX()) {
+                point1 = point1.plus(new Translation2d(0.0001, 0));
+            }
+
+            //rise over run
+            this.m = (point1.getY() - point2.getY()) / (point1.getX() - point2.getX());
+            //determine y-intercept by rearranging y=mx+b
+            this.b = point2.getY() - (this.m * point2.getX());
             this.target = target;
         }
 

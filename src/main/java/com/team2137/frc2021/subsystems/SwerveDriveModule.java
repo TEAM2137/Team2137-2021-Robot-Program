@@ -5,6 +5,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team2137.frc2021.Constants;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -25,6 +26,7 @@ public class SwerveDriveModule extends SubsystemBase {
 
     private Rotation2d turningSetpointRaw = Rotation2d.fromDegrees(0);
     private Rotation2d turningSetpointCorrected = Rotation2d.fromDegrees(0);
+    private boolean reverseWheel;
 
     private double driveRawPower = 0;
     private double driveVelocityTarget;
@@ -81,6 +83,8 @@ public class SwerveDriveModule extends SubsystemBase {
         Constants.PIDConstants drivePIDConstants = Constants.Drivetrain.drivePIDConstants;
         this.drivePID = new PIDController(drivePIDConstants.P, drivePIDConstants.I, drivePIDConstants.D);
         this.driveFeedForward = Constants.Drivetrain.driveFeedforward;
+
+        this.selfTargetAngle();
     }
 
     /**
@@ -96,25 +100,34 @@ public class SwerveDriveModule extends SubsystemBase {
      */
     @Override
     public void periodic() {
+        // if robot is disabled, target modules to their current angle
+        // if you're doing some types of debugging, disable this
+        if(DriverStation.getInstance().isDisabled()) {
+            selfTargetAngle();
+        }
+
         // prevents the module from doing a >90 degree flip to get to a target, instead reverse wheel direction
 
         //optimization now done in SwerveDrivetrain's methods, so this is obsolete
-//        if (Math.abs(turningSetpointRaw.minus(getModuleRotation()).getDegrees()) > 90) {
-//            turningSetpointCorrected = turningSetpointRaw.plus(Rotation2d.fromDegrees(180));
-//            reverseWheel = true;
-//        } else {
-//            turningSetpointCorrected = turningSetpointRaw;
-//            reverseWheel = false;
-//        }
+        if (Math.abs(turningSetpointRaw.minus(getModuleRotation()).getDegrees()) > 90) {
+            turningSetpointCorrected = turningSetpointRaw.plus(Rotation2d.fromDegrees(180));
+            reverseWheel = true;
+        } else {
+            turningSetpointCorrected = turningSetpointRaw;
+            reverseWheel = false;
+        }
 
-        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
+//        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
+        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
 
         turningMotor.setVoltage(output);
 
+
+
         switch(driveMode) {
             case RawPower: //for use in teleop
-//                driveMotor.set(driveRawPower * (reverseWheel ? -1 : 1));
-                driveMotor.set(driveRawPower);
+                driveMotor.set(driveRawPower * (reverseWheel ? -1 : 1));
+//                driveMotor.set(driveRawPower);
                 break;
             case Velocity: //for use in auto and autonomous trajectories
 //                driveMotor.setVoltage(driveFeedForward.calculate(driveVelocityTarget * (reverseWheel ? -1 : 1)) +
