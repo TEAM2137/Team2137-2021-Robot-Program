@@ -6,22 +6,33 @@ import com.team2137.libs.GamePad;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
+import org.opencv.core.Point;
 
 public class Constants {
 
-    public GamePad.ControllerIO driveTrainStrafeAxis = GamePad.Axis.kLeftX;
-    public GamePad.ControllerIO driveTrainForwardAxis = GamePad.Axis.kLeftY;
-    public GamePad.ControllerIO driveTrainTurnAxis = GamePad.Axis.kRightX;
+    public enum ShooterPresets {
+        InitiationLine (0, 5000),
+        Tench (0, 6000);
 
-    public GamePad.ControllerIO shooterInitiationLineRevButton = GamePad.Button.kA;
-    public GamePad.ControllerIO shooterTrenchRevButton = GamePad.Button.kB;
-    public GamePad.ControllerIO shooterMidFieldRevButton = GamePad.Button.kX;
+        public int hoodAngle = 0;
+        public int flywheelSpeed = 0;
+
+        ShooterPresets (int _hoodAngle, int _flywheelSpeed) {
+            hoodAngle = _hoodAngle;
+            flywheelSpeed = _flywheelSpeed;
+        }
+    }
 
     //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Vel
-    public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, new PID(0.15, 0.06, 0.0005),"1.5", "0.4", "0.106", "0.0225", "6000"); //Parm 0 - Ramp Speed ~ Parm 1 - S ~ Parm 2 - V ~ Parm 3 - A ~ Parm 4 - Max Vel
-    public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, null, "1.5");
-    public static final Motor PreRollerMotorObject = new Motor("preRollerMotor", 44, Motor.MotorTypes.NEO550, true, 60, 1, null, "0");
-    public static final Motor HoodMotorObject      = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 60, 1, new PID(0,0,0),"0", "45", "0", "30"); //Parm 0 - Ramp Speed ~ Parm 4 - Max Position deg ~ Parm 5 Min Position deg ~ Parm 6 Zero Current TODO fix gear ratio for hood motor (Rotation Per Degree)
+    public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 1.5, new PID(0.15, 0.06, 0.0005, 0.4, 0.106, 0.0225),  "6000"); //Parm 4 - Max Vel
+    public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 1.5, null);
+    public static final Motor PreRollerMotorObject = new Motor("preRollerMotor", 44, Motor.MotorTypes.NEO550, true, 60, 1, 0, null);
+    public static final Motor HoodMotorObject      = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 60, 1, 0, new PID(0,0,0),"45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
+
+    public static final Point LimeLightShootingCameraPosition = new Point(0, 0);
+    public static final PID LimeLightThetaPIDValues = new PID(1, 0, 0);
+    public static final double LimeLightShootingCameraAngleDegree = 35;
+    public static final int HoodMotorHomingCurrentSignal = 30;
 
     public static class Drivetrain {
         public static final double length = Units.inchesToMeters(24.5);
@@ -88,5 +99,14 @@ public class Constants {
         public String toString() {
             return this.name;
         }
+    }
+
+    /**
+     * Converts feet in to Meters (Moving to Constants)
+     * @param feet The value to convert to meters
+     * @return Meter from feet
+     */
+    public static double feetToMeters(double feet) {
+        return feet / 3.2808399;
     }
 }

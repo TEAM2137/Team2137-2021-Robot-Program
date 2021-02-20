@@ -20,7 +20,10 @@ public class ControlsManager {
         DriveAxis               (Axis.kLeftY, driverController),
         StrafeAxis              (Axis.kLeftX, driverController),
         RotationAxis            (Axis.kRightX, driverController),
-        ;
+
+        ShooterInitiationLine   (Button.kA, operatorController),
+        ShooterTrenchLine       (Button.kB, operatorController),
+        LimeLightButton         (Axis.kRightTrigger, driverController);
 
         private int id;
         private GenericHID controller;
@@ -45,7 +48,7 @@ public class ControlsManager {
         }
 
         Control(DPad button, GenericHID controller) {
-            this.id = button.getAngle();
+            this.id = button.getPort();
             this.controller = controller;
             this.inputType = InputType.POV;
         }

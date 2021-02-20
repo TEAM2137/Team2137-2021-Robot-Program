@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Teleop extends RobotContainer implements OpMode {
+
     @Override
     public void init() {
         drivetrain.selfTargetAllModuleAngles();
@@ -18,7 +19,12 @@ public class Teleop extends RobotContainer implements OpMode {
     public void periodic() {
         double forward = 0.75 * -ControlsManager.getAxis(Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
-        double turn = 3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2);
+        double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
+        if (limeLight.hasTarget() && ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+            turn += limeLight.getRotationVector();
+        } else if (ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+            turn += .5;
+        }
         SmartDashboard.putNumber("forward", forward);
         SmartDashboard.putNumber("strafe", strafe);
         SmartDashboard.putNumber("turn", turn);
