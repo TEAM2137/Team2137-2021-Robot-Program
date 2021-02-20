@@ -3,6 +3,7 @@ package com.team2137.frc2021;
 import com.team2137.frc2021.util.Motor;
 import com.team2137.frc2021.util.PID;
 import com.team2137.libs.GamePad;
+import com.ctre.phoenix.CANifier.GeneralPin;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
@@ -62,9 +63,11 @@ public class Constants {
         public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, 179.56, "Back Left");
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 9.59, "Back Right");
 
-        public static PID translationPIDConstants = new PID(0, 0, 0);
-        public static PID thetaPIDConstants = new PID(0, 0, 0);
-        public static TrapezoidProfile.Constraints thetaPIDConstraints = new TrapezoidProfile.Constraints(2, 1);
+        public static PID translationPIDConstants = new PID(.02, 0, 0.25);
+        public static PID teleopThetaPIDConstants = new PID(0.8, 0, 5); // new
+        public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
+        public static PID autoThetaPIDConstants = new PID(2, 0, 0); // old
+        public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
 
         public static class SwerveModuleConstants {
             public final int driveID;
@@ -101,12 +104,24 @@ public class Constants {
         }
     }
 
-    /**
-     * Converts feet in to Meters (Moving to Constants)
-     * @param feet The value to convert to meters
-     * @return Meter from feet
-     */
-    public static double feetToMeters(double feet) {
-        return feet / 3.2808399;
+    public static class Intake {
+        public static int motorID = 30;
+        
+        public static int cylinderForwardID = 0;
+        public static int cylinderReverseID = 1;
     }
+
+    public static class Spindexer {
+        public static int motorID = 35;
+        public static boolean invertMotor = false;
+
+        public static int currentLimit = 30;
+        public static double voltageRamp = 0.25;
+
+        public static GeneralPin firstHopperPhotoeyePin = GeneralPin.LIMF;
+        public static GeneralPin secondHopperPhotoeyePin = GeneralPin.LIMR;
+        public static GeneralPin fifthBallPhotoeyePin = GeneralPin.QUAD_A;
+    }
+
+    public static int canifierID = 9;
 }

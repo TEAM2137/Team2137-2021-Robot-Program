@@ -20,10 +20,16 @@ public class ControlsManager {
         DriveAxis               (Axis.kLeftY, driverController),
         StrafeAxis              (Axis.kLeftX, driverController),
         RotationAxis            (Axis.kRightX, driverController),
+        XLockButton             (Button.kBumperRight, driverController),
+
+        HeadingTargetButton     (Button.kBumperLeft, driverController),
+
+        IntakeButton            (Button.kA, driverController),
 
         ShooterInitiationLine   (Button.kA, operatorController),
         ShooterTrenchLine       (Button.kB, operatorController),
-        LimeLightButton         (Axis.kRightTrigger, driverController);
+        LimeLightButton         (Axis.kRightTrigger, driverController)
+        ;
 
         private int id;
         private GenericHID controller;

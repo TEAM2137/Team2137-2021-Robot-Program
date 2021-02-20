@@ -1,17 +1,28 @@
 package com.team2137.frc2021;
 
-import com.team2137.frc2021.subsystems.LimeLight;
-import com.team2137.frc2021.subsystems.Shooter;
-import com.team2137.frc2021.subsystems.SwerveDrivetrain;
+import com.team2137.frc2021.subsystems.*;
+
+import com.ctre.phoenix.CANifier;
 
 public class RobotContainer {
+
+    public static CANifier canifier;
+
     public static SwerveDrivetrain drivetrain;
+    public static Intake intake;
+    public static Spindexer spindexer;
     public static Shooter shooter;
     public static LimeLight limeLight;
 
+
+
     public static void initialize() {
+        canifier = new CANifier(Constants.canifierID);
+
         drivetrain = new SwerveDrivetrain();
         shooter = new Shooter();
         limeLight = new LimeLight();
+        intake = new Intake();
+        spindexer = new Spindexer(canifier);
     }
 }
