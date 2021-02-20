@@ -1,5 +1,6 @@
 package com.team2137.frc2021;
 
+import com.ctre.phoenix.CANifier.GeneralPin;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
@@ -75,4 +76,18 @@ public class Constants {
         public static int cylinderForwardID = 0;
         public static int cylinderReverseID = 1;
     }
+
+    public static class Spindexer {
+        public static int motorID = 35;
+        public static boolean invertMotor = false;
+
+        public static int currentLimit = 30;
+        public static double voltageRamp = 0.25;
+
+        public static GeneralPin firstHopperPhotoeyePin = GeneralPin.LIMF;
+        public static GeneralPin secondHopperPhotoeyePin = GeneralPin.LIMR;
+        public static GeneralPin fifthBallPhotoeyePin = GeneralPin.QUAD_A;
+    }
+
+    public static int canifierID = 9;
 }
