@@ -20,14 +20,4 @@ public class UnitsExtra {
     public static Translation2d feetToMeters(Translation2d translation) {
         return new Translation2d(Units.feetToMeters(translation.getX()), Units.feetToMeters(translation.getY()));
     }
-
-    /**
-     * Converts feet in to Meters (Moving to Constants)
-     * @param feet The value to convert to meters
-     * @return Meter from feet
-     */
-    @Deprecated
-    public static double feetToMeters(double feet) {
-        return feet / 3.2808399;
-    }
 }

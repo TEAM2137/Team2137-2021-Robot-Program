@@ -16,14 +16,8 @@ import java.util.ArrayList;
 
 public class Autonomous extends RobotContainer implements OpMode {
 
-    /**
-     * Step 1: Start zeroing subsystems
-     *          A) Zero the Shooter Hood
-     */
     @Override
     public void init() {
-        shooter.zeroHoodAngle();
-
         Trajectory trajectory;
         TrajectoryFollowCommand followCommand;
 

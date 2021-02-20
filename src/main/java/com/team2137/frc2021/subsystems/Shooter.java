@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static com.team2137.frc2021.Constants.*;
+import static com.team2137.frc2021.Constants.Shooter.*;
 
 @SuppressWarnings("all")
 public class Shooter extends SubsystemBase {
@@ -39,10 +40,10 @@ public class Shooter extends SubsystemBase {
     private SupplyCurrentLimitConfiguration flywheelCurrentLimit; //Current limited to prevent the motors from burning if jammed
 
     //Store the state of the Hood. (Weather Homing or moving to position)
-    private StepState mStateHoodHoming = StepState.STATE_NOT_STARTED;
+    private StepState mStateHoodHoming = StepState.STATE_INIT;
 
     private double dblFlywheelVelocityGoal = 0; //Velocity Goal in RPM for the shooter
-    private double dblHoodMotorHomingCurrentLimit = 20; //The Current that is needed for the hood to be considered homed
+    private double dblHoodMotorHomingCurrentLimit = HoodMotorHomingCurrentSignal; //The Current that is needed for the hood to be considered homed
     private double dblHoodMotorTargetAngle = 0; //The goal for the hood position and needed if homing is called during a movement
 
     public Shooter() {
@@ -117,6 +118,10 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Hood Angle", getHoodAngle());
 
         double flywheelPower = (flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12;
+
+        if(dblFlywheelVelocityGoal < getFlywheelVelocity() - 600) {
+            flywheelPower = 0;
+        }
 
         SmartDashboard.putNumber("FlyWheel Power", flywheelPower);
         SmartDashboard.putNumber("FlyWheel Velocity", getFlywheelVelocity());

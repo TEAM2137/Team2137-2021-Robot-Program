@@ -58,10 +58,10 @@ public class LimeLight extends SubsystemBase {
 
     public LimeLight() {
         limeLightTable = NetworkTableInstance.getDefault().getTable("limelight");
-        cameraAngle = Math.toRadians(Constants.LimeLightShootingCameraAngleDegree);
-        robotCentricCameraPosition = Constants.LimeLightShootingCameraPosition;
+        cameraAngle = Math.toRadians(Constants.Shooter.LimeLightShootingCameraAngleDegree);
+        robotCentricCameraPosition = Constants.Shooter.LimeLightShootingCameraPosition;
 
-        thetaController = Constants.LimeLightThetaPIDValues.getWPIPIDController();
+        thetaController = Constants.Shooter.LimeLightThetaPIDValues.getWPIPIDController();
 
         thetaController.setSetpoint(0);
     }
