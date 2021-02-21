@@ -60,8 +60,6 @@ public class Teleop extends RobotContainer implements OpMode {
 
             drivetrain.driveTranslationRotationRaw(speeds);
 
-
-
         } else {
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));

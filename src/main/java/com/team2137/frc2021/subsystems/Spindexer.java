@@ -4,8 +4,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team2137.frc2021.Constants;
-import com.team2137.frc2021.commands.SpindexerControl;
+import com.team2137.frc2021.Robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,8 +17,7 @@ public class Spindexer extends SubsystemBase {
     private TalonSRX motor;
 
     private CANifier canifier;
-
-    private SpindexerControl controlCommand;
+    private DoubleSolenoid ballStopper;
 
     /**
      * Creates a Spindexer from the constants
@@ -30,18 +30,16 @@ public class Spindexer extends SubsystemBase {
         this.motor.configClosedloopRamp(Constants.Spindexer.voltageRamp);
         this.motor.configOpenloopRamp(Constants.Spindexer.voltageRamp);
 
+        this.ballStopper = new DoubleSolenoid(Constants.Spindexer.solenoidForwardID, Constants.Spindexer.solenoidReverseID);
+
         this.canifier = canifier;
 
-        this.controlCommand = new SpindexerControl(this);
-        setDefaultCommand(this.controlCommand);
+        Robot.addOnEnabled(this::enableSpindexer);
+        Robot.addOnDisabled(this::disabledSpindexer);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Spindexer speed", motor.getMotorOutputPercent());
-        SmartDashboard.putBoolean("Photoeye 1", getHopperFirstPhotoeye());
-        SmartDashboard.putBoolean("Photoeye 2", getHopperSecondPhotoeye());
-        SmartDashboard.putBoolean("Photoeye Fifth ball", getFifthBallPhotoeye());
     }
 
     /**
@@ -51,24 +49,23 @@ public class Spindexer extends SubsystemBase {
         motor.set(ControlMode.PercentOutput, power);
     }
 
-    /**
-     * @return the state of the first photoeye in the hopper
-     */
-    public boolean getHopperFirstPhotoeye() {
-        return canifier.getGeneralInput(Constants.Spindexer.firstHopperPhotoeyePin);
+    public void enableSpindexer() {
+        SmartDashboard.putBoolean("Spindexer Enabled", true);
+        setPower(1);
     }
 
-    /**
-     * @return the state of the second photoeye in the hopper
-     */
-    public boolean getHopperSecondPhotoeye() {
-        return canifier.getGeneralInput(Constants.Spindexer.secondHopperPhotoeyePin);
+    public void disabledSpindexer() {
+        SmartDashboard.putBoolean("Spindexer Enabled", false);
+        setPower(0);
     }
 
-    /**
-     * @return the state of the fifth ball detection photoeye in the spindexer
-     */
-    public boolean getFifthBallPhotoeye() {
-        return canifier.getGeneralInput(Constants.Spindexer.fifthBallPhotoeyePin);
+    public void enableBallStopper() {
+        SmartDashboard.putBoolean("BallStopper Enabled", true);
+        ballStopper.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void disabledBallStopper() {
+        SmartDashboard.putBoolean("BallStopper Enabled", false);
+        ballStopper.set(DoubleSolenoid.Value.kOff);
     }
 }

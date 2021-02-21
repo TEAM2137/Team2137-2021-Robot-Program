@@ -79,14 +79,13 @@ public class Constants {
 
     public static class Spindexer {
         public static int motorID = 35;
+        public static int solenoidForwardID = 2;
+        public static int solenoidReverseID = 3;
+
         public static boolean invertMotor = false;
 
         public static int currentLimit = 30;
         public static double voltageRamp = 0.25;
-
-        public static GeneralPin firstHopperPhotoeyePin = GeneralPin.LIMF;
-        public static GeneralPin secondHopperPhotoeyePin = GeneralPin.LIMR;
-        public static GeneralPin fifthBallPhotoeyePin = GeneralPin.QUAD_A;
     }
 
     public static int canifierID = 9;

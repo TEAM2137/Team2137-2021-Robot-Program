@@ -4,20 +4,24 @@ import com.team2137.frc2021.subsystems.Spindexer;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class SetSpindexerCommand extends CommandBase {
+public class SpindexerCommand extends CommandBase {
     private Spindexer spindexer;
-    private double power;
+    private boolean enabled;
 
-    public SetSpindexerCommand(Spindexer spindexer, double power) {
+    public SpindexerCommand(Spindexer spindexer, boolean enable) {
         this.spindexer = spindexer;
-        this.power = power;
+        this.enabled = enable;
 
         addRequirements(spindexer);
     } 
 
     @Override
     public void initialize() {
-        spindexer.setPower(power);
+        if (enabled) {
+            spindexer.disabledBallStopper();
+        } else {
+            spindexer.enableBallStopper();
+        }
     }
 
     @Override

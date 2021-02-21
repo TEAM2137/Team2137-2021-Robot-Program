@@ -4,6 +4,8 @@ import com.team2137.frc2021.subsystems.*;
 
 import com.ctre.phoenix.CANifier;
 
+import java.util.List;
+
 public class RobotContainer {
 
     public static CANifier canifier;
@@ -11,8 +13,6 @@ public class RobotContainer {
     public static SwerveDrivetrain drivetrain;
     public static Intake intake;
     public static Spindexer spindexer;
-
-
 
     public static void initialize() {
         canifier = new CANifier(Constants.canifierID);
