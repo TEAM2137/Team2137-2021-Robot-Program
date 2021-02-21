@@ -25,6 +25,10 @@ public class ControlsManager {
         HeadingTargetButton     (Button.kBumperLeft, driverController),
 
         IntakeButton            (Button.kA, driverController),
+
+        ShooterInitiationLine   (Button.kA, operatorController),
+        ShooterTrenchLine       (Button.kB, operatorController),
+        LimeLightButton         (Axis.kRightTrigger, driverController)
         ;
 
         private int id;
@@ -50,7 +54,7 @@ public class ControlsManager {
         }
 
         Control(DPad button, GenericHID controller) {
-            this.id = button.getAngle();
+            this.id = button.getPort();
             this.controller = controller;
             this.inputType = InputType.POV;
         }

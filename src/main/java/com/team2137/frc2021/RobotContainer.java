@@ -13,11 +13,15 @@ public class RobotContainer {
     public static SwerveDrivetrain drivetrain;
     public static Intake intake;
     public static Spindexer spindexer;
+    public static Shooter shooter;
+    public static LimeLight limeLight;
 
     public static void initialize() {
         canifier = new CANifier(Constants.canifierID);
 
         drivetrain = new SwerveDrivetrain();
+        shooter = new Shooter();
+        limeLight = new LimeLight();
         intake = new Intake();
         spindexer = new Spindexer(canifier);
     }
