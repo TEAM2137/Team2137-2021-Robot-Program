@@ -19,6 +19,8 @@ public class RobotContainer {
     public static void initialize() {
         canifier = new CANifier(Constants.canifierID);
 
+        LEDs.initialize(canifier);
+
         drivetrain = new SwerveDrivetrain();
         shooter = new Shooter();
         limeLight = new LimeLight();

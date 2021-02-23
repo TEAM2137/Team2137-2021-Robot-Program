@@ -5,6 +5,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
+import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.util.PID;
 import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
@@ -29,10 +30,15 @@ public class Teleop extends RobotContainer implements OpMode {
         PID headingConstants = Constants.Drivetrain.teleopThetaPIDConstants;
         headingController = new ProfiledPIDController(headingConstants.getP(), headingConstants.getI(), headingConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstraints);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
+
+        LEDs.getInstance().setDefaultState(LEDs.State.Blue, true);
     }
 
     @Override
     public void periodic() {
+
+        // Drivetrain
+
         double forward = 0.75 * -ControlsManager.getAxis(Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
         double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
@@ -80,13 +86,17 @@ public class Teleop extends RobotContainer implements OpMode {
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
 
 
+        // Intake
+
         if(ControlsManager.getButton(Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
             if(intakePreviouslyDeployed) {
                 new SetIntakeCommand(intake, IntakeState.Retracted).schedule();
                 intakePreviouslyDeployed = false;
+                LEDs.getInstance().setState(LEDs.State.Yellow);
             } else {
                 new SetIntakeCommand(intake, IntakeState.Running).schedule();
                 intakePreviouslyDeployed = true;
+                LEDs.getInstance().enableDefaultState();
             }
         }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);
