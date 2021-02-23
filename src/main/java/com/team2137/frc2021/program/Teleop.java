@@ -37,11 +37,11 @@ public class Teleop extends RobotContainer implements OpMode {
         double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
         double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
 
-        if (limeLight.hasTarget() && ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
-            turn += limeLight.getRotationVector();
-        } else if (ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
-            turn += .5;
-        }
+//        if (limeLight.hasTarget() && ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+//            turn += limeLight.getRotationVector();
+//        } else if (ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
+//            turn += .5;
+//        }
 
         SmartDashboard.putNumber("forward", forward);
         SmartDashboard.putNumber("strafe", strafe);
@@ -52,7 +52,12 @@ public class Teleop extends RobotContainer implements OpMode {
         } else if(ControlsManager.getButton(Control.HeadingTargetButton)) {
             Translation2d target = UnitsExtra.feetToMeters(new Translation2d(0, 0));
 
-            Rotation2d angle = new Rotation2d(-(drivetrain.getPose().getX() - target.getX()), -(drivetrain.getPose().getY() - target.getY()));
+            //Rotation2d angle = new Rotation2d(-(drivetrain.getPose().getX() - target.getX()), -(drivetrain.getPose().getY() - target.getY()));
+            Rotation2d angle;
+            if (limeLight.hasTarget())
+                angle = new Rotation2d(-(limeLight.translateCameraXToCenter(drivetrain.getRobotAngle().getDegrees()) - target.getX()), -(limeLight.translateCameraYToCenter(drivetrain.getRobotAngle().getDegrees()) - target.getY()));
+            else
+                angle = new Rotation2d(-(drivetrain.getPose().getX() - target.getX()), -(drivetrain.getPose().getY() - target.getY()));
 
             double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
 

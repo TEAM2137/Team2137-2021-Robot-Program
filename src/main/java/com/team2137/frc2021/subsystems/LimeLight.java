@@ -78,7 +78,7 @@ public class LimeLight extends SubsystemBase {
             ta = table.getEntry().getDouble(0.0);
         }, 0);
         limeLightTable.getEntry(LimeLightValues.TV.getTableName()).addListener((table) -> {
-            tv = table.getEntry().getBoolean(false);
+            tv = table.getEntry().getDouble(0) > 1.0;
         }, 0);
     }
 
@@ -150,7 +150,15 @@ public class LimeLight extends SubsystemBase {
     }
 
     public void forceLEDBlink() {
+        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(2);
+    }
 
+    public void disableLEDBlink() {
+        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(1);
+    }
+
+    public void enableLEDBlink() {
+        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(3);
     }
 
     public double getRotationVector() {
