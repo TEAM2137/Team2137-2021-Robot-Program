@@ -153,11 +153,11 @@ public class LimeLight extends SubsystemBase {
         limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(2);
     }
 
-    public void disableLEDBlink() {
+    public void disableLED() {
         limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(1);
     }
 
-    public void enableLEDBlink() {
+    public void enableLED() {
         limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(3);
     }
 
