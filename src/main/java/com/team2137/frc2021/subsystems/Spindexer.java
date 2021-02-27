@@ -54,6 +54,10 @@ public class Spindexer extends SubsystemBase {
         setPower(1);
     }
 
+    public boolean isBallStopperEnabled() {
+        return ballStopper.get() == DoubleSolenoid.Value.kForward;
+    }
+
     public void disabledSpindexer() {
         SmartDashboard.putBoolean("Spindexer Enabled", false);
         setPower(0);

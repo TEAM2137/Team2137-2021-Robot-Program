@@ -32,8 +32,9 @@ public class Constants {
         public static final Motor HoodMotorObject = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 60, 1, 0, new PID(0, 0, 0), "45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
 
         public static final Point LimeLightShootingCameraPosition = new Point(0, 0);
-        public static final PID LimeLightThetaPIDValues = new PID(1, 0, 0);
+        public static final Point LimeLightTargetFieldPosition = new Point(7.5, 0);
         public static final double LimeLightShootingCameraAngleDegree = 35;
+        public static final double FlywheelIdlePercent = 0.7;
         public static final int HoodMotorHomingCurrentSignal = 20;
     }
 
@@ -108,7 +109,7 @@ public class Constants {
 
     public static class Intake {
         public static int motorID = 30;
-        
+
         public static int cylinderForwardID = 0;
         public static int cylinderReverseID = 1;
     }
@@ -125,4 +126,15 @@ public class Constants {
     }
 
     public static int canifierID = 9;
+
+    public static boolean withinClip(double num, double goal, double width) {
+        return Math.abs(goal - num) < width;
+    }
+
+    public static double applyDeadBand(double width, double goal) {
+        if(Math.abs(goal) < width)
+            return 0;
+        else
+            return goal;
+    }
 }

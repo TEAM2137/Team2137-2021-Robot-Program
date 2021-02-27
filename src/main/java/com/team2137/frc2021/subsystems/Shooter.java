@@ -138,6 +138,14 @@ public class Shooter extends SubsystemBase {
         return (this.flywheelMotor1.getSensorCollection().getIntegratedSensorVelocity() / 2048) * 600;
     }
 
+    public boolean isFlywheelAtTarget(double width) {
+        return Constants.withinClip(getFlywheelVelocity(), dblFlywheelVelocityGoal, width);
+    }
+
+    public void setFlyWheelIdle() {
+        setFlywheelVelocity(dblFlywheelVelocityGoal * FlywheelIdlePercent);
+    }
+
     /**
      * Sets the velocity goal of the flywheel for the PID Controller
      * @param velocity Velocity in RMP

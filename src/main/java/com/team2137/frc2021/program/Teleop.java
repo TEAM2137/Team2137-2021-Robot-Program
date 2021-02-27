@@ -4,6 +4,7 @@ import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
+import com.team2137.frc2021.commands.SpindexerCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.util.PID;
@@ -16,6 +17,7 @@ import com.team2137.frc2021.subsystems.Intake.IntakeState;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Teleop extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
@@ -38,7 +40,6 @@ public class Teleop extends RobotContainer implements OpMode {
     public void periodic() {
 
         // Drivetrain
-
         double forward = 0.75 * -ControlsManager.getAxis(Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
         double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
@@ -56,28 +57,36 @@ public class Teleop extends RobotContainer implements OpMode {
         if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
             drivetrain.xLock();
         } else if(ControlsManager.getButton(Control.HeadingTargetButton)) {
-            Translation2d target = UnitsExtra.feetToMeters(new Translation2d(0, 0));
 
-            //Rotation2d angle = new Rotation2d(-(drivetrain.getPose().getX() - target.getX()), -(drivetrain.getPose().getY() - target.getY()));
+            //Set the flywheel velocity for the shooter and the angle for the hood
+            shooter.setFlywheelVelocity(ShooterMap.getFlywheelSpeed(limeLight.getRobotRadius()));
+            shooter.setHoodAngle(ShooterMap.getHoodAngle(limeLight.getRobotRadius()));
+
             Rotation2d angle;
+            //If the LimeLight has a target use that target if not use the estimated position using pose
             if (limeLight.hasTarget())
-                angle = new Rotation2d(-(limeLight.translateCameraXToCenter(drivetrain.getRobotAngle().getDegrees()) - target.getX()), -(limeLight.translateCameraYToCenter(drivetrain.getRobotAngle().getDegrees()) - target.getY()));
+                angle = new Rotation2d(-(limeLight.translateCameraXToCenter(drivetrain.getRobotAngle().getDegrees()) - Constants.Shooter.LimeLightTargetFieldPosition.x), -(limeLight.translateCameraYToCenter(drivetrain.getRobotAngle().getDegrees()) - Constants.Shooter.LimeLightTargetFieldPosition.y));
             else
-                angle = new Rotation2d(-(drivetrain.getPose().getX() - target.getX()), -(drivetrain.getPose().getY() - target.getY()));
+                angle = new Rotation2d(-(drivetrain.getPose().getX() - Constants.Shooter.LimeLightTargetFieldPosition.x), -(drivetrain.getPose().getY() - Constants.Shooter.LimeLightTargetFieldPosition.y));
 
+            //TODO add an insurance on the pose and if needed add control for rotating until seeing target
+
+            //Power for the robot to turn given the Robot Angle in Radians
             double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
 
-            if(Math.abs(thetaPower) < 0.05) {
-                thetaPower = 0;
-            }
+            if (thetaPower < 0.05 && shooter.isFlywheelAtTarget(50))
+                CommandScheduler.getInstance().schedule(new SpindexerCommand(spindexer, false));
 
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe,
-                    thetaPower,
+                    Constants.applyDeadBand(thetaPower, 0.05),
                     drivetrain.getRobotAngle());
 
             drivetrain.driveTranslationRotationRaw(speeds);
 
         } else {
+            if(!spindexer.isBallStopperEnabled()) {
+                CommandScheduler.getInstance().schedule(new SpindexerCommand(spindexer, true));
+            }
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
             drivetrain.driveTranslationRotationRaw(speeds);
