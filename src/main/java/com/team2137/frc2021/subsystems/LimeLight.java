@@ -61,10 +61,7 @@ public class LimeLight extends SubsystemBase {
         robotCentricCameraPosition = Constants.Shooter.LimeLightShootingCameraPosition;
 
         targetFieldCentricPosition = Constants.Shooter.LimeLightTargetFieldPosition;
-    }
 
-    @Override
-    public void periodic() {
         limeLightTable.getEntry(LimeLightValues.TX.getTableName()).addListener((table) -> {
             tx = Math.toRadians(table.getEntry().getDouble(0.0));
         }, 0);
@@ -77,6 +74,11 @@ public class LimeLight extends SubsystemBase {
         limeLightTable.getEntry(LimeLightValues.TV.getTableName()).addListener((table) -> {
             tv = table.getEntry().getDouble(0) > 1.0;
         }, 0);
+    }
+
+    @Override
+    public void periodic() {
+
     }
 
     /**

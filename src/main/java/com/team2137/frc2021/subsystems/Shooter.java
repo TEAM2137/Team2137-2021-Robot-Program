@@ -48,7 +48,8 @@ public class Shooter extends SubsystemBase {
 
     public Shooter() {
         //Make sure to add current limiting for the hood motor so that it does not burn
-        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
+//        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
+        this.dblHoodMotorHomingCurrentLimit = 1; //temp
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -195,6 +196,11 @@ public class Shooter extends SubsystemBase {
         this.dblHoodMotorTargetAngle = angle; //Store the value in the variable so that once homing is done it will remember the position
         if (this.mStateHoodHoming == StepState.STATE_FINISH || this.mStateHoodHoming == StepState.STATE_NOT_STARTED)
             this.hoodPIDController.setReference(angle, ControlType.kPosition); //If the hood it homing then do not change the speed until it is done
+    }
+
+    public void setPreset(ShooterPresets preset) {
+        setFlywheelVelocity(preset.flywheelSpeed);
+        setHoodAngle(preset.hoodAngle);
     }
 
     /**

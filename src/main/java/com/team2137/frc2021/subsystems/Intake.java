@@ -30,6 +30,7 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("IntakeSpeed", motor.getMotorOutputPercent());
         SmartDashboard.putString("Cylinder State", cylinder.get().toString());
+        SmartDashboard.putNumber("Intake Current", getIntakeCurrentDraw());
     }
 
     public void setCylinderState(DoubleSolenoid.Value state) {
@@ -44,6 +45,10 @@ public class Intake extends SubsystemBase {
         setMotorPowerRaw(state.motorPower);
         setCylinderState(state.cylinderState);
         this.state = state;
+    }
+
+    public double getIntakeCurrentDraw() {
+        return motor.getStatorCurrent();
     }
 
     public IntakeState getIntakeState() {

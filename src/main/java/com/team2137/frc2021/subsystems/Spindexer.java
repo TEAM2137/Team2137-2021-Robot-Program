@@ -16,13 +16,12 @@ public class Spindexer extends SubsystemBase {
 
     private TalonSRX motor;
 
-    private CANifier canifier;
-    private DoubleSolenoid ballStopper;
+    private DoubleSolenoid ballStop;
 
     /**
      * Creates a Spindexer from the constants
      */
-    public Spindexer(CANifier canifier) {
+    public Spindexer() {
         this.motor = new TalonSRX(Constants.Spindexer.motorID);
         this.motor.setInverted(Constants.Spindexer.invertMotor);
         this.motor.configContinuousCurrentLimit(Constants.Spindexer.currentLimit);
@@ -30,16 +29,13 @@ public class Spindexer extends SubsystemBase {
         this.motor.configClosedloopRamp(Constants.Spindexer.voltageRamp);
         this.motor.configOpenloopRamp(Constants.Spindexer.voltageRamp);
 
-        this.ballStopper = new DoubleSolenoid(Constants.Spindexer.solenoidForwardID, Constants.Spindexer.solenoidReverseID);
-
-        this.canifier = canifier;
-
-        Robot.addOnEnabled(this::enableSpindexer);
-        Robot.addOnDisabled(this::disabledSpindexer);
+        this.ballStop = new DoubleSolenoid(Constants.Spindexer.solenoidForwardID, Constants.Spindexer.solenoidReverseID);
     }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Spindexer Power", motor.getMotorOutputPercent());
+        SmartDashboard.putBoolean("Spindexer Ball Stop On", isBallStopEnabled());
     }
 
     /**
@@ -49,27 +45,23 @@ public class Spindexer extends SubsystemBase {
         motor.set(ControlMode.PercentOutput, power);
     }
 
-    public void enableSpindexer() {
-        SmartDashboard.putBoolean("Spindexer Enabled", true);
-        setPower(1);
+    public void setBallStop(BallStopState state) {
+        ballStop.set(state.value);
     }
 
-    public boolean isBallStopperEnabled() {
-        return ballStopper.get() == DoubleSolenoid.Value.kForward;
+    public boolean isBallStopEnabled() {
+        return ballStop.get() == BallStopState.Enabled.value;
     }
 
-    public void disabledSpindexer() {
-        SmartDashboard.putBoolean("Spindexer Enabled", false);
-        setPower(0);
-    }
+    public enum BallStopState {
+        Enabled(DoubleSolenoid.Value.kForward),
+        Disabled(DoubleSolenoid.Value.kReverse),
+        ;
 
-    public void enableBallStopper() {
-        SmartDashboard.putBoolean("BallStopper Enabled", true);
-        ballStopper.set(DoubleSolenoid.Value.kForward);
-    }
+        DoubleSolenoid.Value value;
 
-    public void disabledBallStopper() {
-        SmartDashboard.putBoolean("BallStopper Enabled", false);
-        ballStopper.set(DoubleSolenoid.Value.kOff);
+        BallStopState(DoubleSolenoid.Value value) {
+            this.value = value;
+        }
     }
 }

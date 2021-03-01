@@ -1,5 +1,7 @@
 package com.team2137.frc2021;
 
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.team2137.frc2021.util.Motor;
 import com.team2137.frc2021.util.PID;
 import com.team2137.libs.GamePad;
@@ -12,15 +14,20 @@ import org.opencv.core.Point;
 public class Constants {
 
     public enum ShooterPresets {
-        InitiationLine (0, 5000),
-        Tench (0, 6000);
+        InitiationLine (0, 5000, .5),
+        Tench (0, 6000, .5),
 
-        public int hoodAngle = 0;
+        AutoShoot(0, 3000, .5)
+        ;
+
+        public double hoodAngle = 0;
         public int flywheelSpeed = 0;
+        public double prerollerPower = 0;
 
-        ShooterPresets (int _hoodAngle, int _flywheelSpeed) {
+        ShooterPresets(double _hoodAngle, int _flywheelSpeed, double _prerollerPower) {
             hoodAngle = _hoodAngle;
             flywheelSpeed = _flywheelSpeed;
+            prerollerPower = _prerollerPower;
         }
     }
 
@@ -39,6 +46,8 @@ public class Constants {
     }
 
     public static class Drivetrain {
+        public static final int gyroID = 4;
+
         public static final double length = Units.inchesToMeters(24.5);
         public static final double width = Units.inchesToMeters(21.5);
 
@@ -49,22 +58,25 @@ public class Constants {
 
         public static final boolean invertDriveMotor = true;
         public static final boolean invertTurningMotor = false;
-        public static final int driveMotorCurrentLimit = 80;
-        public static final int turningMotorCurrentLimit = 80;
+        public static final SupplyCurrentLimitConfiguration driveMotorSupplyCurrentLimit = new SupplyCurrentLimitConfiguration(true, 40, 60 ,1);
+        public static final StatorCurrentLimitConfiguration driveMotorStatorCurrentLimit = new StatorCurrentLimitConfiguration(true, 40, 60, 1);
+        public static final SupplyCurrentLimitConfiguration turningMotorSupplyCurrentLimit = new SupplyCurrentLimitConfiguration(true, 20, 30, 1);
+        public static final StatorCurrentLimitConfiguration turningMotorStatorCurrentLimit = new StatorCurrentLimitConfiguration(true, 20, 30, 1);
 
         public static final double driveMotorRamp = 0.5;
 
-        public static PID turningPIDConstants = new PID(0.075, 0, -0.000000000000000000001); // in the air
+        public static double turningFeedForward = 0.03;
+        public static PID turningPIDConstants = new PID(0.13, 0, 0.004); // in the air
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
 //        public static PID turningPIDConstants = new PID(0.08, 0, 0); // carpet
 
         public static PID drivePIDConstants = new PID(0.32, 0, 0);
         public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.17, 2.7, 0);
 
-        public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -55.81, "Front Left");
-        public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 120.94, "Front Right");
-        public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, 179.56, "Back Left");
-        public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 9.59, "Back Right");
+        public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -173.58, "Front Left");
+        public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 80.51, "Front Right");
+        public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, -52.99, "Back Left");
+        public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 121.11, "Back Right");
 
         public static PID translationPIDConstants = new PID(.02, 0, 0.25);
         public static PID teleopThetaPIDConstants = new PID(0.8, 0, 5); // new

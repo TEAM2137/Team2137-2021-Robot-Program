@@ -4,18 +4,15 @@ import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
-import com.team2137.frc2021.commands.SpindexerCommand;
+import com.team2137.frc2021.commands.SetSpindexerCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.util.PID;
-import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import com.team2137.frc2021.subsystems.Intake.IntakeState;
 
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -33,7 +30,7 @@ public class Teleop extends RobotContainer implements OpMode {
         headingController = new ProfiledPIDController(headingConstants.getP(), headingConstants.getI(), headingConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstraints);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
 
-        LEDs.getInstance().setDefaultState(LEDs.State.Blue, true);
+//        LEDs.getInstance().setDefaultState(LEDs.State.Blue, true);
     }
 
     @Override
@@ -75,7 +72,7 @@ public class Teleop extends RobotContainer implements OpMode {
             double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
 
             if (thetaPower < 0.05 && shooter.isFlywheelAtTarget(50))
-                CommandScheduler.getInstance().schedule(new SpindexerCommand(spindexer, false));
+                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 0));
 
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe,
                     Constants.applyDeadBand(thetaPower, 0.05),
@@ -84,8 +81,8 @@ public class Teleop extends RobotContainer implements OpMode {
             drivetrain.driveTranslationRotationRaw(speeds);
 
         } else {
-            if(!spindexer.isBallStopperEnabled()) {
-                CommandScheduler.getInstance().schedule(new SpindexerCommand(spindexer, true));
+            if(!spindexer.isBallStopEnabled()) {
+                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 1));
             }
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
@@ -101,11 +98,11 @@ public class Teleop extends RobotContainer implements OpMode {
             if(intakePreviouslyDeployed) {
                 new SetIntakeCommand(intake, IntakeState.Retracted).schedule();
                 intakePreviouslyDeployed = false;
-                LEDs.getInstance().setState(LEDs.State.Yellow);
+//                LEDs.getInstance().setState(LEDs.State.Yellow);
             } else {
                 new SetIntakeCommand(intake, IntakeState.Running).schedule();
                 intakePreviouslyDeployed = true;
-                LEDs.getInstance().enableDefaultState();
+//                LEDs.getInstance().enableDefaultState();
             }
         }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);

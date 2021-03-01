@@ -58,7 +58,7 @@ public class SwerveDrivetrain extends SubsystemBase {
         swerveArray = new SwerveDriveModule[]{frontLeftModule, frontRightModule, backLeftModule, backRightModule};
 
         // the gyro
-        pigeonIMU = new PigeonIMU(4);
+        pigeonIMU = new PigeonIMU(Constants.Drivetrain.gyroID);
         pigeonIMU.setYaw(0);
 
         // create pose estimator
@@ -68,6 +68,7 @@ public class SwerveDrivetrain extends SubsystemBase {
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.5, 0.5, Units.degreesToRadians(30))); // Vision measurement standard deviations. X, Y, and theta.
 
         SmartDashboard.putData("Field", field2d);
+        SmartDashboard.putBoolean("Reset Position", false);
     }
 
     /**
@@ -75,12 +76,21 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
+//        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
 
         SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
         field2d.setRobotPose(getPose());
         SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
         SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
+
+        if(SmartDashboard.getBoolean("Reset Position", false)) {
+            resetOdometry();
+            SmartDashboard.putBoolean("Reset Position", false);
+        }
+
+        for(SwerveDriveModule module : swerveArray) {
+            module.periodic();
+        }
     }
 
     /**
@@ -208,6 +218,14 @@ public class SwerveDrivetrain extends SubsystemBase {
         frontRightModule.selfTargetAngle();
         backLeftModule.selfTargetAngle();
         backRightModule.selfTargetAngle();
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        poseEstimator.resetPosition(pose, pose.getRotation());
+    }
+
+    public void resetOdometry() {
+        resetOdometry(new Pose2d());
     }
 
     /**

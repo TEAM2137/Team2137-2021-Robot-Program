@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        runOnEnabledFunctions();
+//        runOnEnabledFunctions();
         disabled.end();
         currentOpMode = autonomous;
         autonomous.init();
@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        runOnEnabledFunctions();
+//        runOnEnabledFunctions();
         disabled.end();
         currentOpMode = teleop;
         teleop.init();
@@ -62,9 +62,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        runOnDisabledFunctions();
-        if (currentOpMode != null)
-            currentOpMode.end();
+//        runOnDisabledFunctions();
+//        if (currentOpMode != null)
+//            currentOpMode.end();
         disabled.init();
     }
 
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        runOnEnabledFunctions();
+//        runOnEnabledFunctions();
         disabled.end();
         currentOpMode = test;
         test.init();

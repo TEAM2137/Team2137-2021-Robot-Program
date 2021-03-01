@@ -1,5 +1,8 @@
 package com.team2137.frc2021.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
@@ -17,8 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SwerveDriveModule extends SubsystemBase {
 
-    private CANSparkMax driveMotor;
-    private CANSparkMax turningMotor;
+    private TalonFX driveMotor;
+    private TalonFX turningMotor;
     private CANCoder encoder;
 
     private PIDController turningPID;
@@ -47,24 +50,22 @@ public class SwerveDriveModule extends SubsystemBase {
      */
     public SwerveDriveModule(int driveID, int turningID, int encoderID, double encoderOffset, String moduleName) {
         // Drive motor setup
-        this.driveMotor = new CANSparkMax(driveID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.driveMotor.restoreFactoryDefaults();
-//        this.driveMotor.setMotorType(CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.driveMotor = new TalonFX(driveID);
+        this.driveMotor.configFactoryDefault();
         this.driveMotor.setInverted(Constants.Drivetrain.invertDriveMotor);
-        this.driveMotor.setSmartCurrentLimit(Constants.Drivetrain.driveMotorCurrentLimit);
-        this.driveMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-//        this.driveMotor.setIdleMode(CANSparkMax.IdleMode.kCoast); //just for when I'm zeroing stuff
-        this.driveMotor.setClosedLoopRampRate(Constants.Drivetrain.driveMotorRamp);
-        this.driveMotor.setOpenLoopRampRate(Constants.Drivetrain.driveMotorRamp);
+        this.driveMotor.configSupplyCurrentLimit(Constants.Drivetrain.driveMotorSupplyCurrentLimit);
+        this.driveMotor.configStatorCurrentLimit(Constants.Drivetrain.driveMotorStatorCurrentLimit);
+        this.driveMotor.setNeutralMode(NeutralMode.Brake);
+        this.driveMotor.configClosedloopRamp(Constants.Drivetrain.driveMotorRamp);
+        this.driveMotor.configOpenloopRamp(Constants.Drivetrain.driveMotorRamp);
 
         // Turning motor setup
-        this.turningMotor = new CANSparkMax(turningID, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.turningMotor.restoreFactoryDefaults();
-//        this.turningMotor.setMotorType(CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.turningMotor = new TalonFX(turningID);
+        this.turningMotor.configFactoryDefault();
         this.turningMotor.setInverted(Constants.Drivetrain.invertTurningMotor);
-        this.turningMotor.setSmartCurrentLimit(Constants.Drivetrain.turningMotorCurrentLimit);
-//        this.turningMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
-        this.turningMotor.setIdleMode(CANSparkMax.IdleMode.kCoast); //just for when I'm zeroing stuff
+        this.turningMotor.configSupplyCurrentLimit(Constants.Drivetrain.turningMotorSupplyCurrentLimit);
+        this.turningMotor.configStatorCurrentLimit(Constants.Drivetrain.turningMotorStatorCurrentLimit);
+        this.turningMotor.setNeutralMode(NeutralMode.Brake);
 
         // Encoder setup
         this.encoder = new CANCoder(encoderID);
@@ -86,6 +87,8 @@ public class SwerveDriveModule extends SubsystemBase {
         this.driveFeedForward = Constants.Drivetrain.driveFeedforward;
 
         this.selfTargetAngle();
+
+
     }
 
     /**
@@ -104,7 +107,7 @@ public class SwerveDriveModule extends SubsystemBase {
         // if robot is disabled, target modules to their current angle
         // if you're doing some types of debugging, disable this
         if(DriverStation.getInstance().isDisabled()) {
-            selfTargetAngle();
+//            selfTargetAngle();
         }
 
         // prevents the module from doing a >90 degree flip to get to a target, instead reverse wheel direction
@@ -119,32 +122,39 @@ public class SwerveDriveModule extends SubsystemBase {
         }
 
 //        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
-        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
+        double pidEffort = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
 
-        turningMotor.setVoltage(output);
+        double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward + pidEffort;
 
+        if (moduleName == "Front Right") {
+            System.out.println(moduleName + "setcor" + turningSetpointCorrected.getDegrees());
+            System.out.println("modrot" + getModuleRotation().getDegrees());
+            System.out.println("pid" + pidEffort);
+            System.out.println(output);
+        }
 
+        turningMotor.set(ControlMode.PercentOutput, output / 12);
 
         switch(driveMode) {
             case RawPower: //for use in teleop
-                driveMotor.set(driveRawPower * (reverseWheel ? -1 : 1));
+                driveMotor.set(ControlMode.PercentOutput, driveRawPower * (reverseWheel ? -1 : 1));
 //                driveMotor.set(driveRawPower);
                 break;
             case Velocity: //for use in auto and autonomous trajectories
 //                driveMotor.setVoltage(driveFeedForward.calculate(driveVelocityTarget * (reverseWheel ? -1 : 1)) +
 //                        drivePIDController.calculate(getDriveVelocity(), driveVelocityTarget * (reverseWheel ? -1 : 1)));
 
-                driveMotor.setVoltage(driveFeedForward.calculate(driveVelocityTarget) +
-                        drivePID.calculate(getDriveVelocity(), driveVelocityTarget));
+                driveMotor.set(ControlMode.PercentOutput, (driveFeedForward.calculate(driveVelocityTarget) +
+                        drivePID.calculate(getDriveVelocity(), driveVelocityTarget)) / 12);
                 break;
         }
 
         SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
-        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointRaw.getDegrees());
+        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
         SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
-        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.get());
+        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
 
-        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.get());
+        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
 
         SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
         SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
@@ -186,21 +196,21 @@ public class SwerveDriveModule extends SubsystemBase {
      * @return Drive wheel velocity in meters per second
      */
     public double getDriveVelocity() {
-        return driveMotor.getEncoder().getVelocity() * Constants.Drivetrain.motorToWheelConversionFactor / 60;
+        return driveMotor.getSensorCollection().getIntegratedSensorVelocity() * Constants.Drivetrain.motorToWheelConversionFactor / 2048 * 10;
     }
 
     /**
      * @return wheel distance traveled in meters
      */
     public double getDriveDistance() {
-        return driveMotor.getEncoder().getPosition() * Constants.Drivetrain.motorToWheelConversionFactor;
+        return driveMotor.getSensorCollection().getIntegratedSensorPosition() * Constants.Drivetrain.motorToWheelConversionFactor / 2048;
     }
 
     /**
      * Resets drive encoder distance to zero.
      */
     public void resetDriveEncoder() {
-        driveMotor.getEncoder().setPosition(0);
+        driveMotor.getSensorCollection().setIntegratedSensorPosition(0, 10);
     }
 
     public SwerveModuleState getSwerveModuleState() {

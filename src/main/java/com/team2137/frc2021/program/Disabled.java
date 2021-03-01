@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Disabled extends RobotContainer implements OpMode {
     @Override
     public void init() {
-        CommandScheduler.getInstance().cancelAll();
-        LEDs.getInstance().setDefaultState(LEDs.State.RainbowCycle, true);
+//        CommandScheduler.getInstance().cancelAll();
+//        LEDs.getInstance().setDefaultState(LEDs.State.RainbowCycle, true);
         limeLight.disableLED();
     }
 
