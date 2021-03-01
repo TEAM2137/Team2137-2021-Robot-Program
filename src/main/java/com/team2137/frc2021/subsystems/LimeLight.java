@@ -1,5 +1,6 @@
 package com.team2137.frc2021.subsystems;
 
+import com.sun.javafx.geom.transform.Translate2D;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.networktables.*;
@@ -109,8 +110,8 @@ public class LimeLight extends SubsystemBase {
      * Convert the two doubles into a single point {@link org.opencv.core.Point}
      * @return XY point of the camera
      */
-    public Point getCameraPoint() {
-        return new Point(getCameraXPosition(), getCameraYPosition());
+    public Translate2D getCameraPoint() {
+        return new Translate2D(getCameraXPosition(), getCameraYPosition());
     }
 
     /**
@@ -136,8 +137,8 @@ public class LimeLight extends SubsystemBase {
      * @param gyroAngle Robot Angle
      * @return Center point of the robot
      */
-    public Point getRobotPosition(double gyroAngle) {
-        return new Point(translateCameraXToCenter(gyroAngle), translateCameraYToCenter(gyroAngle));
+    public Translate2D getRobotPosition(double gyroAngle) {
+        return new Translate2D(translateCameraXToCenter(gyroAngle), translateCameraYToCenter(gyroAngle));
     }
 
 //    public double getProbableArea(Point robotPosition) {
