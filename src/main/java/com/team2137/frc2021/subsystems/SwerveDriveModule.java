@@ -126,13 +126,6 @@ public class SwerveDriveModule extends SubsystemBase {
 
         double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward + pidEffort;
 
-        if (moduleName == "Front Right") {
-            System.out.println(moduleName + "setcor" + turningSetpointCorrected.getDegrees());
-            System.out.println("modrot" + getModuleRotation().getDegrees());
-            System.out.println("pid" + pidEffort);
-            System.out.println(output);
-        }
-
         turningMotor.set(ControlMode.PercentOutput, output / 12);
 
         switch(driveMode) {

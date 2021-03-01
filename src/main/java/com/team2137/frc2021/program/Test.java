@@ -4,6 +4,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.subsystems.Intake;
+import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
@@ -30,18 +31,26 @@ public class Test extends RobotContainer implements OpMode {
 
         // intake
 
+//        System.out.println("prev " + intakeButtonPreviouslyPressed);
+//        System.out.println("cur  " + ControlsManager.getButton(ControlsManager.Control.IntakeButton));
+
         if(ControlsManager.getButton(ControlsManager.Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
+            System.out.println("gogogo");
             if(intakePreviouslyDeployed) {
-                new SetIntakeCommand(intake, Intake.IntakeState.Retracted).schedule();
+                intake.setIntakeState(Intake.IntakeState.Retracted);
+
                 intakePreviouslyDeployed = false;
 //                LEDs.getInstance().setState(LEDs.State.Yellow);
             } else {
-                new SetIntakeCommand(intake, Intake.IntakeState.Running).schedule();
+                intake.setIntakeState(Intake.IntakeState.Running);
+
                 intakePreviouslyDeployed = true;
 //                LEDs.getInstance().enableDefaultState();
             }
         }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(ControlsManager.Control.IntakeButton);
+
+        spindexer.setPower(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? 1 : 0);
     }
 
     @Override

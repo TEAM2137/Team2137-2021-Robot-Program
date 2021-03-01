@@ -23,6 +23,6 @@ public class RobotContainer {
 //        shooter = new Shooter();
         limeLight = new LimeLight();
         intake = new Intake();
-//        spindexer = new Spindexer();
+        spindexer = new Spindexer();
     }
 }

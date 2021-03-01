@@ -17,13 +17,17 @@ public class Intake extends SubsystemBase {
     TalonSRX motor;
     
     DoubleSolenoid cylinder;
+    DoubleSolenoid cylinder2;
 
     private IntakeState state;
 
     public Intake() {
         this.motor = new TalonSRX(Constants.Intake.motorID);
+        this.motor.setInverted(Constants.Intake.invertMotor);
+
         //CANSparkMax(Constants.Intake.motorID, MotorType.kBrushless);
         this.cylinder = new DoubleSolenoid(Constants.Intake.cylinderForwardID, Constants.Intake.cylinderReverseID);
+        this.cylinder2 = new DoubleSolenoid(Constants.Intake.cylinder2ForwardID, Constants.Intake.cylinder2ReverseID);
     }
     
     @Override
@@ -35,6 +39,8 @@ public class Intake extends SubsystemBase {
 
     public void setCylinderState(DoubleSolenoid.Value state) {
         cylinder.set(state);
+//        cylinder2.set(state == DoubleSolenoid.Value.kForward ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
+        cylinder2.set(state);
     }
 
     public void setMotorPowerRaw(double power) {

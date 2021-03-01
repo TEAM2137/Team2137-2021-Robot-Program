@@ -121,14 +121,17 @@ public class Constants {
 
     public static class Intake {
         public static int motorID = 30;
+        public static final boolean invertMotor = true;
 
-        public static int cylinderForwardID = 0;
-        public static int cylinderReverseID = 1;
+        public static final int cylinderForwardID = 2;
+        public static final int cylinderReverseID = 1;
+        public static final int cylinder2ForwardID = 0;
+        public static final int cylinder2ReverseID = 5;
     }
 
     public static class Spindexer {
         public static int motorID = 35;
-        public static int solenoidForwardID = 2;
+        public static int solenoidForwardID = 4;
         public static int solenoidReverseID = 3;
 
         public static boolean invertMotor = false;

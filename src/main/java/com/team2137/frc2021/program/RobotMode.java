@@ -15,6 +15,7 @@ public class RobotMode extends RobotContainer implements OpMode {
     public void periodic() {
 //        CommandScheduler.getInstance().run();
         drivetrain.periodic();
+        intake.periodic();
     }
 
     @Override
