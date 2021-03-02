@@ -72,7 +72,7 @@ public class Teleop extends RobotContainer implements OpMode {
             double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
 
             if (thetaPower < 0.05 && shooter.isFlywheelAtTarget(50))
-                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 0));
+                spindexer.setPower(0);
 
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe,
                     Constants.applyDeadBand(thetaPower, 0.05),
@@ -87,6 +87,10 @@ public class Teleop extends RobotContainer implements OpMode {
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
             drivetrain.driveTranslationRotationRaw(speeds);
+        }
+
+        if(ControlsManager.getButton(Control.ShooterInitiationLine)) {
+            shooter.setFlywheelVelocity(7000);
         }
 //        drivetrain.setAllModuleRotations(new Rotation2d(Math.atan2(forward, strafe)));
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));

@@ -36,7 +36,7 @@ public class Constants {
         public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 1.5, new PID(0.15, 0.06, 0.0005, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
         public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 1.5, null);
         public static final Motor PreRollerMotorObject = new Motor("preRollerMotor", 44, Motor.MotorTypes.NEO550, true, 35, 1, 0, null);
-        public static final Motor HoodMotorObject = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 35, 1, 0, new PID(0, 0, 0), "45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
+        public static final Motor HoodMotorObject = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 35, ((1.0/90.0) * (32.0/70.0)) * 360.0, 0, new PID(0.03, 0, 0), "45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
 
         public static final Point LimeLightShootingCameraPosition = new Point(0, 0);
         public static final Point LimeLightTargetFieldPosition = new Point(0, 7.5);

@@ -16,7 +16,7 @@ public class Test extends RobotContainer implements OpMode {
 
     @Override
     public void init() {
-
+        shooter.zeroHoodAngle();
     }
 
     @Override
@@ -49,6 +49,18 @@ public class Test extends RobotContainer implements OpMode {
             }
         }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(ControlsManager.Control.IntakeButton);
+
+        if (ControlsManager.getButton(ControlsManager.Control.XLockButton)) {
+            shooter.setHoodAngle(0);
+        }
+
+        if (ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine)) {
+            shooter.setHoodAngle(15);
+        }
+
+        if (ControlsManager.getButton(ControlsManager.Control.ShooterTrenchLine)) {
+            shooter.setHoodAngle(30);
+        }
 
         spindexer.setPower(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? 1 : 0);
     }

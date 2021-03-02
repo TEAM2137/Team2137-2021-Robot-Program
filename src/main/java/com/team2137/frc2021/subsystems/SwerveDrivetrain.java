@@ -76,7 +76,7 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-//        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
+        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
 
         SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
         field2d.setRobotPose(getPose());

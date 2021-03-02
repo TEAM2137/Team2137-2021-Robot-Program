@@ -41,6 +41,7 @@ public class Shooter extends SubsystemBase {
 
     //Store the state of the Hood. (Weather Homing or moving to position)
     private StepState mStateHoodHoming = StepState.STATE_INIT;
+    private double startTime = 0;
 
     private double dblFlywheelVelocityGoal = 0; //Velocity Goal in RPM for the shooter
     private double dblHoodMotorHomingCurrentLimit = HoodMotorHomingCurrentSignal; //The Current that is needed for the hood to be considered homed
@@ -49,7 +50,7 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         //Make sure to add current limiting for the hood motor so that it does not burn
 //        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
-        this.dblHoodMotorHomingCurrentLimit = 1; //temp
+        this.dblHoodMotorHomingCurrentLimit = 5; //temp
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -66,6 +67,7 @@ public class Shooter extends SubsystemBase {
         this.hoodPIDController.setP(HoodMotorObject.getPID().getP());
         this.hoodPIDController.setI(HoodMotorObject.getPID().getI());
         this.hoodPIDController.setD(HoodMotorObject.getPID().getD());
+        this.hoodPIDController.setFF(0.001);
 
         this.flywheelCurrentLimit = new SupplyCurrentLimitConfiguration(true, FlyWheelMotorObject1.getCurrentLimit(), 80, 2);
 
@@ -100,14 +102,16 @@ public class Shooter extends SubsystemBase {
          */
         switch (this.mStateHoodHoming) {
             case STATE_INIT: //Start the homing process of the hood
-                this.hoodMotor.set(-.5); //Reverse the hood back to zero direction
+                this.startTime = System.currentTimeMillis();
+                this.hoodMotor.set(-0.25); //Reverse the hood back to zero direction
                 this.mStateHoodHoming = StepState.STATE_RUNNING; //Move to the looping stage
                 break;
             case STATE_RUNNING: //Loop and check if the hood is a home yet
                 //If the motor is drawing to much power stop the power and set that as the home position and continue commands before it
-                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit) {
+                SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
+                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit && System.currentTimeMillis() - startTime > 200) {
                     this.hoodMotor.set(0);
-                    this.hoodMotorEncoder.setPosition(0);
+                    this.hoodMotorEncoder.setPosition(-8.35917);
                     this.hoodPIDController.setReference(dblHoodMotorTargetAngle, ControlType.kPosition);
                     this.mStateHoodHoming = Constants.StepState.STATE_FINISH;
                 }
@@ -117,9 +121,11 @@ public class Shooter extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("Hood Angle", getHoodAngle());
+        SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
 
         double flywheelPower = (flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12;
 
+        //.00083
         if(dblFlywheelVelocityGoal < getFlywheelVelocity() - 600) {
             flywheelPower = 0;
         }

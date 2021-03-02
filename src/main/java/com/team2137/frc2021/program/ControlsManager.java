@@ -24,10 +24,10 @@ public class ControlsManager {
 
         HeadingTargetButton     (Button.kBumperLeft, driverController),
 
-        IntakeButton            (Button.kA, driverController),
+        IntakeButton            (Button.kA, operatorController),
 
-        ShooterInitiationLine   (Button.kA, operatorController),
-        ShooterTrenchLine       (Button.kB, operatorController),
+        ShooterInitiationLine   (Button.kA, driverController),
+        ShooterTrenchLine       (Button.kB, driverController),
         LimeLightButton         (Axis.kRightTrigger, driverController)
         ;
 

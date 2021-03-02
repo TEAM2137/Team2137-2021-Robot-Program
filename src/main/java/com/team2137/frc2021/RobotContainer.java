@@ -20,7 +20,7 @@ public class RobotContainer {
 //        LEDs.initialize(canifier);
 
         drivetrain = new SwerveDrivetrain();
-//        shooter = new Shooter();
+        shooter = new Shooter();
         limeLight = new LimeLight();
         intake = new Intake();
         spindexer = new Spindexer();
