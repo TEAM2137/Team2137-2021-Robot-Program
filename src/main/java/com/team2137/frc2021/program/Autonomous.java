@@ -7,6 +7,8 @@ import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.commands.TrajectoryFollowCommand;
 import com.team2137.frc2021.commands.TrajectoryFollowCommand.HeadingControlThreshold;
 import com.team2137.frc2021.subsystems.Intake;
+import com.team2137.frc2021.subsystems.LimeLight;
+import com.team2137.frc2021.subsystems.Spindexer;
 import com.team2137.libs.TrajectoryUtility;
 import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.networktables.NetworkTable;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -27,14 +30,19 @@ import java.util.ArrayList;
 public class Autonomous extends RobotContainer implements OpMode {
 
     private State state = State.Searching;
-    NetworkTable llTable = NetworkTableInstance.getDefault().getTable("ballCamera");
-    NetworkTableEntry hasTarget = llTable.getEntry("tv");
-    NetworkTableEntry ballX = llTable.getEntry("tx");
-    NetworkTableEntry ballY = llTable.getEntry("ty");
+    NetworkTable llTable = NetworkTableInstance.getDefault().getTable("limelight-two");
+//    NetworkTableEntry hasTarget = llTable.getEntry("tv");
+//    NetworkTableEntry ballX = llTable.getEntry("tx");
+//    NetworkTableEntry ballY = llTable.getEntry("ty");
+
+    boolean hasTarget = false;
+    double ballX = 0;
+    double ballY = 0;
 
     PIDController ballSearchTurnController = new PIDController(0.1, 0 ,0);
 
     Timer intakeTimer = new Timer();
+    Timer switchTimer = new Timer();
 
     PIDController xController = new PIDController(Constants.Drivetrain.translationPIDConstants.getP(), Constants.Drivetrain.translationPIDConstants.getI(), Constants.Drivetrain.translationPIDConstants.getD());
     PIDController yController = new PIDController(Constants.Drivetrain.translationPIDConstants.getP(), Constants.Drivetrain.translationPIDConstants.getI(), Constants.Drivetrain.translationPIDConstants.getD());
@@ -44,46 +52,75 @@ public class Autonomous extends RobotContainer implements OpMode {
 
     @Override
     public void init() {
-        new SetIntakeCommand(intake, Intake.IntakeState.Running).schedule();
+        state = State.Searching;
+
+        intakeTimer.reset();
+        switchTimer.stop();
+        switchTimer.reset();
 
         xController.setTolerance(0.05);
         yController.setTolerance(0.05);
         thetaController.setTolerance(0.05);
+
+//        llTable.getEntry("tv").addListener((table) -> {
+//            hasTarget = table.getEntry().getDouble(0) >= 1.0;
+//        }, 0);
+//        llTable.getEntry("tx").addListener((table) -> {
+//            ballX = table.getEntry().getDouble(0);
+//        }, 0);
+//        llTable.getEntry("ty").addListener((table) -> {
+//            ballY = table.getEntry().getDouble(0);
+//        }, 0);
     }
 
     @Override
     public void periodic() {
+        hasTarget = llTable.getEntry("tv").getDouble(0) > 0;
+        ballX = llTable.getEntry("tx").getDouble(0);
+        ballY = llTable.getEntry("ty").getDouble(0);
+
         switch (state) {
             case Searching:
+                intake.setIntakeState(Intake.IntakeState.Running);
+                spindexer.setBallStop(Spindexer.BallStopState.Enabled);
 
-
-                if(hasTarget.getDouble(0) == 0) {
-                    drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(0, 0, 0.5));
+                if(hasTarget) {
+                    SmartDashboard.putString("status", "seen");
+                    double turn = ballSearchTurnController.calculate(-ballX + 10, 0);
+                    double drive = 0.1;
+//                    drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(0, drive, turn));
                 } else {
-                    double turn = ballSearchTurnController.calculate(-ballX.getDouble(0), 0);
-                    double drive = 0.2;
-                    drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(0, drive, turn));
+                    SmartDashboard.putString("status", "unknown");
+//                    drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(0, 0, 0.01));
                 }
 
-                if(intake.getIntakeCurrentDraw() > 5) {
+                if(intake.getIntakeCurrentDraw() < 5) {
                     intakeTimer.reset();
                     intakeTimer.start();
                 }
 
-                if(intakeTimer.hasElapsed(1)) {
+                SmartDashboard.putNumber("timer", intakeTimer.get());
+                if(intakeTimer.hasElapsed(0.25)) {
+                    switchTimer.reset();
+                    switchTimer.start();
+                }
+
+                if(switchTimer.hasElapsed(1.5)) {
                     state = State.DrivingToGoal;
+                    switchTimer.stop();
+                    switchTimer.reset();
                 }
                 break;
             case DrivingToGoal:
+                intake.setIntakeState(Intake.IntakeState.Retracted);
 
-//                xController.calculate()
                 break;
         }
     }
 
     @Override
     public void end() {
-
+        drivetrain.driveTranslationRotationRaw(new ChassisSpeeds());
     }
 
     private enum State {

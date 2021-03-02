@@ -8,6 +8,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team2137.frc2021.Constants;
+import com.team2137.libs.Util;
 import edu.wpi.first.wpilibj.DriverStation;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -122,9 +123,10 @@ public class SwerveDriveModule extends SubsystemBase {
         }
 
 //        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
-        double pidEffort = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
+        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
 
-        double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward + pidEffort;
+//        double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward * Math.abs(Math.signum(Util.deadband(turningPID.getPositionError(), 0.5))) + pidEffort;
+//        double output = Constants.Drivetrain.turningFeedForward;
 
         turningMotor.set(ControlMode.PercentOutput, output / 12);
 
@@ -134,11 +136,13 @@ public class SwerveDriveModule extends SubsystemBase {
 //                driveMotor.set(driveRawPower);
                 break;
             case Velocity: //for use in auto and autonomous trajectories
-//                driveMotor.setVoltage(driveFeedForward.calculate(driveVelocityTarget * (reverseWheel ? -1 : 1)) +
-//                        drivePIDController.calculate(getDriveVelocity(), driveVelocityTarget * (reverseWheel ? -1 : 1)));
+                double driveOutput = driveFeedForward.calculate(driveVelocityTarget * (reverseWheel ? -1 : 1)) +
+                    drivePID.calculate(getDriveVelocity(), driveVelocityTarget * (reverseWheel ? -1 : 1));
+                System.out.println(driveOutput);
+                driveMotor.set(ControlMode.PercentOutput, driveOutput / 12);
 
-                driveMotor.set(ControlMode.PercentOutput, (driveFeedForward.calculate(driveVelocityTarget) +
-                        drivePID.calculate(getDriveVelocity(), driveVelocityTarget)) / 12);
+//                driveMotor.set(ControlMode.PercentOutput, (driveFeedForward.calculate(driveVelocityTarget) +
+//                        drivePID.calculate(getDriveVelocity(), driveVelocityTarget)) / 12);
                 break;
         }
 

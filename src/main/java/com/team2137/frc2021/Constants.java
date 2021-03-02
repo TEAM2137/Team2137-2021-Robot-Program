@@ -65,13 +65,13 @@ public class Constants {
 
         public static final double driveMotorRamp = 0.5;
 
-        public static double turningFeedForward = 0.03;
-        public static PID turningPIDConstants = new PID(0.13, 0, 0.004); // in the air
+        public static double turningFeedForward = 0.5; //0.8
+        public static PID turningPIDConstants = new PID(0.21, 0, 0.0015); // in the air
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
 //        public static PID turningPIDConstants = new PID(0.08, 0, 0); // carpet
 
-        public static PID drivePIDConstants = new PID(0.32, 0, 0);
-        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.17, 2.7, 0);
+        public static PID drivePIDConstants = new PID(0, 0, 0);
+        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.225, 0);
 
         public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -173.58, "Front Left");
         public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 80.51, "Front Right");
@@ -83,6 +83,8 @@ public class Constants {
         public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
         public static PID autoThetaPIDConstants = new PID(2, 0, 0); // old
         public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
+
+        public static PID purePIDTranslationConstants = new PID(0, 0, 0);
 
         public static class SwerveModuleConstants {
             public final int driveID;

@@ -5,9 +5,11 @@ import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.subsystems.Intake;
 import com.team2137.frc2021.subsystems.Spindexer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Test extends RobotContainer implements OpMode {
@@ -16,7 +18,10 @@ public class Test extends RobotContainer implements OpMode {
 
     @Override
     public void init() {
-        shooter.zeroHoodAngle();
+//        shooter.zeroHoodAngle();
+
+        Compressor c = new Compressor();
+//        c.stop();
     }
 
     @Override
@@ -28,44 +33,54 @@ public class Test extends RobotContainer implements OpMode {
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
         // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
         drivetrain.driveTranslationRotationRaw(speeds);
-
-        // intake
-
-//        System.out.println("prev " + intakeButtonPreviouslyPressed);
-//        System.out.println("cur  " + ControlsManager.getButton(ControlsManager.Control.IntakeButton));
-
-        if(ControlsManager.getButton(ControlsManager.Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
-            System.out.println("gogogo");
-            if(intakePreviouslyDeployed) {
-                intake.setIntakeState(Intake.IntakeState.Retracted);
-
-                intakePreviouslyDeployed = false;
-//                LEDs.getInstance().setState(LEDs.State.Yellow);
-            } else {
-                intake.setIntakeState(Intake.IntakeState.Running);
-
-                intakePreviouslyDeployed = true;
-//                LEDs.getInstance().enableDefaultState();
-            }
-        }
+//
+//        // intake
+//
+////        System.out.println("prev " + intakeButtonPreviouslyPressed);
+////        System.out.println("cur  " + ControlsManager.getButton(ControlsManager.Control.IntakeButton));
+//
+//        if(ControlsManager.getButton(ControlsManager.Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
+//            if(intakePreviouslyDeployed) {
+//                intake.setIntakeState(Intake.IntakeState.Retracted);
+//
+//                intakePreviouslyDeployed = false;
+////                LEDs.getInstance().setState(LEDs.State.Yellow);
+//            } else {
+//                intake.setIntakeState(Intake.IntakeState.Running);
+//
+//                intakePreviouslyDeployed = true;
+////                LEDs.getInstance().enableDefaultState();
+//            }
+//        }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(ControlsManager.Control.IntakeButton);
+//
+////        if (ControlsManager.getButton(ControlsManager.Control.XLockButton)) {
+////            shooter.setHoodAngle(0);
+////        }
+////
+////        if (ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine)) {
+////            shooter.setHoodAngle(15);
+////        }
+////
+////        if (ControlsManager.getButton(ControlsManager.Control.ShooterTrenchLine)) {
+////            shooter.setHoodAngle(30);
+////        }
+//
+////        spindexer.setPower(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? 1 : 0);
+//        spindexer.setPower(1);
+//        spindexer.setBallStop(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? Spindexer.BallStopState.Disabled : Spindexer.BallStopState.Enabled);
+//
+////        shooter.setFlywheelVelocity(3000);
+////        shooter.setPreRollerPower(1);
 
-        if (ControlsManager.getButton(ControlsManager.Control.XLockButton)) {
-            shooter.setHoodAngle(0);
-        }
+//        drivetrain.setAllModuleRotations(new Rotation2d());
+//        drivetrain.setAllModuleDriveVelocity(-Units.feetToMeters(4));
 
-        if (ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine)) {
-            shooter.setHoodAngle(15);
-        }
-
-        if (ControlsManager.getButton(ControlsManager.Control.ShooterTrenchLine)) {
-            shooter.setHoodAngle(30);
-        }
-
-        spindexer.setPower(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? 1 : 0);
     }
 
     @Override
     public void end() {
+        drivetrain.driveTranslationRotationRaw(new ChassisSpeeds());
+        shooter.setFlywheelVelocity(0);
     }
 }

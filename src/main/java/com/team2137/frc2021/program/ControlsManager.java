@@ -24,7 +24,7 @@ public class ControlsManager {
 
         HeadingTargetButton     (Button.kBumperLeft, driverController),
 
-        IntakeButton            (Button.kA, operatorController),
+        IntakeButton            (Button.kA, driverController),
 
         ShooterInitiationLine   (Button.kA, driverController),
         ShooterTrenchLine       (Button.kB, driverController),

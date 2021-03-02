@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         this.motor = new TalonSRX(Constants.Intake.motorID);
+        this.motor.configFactoryDefault();
         this.motor.setInverted(Constants.Intake.invertMotor);
 
         //CANSparkMax(Constants.Intake.motorID, MotorType.kBrushless);
@@ -44,7 +45,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setMotorPowerRaw(double power) {
-        motor.set(ControlMode.PercentOutput, power);;
+        motor.set(ControlMode.PercentOutput, power);
     }
 
     public void setIntakeState(IntakeState state) {
