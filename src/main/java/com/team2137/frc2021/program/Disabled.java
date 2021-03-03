@@ -12,16 +12,7 @@ public class Disabled extends RobotContainer implements OpMode {
     public void init() {
 //        CommandScheduler.getInstance().cancelAll();
 //        LEDs.getInstance().setDefaultState(LEDs.State.RainbowCycle, true);
-        limeLight.disableLED();
-
-        drivetrain.setAllModuleRotations(new Rotation2d(0));
-
-        drivetrain.setAllModuleDriveRawPower(0);
-        intake.setIntakeState(Intake.IntakeState.Retracted);
-        spindexer.setPower(0);
-        shooter.setHoodAngle(0);
-        shooter.setFlywheelVelocity(0);
-        shooter.setPreRollerPower(0);
+        //limeLight.disableLED();
     }
 
     @Override
@@ -31,6 +22,7 @@ public class Disabled extends RobotContainer implements OpMode {
 
     @Override
     public void end() {
-//        limeLight.enableLED();
+
+        //limeLight.enableLED();
     }
 }

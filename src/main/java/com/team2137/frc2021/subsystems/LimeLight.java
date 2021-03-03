@@ -3,7 +3,9 @@ package com.team2137.frc2021.subsystems;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import org.opencv.core.Point;
@@ -34,22 +36,31 @@ public class LimeLight extends SubsystemBase {
         }
     }
 
-    private NetworkTable limeLightTable; //Network table for getting the LimeLight values
+    private NetworkTable limeLightTableShoot; //Network table for getting the LimeLight values
+    private NetworkTable limeLightTableIntake;
+
     /**
      * tx - the degrees the target is on the camera
-     * ty - the degrees the target is vertically on the camera
+     * ty- the degrees the target is vertically on the camera
      * ta - the area of the bounding box in the total field of view
      */
-    private double tx, ty, ta; // Target position values
-    private boolean tv = false;
-    private double cameraAngle; //In Radians
+    private double txShoot, tyShoot, taShoot; // Target position values
+    private boolean tvShoot = false;
+
+    private double txBall, tyBall, taBall;
+    private boolean tvBall = false;
+
+    private double cameraAngleShoot; //In Radians
+    private double cameraAngleBall;
+
+    private double cameraIntakeHypot;
 
     private Point targetFieldCentricPosition;
     private Point robotCentricCameraPosition;
 
-    public LimeLight(double _cameraAngle, Point _robotCentricCameraPosition, Point _feildCentricTargetPosition, PID pidValues) {
-        limeLightTable = NetworkTableInstance.getDefault().getTable("limelight");
-        cameraAngle = Math.toRadians(_cameraAngle);
+    public LimeLight(double _cameraAngleShoot, Point _robotCentricCameraPosition, Point _feildCentricTargetPosition, PID pidValues) {
+        limeLightTableShoot = NetworkTableInstance.getDefault().getTable("limelight");
+        cameraAngleShoot = Math.toRadians(_cameraAngleShoot);
         robotCentricCameraPosition = _robotCentricCameraPosition;
     }
 
@@ -57,29 +68,30 @@ public class LimeLight extends SubsystemBase {
      * Create a new LimeLight object for the Subsystem using the default values in {@link com.team2137.frc2021.Constants}
      */
     public LimeLight() {
-        limeLightTable = NetworkTableInstance.getDefault().getTable("limelight");
-        cameraAngle = Math.toRadians(Constants.Shooter.LimeLightShootingCameraAngleDegree);
+        limeLightTableShoot = NetworkTableInstance.getDefault().getTable("limelight");
+        limeLightTableIntake = NetworkTableInstance.getDefault().getTable("test"); //TODO fix
+
+        cameraAngleShoot = Math.toRadians(Constants.Shooter.LimeLightShootingCameraAngleDegree);
+        cameraAngleBall = Math.toRadians(0);
+
         robotCentricCameraPosition = Constants.Shooter.LimeLightShootingCameraPosition;
 
         targetFieldCentricPosition = Constants.Shooter.LimeLightTargetFieldPosition;
-
-        limeLightTable.getEntry(LimeLightValues.TX.getTableName()).addListener((table) -> {
-            tx = Math.toRadians(table.getEntry().getDouble(0.0));
-        }, 0);
-        limeLightTable.getEntry(LimeLightValues.TY.getTableName()).addListener((table) -> {
-            ty = Math.toRadians(table.getEntry().getDouble(0.0));
-        }, 0);
-        limeLightTable.getEntry(LimeLightValues.TA.getTableName()).addListener((table) -> {
-            ta = table.getEntry().getDouble(0.0);
-        }, 0);
-        limeLightTable.getEntry(LimeLightValues.TV.getTableName()).addListener((table) -> {
-            tv = table.getEntry().getDouble(0) > 1.0;
-        }, 0);
     }
 
     @Override
     public void periodic() {
+        txShoot = Math.toRadians(limeLightTableShoot.getEntry(LimeLightValues.TX.getTableName()).getDouble(0.0));
+        tyShoot= Math.toRadians(limeLightTableShoot.getEntry(LimeLightValues.TY.getTableName()).getDouble(0.0));
+        taShoot = limeLightTableShoot.getEntry(LimeLightValues.TA.getTableName()).getDouble(0.0);
+        tvShoot = limeLightTableShoot.getEntry(LimeLightValues.TV.getTableName()).getDouble(0) >= 1.0;
 
+        txBall = Math.toRadians(limeLightTableIntake.getEntry(LimeLightValues.TX.getTableName()).getDouble(0.0));
+        tyBall = Math.toRadians(limeLightTableIntake.getEntry(LimeLightValues.TY.getTableName()).getDouble(0.0));
+        taBall = limeLightTableIntake.getEntry(LimeLightValues.TA.getTableName()).getDouble(0.0);
+        tvBall = limeLightTableIntake.getEntry(LimeLightValues.TV.getTableName()).getDouble(0) >= 1.0;
+
+        SmartDashboard.putNumber("Robot X: ", getCameraXPosition());
     }
 
     /**
@@ -87,31 +99,34 @@ public class LimeLight extends SubsystemBase {
      * @return Camera distance from object on horizontal plane
      */
     public double getRobotRadius() {
-        return (targetFieldCentricPosition.y - robotCentricCameraPosition.y) / Math.tan(cameraAngle + ty);
+        return ((targetFieldCentricPosition.y - robotCentricCameraPosition.y) / Math.tan(cameraAngleShoot + tyShoot)) * (tvShoot ? 1 : 0);
     }
 
     /**
      * Using the Radius from target on a horizontal plane find the Y cord.
      * @return Y cord of the CAMERA
      */
-    public double getCameraYPosition() {
-        return Math.sin(tx) * getRobotRadius();
+    public double getCameraYPosition(Rotation2d gyroAngle) {
+        Rotation2d invertedRobotPosition = gyroAngle.minus(new Rotation2d(270));
+
+        return Math.cos(invertedRobotPosition.getRadians() - txShoot) * getCameraXPosition();
     }
 
     /**
      * Using the Radius from target on a horizontal place find the X cord
+     * (ty + HalfLensView) + cameraAngle
      * @return X Cord of the CAMERA
      */
     public double getCameraXPosition() {
-        return Math.cos(tx) * getRobotRadius();
+        return Math.sin((tyShoot + Math.toRadians(20.5)) + cameraAngleShoot) * getRobotRadius();
     }
 
     /**
      * Convert the two doubles into a single point {@link org.opencv.core.Point}
      * @return XY point of the camera
      */
-    public Translation2d getCameraPoint() {
-        return new Translation2d(getCameraXPosition(), getCameraYPosition());
+    public Translation2d getCameraPoint(Rotation2d robotAngle) {
+        return new Translation2d(getCameraXPosition(), getCameraYPosition(robotAngle));
     }
 
     /**
@@ -119,26 +134,31 @@ public class LimeLight extends SubsystemBase {
      * @param gyroAngle The Angle of the robot in degrees
      * @return The translated Y value of the robot
      */
-    public double translateCameraYToCenter(double gyroAngle) {
-        return Math.sin(Math.toRadians(gyroAngle)) *  Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+    public double translateCameraYToCenter(Rotation2d gyroAngle) {
+        //return Math.sin(Math.toRadians(gyroAngle)) *  Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+        return robotCentricCameraPosition.y + getCameraYPosition(gyroAngle);
     }
 
     /**
      * Translate the Camera X into the robot X
-     * @param gyroAngle The Angle of the robot in degrees
      * @return The translated X value of the robot
      */
-    public double translateCameraXToCenter(double gyroAngle) {
-        return Math.cos(gyroAngle) * Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+    public double translateCameraXToCenter() {
+        //return Math.cos(gyroAngle) * Math.hypot(robotCentricCameraPosition.x, robotCentricCameraPosition.y);
+        return robotCentricCameraPosition.x + getCameraXPosition();
     }
 
     /**
-     * Convert the two doubles into a single point {@link org.opencv.core.Point}
+     * Convert the two doubles into a single point
      * @param gyroAngle Robot Angle
      * @return Center point of the robot
      */
-    public Translation2d getRobotPosition(double gyroAngle) {
-        return new Translation2d(translateCameraXToCenter(gyroAngle), translateCameraYToCenter(gyroAngle));
+    public Translation2d getRobotPosition(Rotation2d gyroAngle) {
+        return new Translation2d(translateCameraXToCenter(), translateCameraYToCenter(gyroAngle));
+    }
+
+    public double getProcessTime() {
+        return limeLightTableShoot.getEntry("tl").getDouble(11) + 11;
     }
 
 //    public double getProbableArea(Point robotPosition) {
@@ -150,27 +170,47 @@ public class LimeLight extends SubsystemBase {
      * @return
      */
     public boolean hasTarget() {
-        return tv;
+        return tvShoot;
     }
 
     /**
      * Setting the LimeLight to blink the green LEDs
      */
     public void forceLEDBlink() {
-        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(2);
+        limeLightTableShoot.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(2);
     }
 
     /**
      * Turn off the LimeLight LEDs
      */
     public void disableLED() {
-        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(1);
+        limeLightTableShoot.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(1);
     }
 
     /**
      * Turn on the LimeLight LEDs needed to view the target
      */
     public void enableLED() {
-        limeLightTable.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(3);
+        limeLightTableShoot.getEntry(LimeLightValues.LEDMODE.getTableName()).setNumber(3);
+    }
+
+    public double getBallRadiusToCamera() {
+        return (robotCentricCameraPosition.y) / Math.tan(cameraAngleBall + tyBall);
+    }
+
+    public double getBallYToCamera() {
+        return Math.sin(txBall) * getRobotRadius();
+    }
+
+    public double getBallXToCamera() {
+        return Math.cos(txShoot) * getRobotRadius();
+    }
+
+    public Translation2d getBallCameraPosition() {
+        return new Translation2d(getBallXToCamera(), getBallYToCamera());
+    }
+
+    public Translation2d getBallPosition(double robotAngle) {
+        return new Translation2d(Math.cos(robotAngle) * cameraIntakeHypot, Math.sin(robotAngle) * cameraIntakeHypot);
     }
 }

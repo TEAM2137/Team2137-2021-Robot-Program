@@ -9,6 +9,7 @@ import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import com.team2137.frc2021.subsystems.Intake.IntakeState;
 
@@ -54,19 +55,14 @@ public class Teleop extends RobotContainer implements OpMode {
         if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
             drivetrain.xLock();
         } else if(ControlsManager.getButton(Control.HeadingTargetButton)) {
-
             //Set the flywheel velocity for the shooter and the angle for the hood
             shooter.setFlywheelVelocity(ShooterMap.getFlywheelSpeed(limeLight.getRobotRadius()));
             shooter.setHoodAngle(ShooterMap.getHoodAngle(limeLight.getRobotRadius()));
 
-            Rotation2d angle;
+            Rotation2d angle = new Rotation2d(Constants.Shooter.LimeLightTargetFieldPosition.x, Constants.Shooter.LimeLightTargetFieldPosition.y);
             //If the LimeLight has a target use that target if not use the estimated position using pose
             if (limeLight.hasTarget())
-                angle = new Rotation2d(-(limeLight.translateCameraXToCenter(drivetrain.getRobotAngle().getDegrees()) - Constants.Shooter.LimeLightTargetFieldPosition.x), -(limeLight.translateCameraYToCenter(drivetrain.getRobotAngle().getDegrees()) - Constants.Shooter.LimeLightTargetFieldPosition.y));
-            else
-                angle = new Rotation2d(-(drivetrain.getPose().getX() - Constants.Shooter.LimeLightTargetFieldPosition.x), -(drivetrain.getPose().getY() - Constants.Shooter.LimeLightTargetFieldPosition.y));
-
-            //TODO add an insurance on the pose and if needed add control for rotating until seeing target
+                drivetrain.addVisionReading(new Pose2d(limeLight.getRobotPosition(drivetrain.getRobotAngle()), drivetrain.getRobotAngle()), limeLight.getProcessTime());
 
             //Power for the robot to turn given the Robot Angle in Radians
             double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
@@ -89,9 +85,6 @@ public class Teleop extends RobotContainer implements OpMode {
             drivetrain.driveTranslationRotationRaw(speeds);
         }
 
-        if(ControlsManager.getButton(Control.ShooterInitiationLine)) {
-            shooter.setFlywheelVelocity(7000);
-        }
 //        drivetrain.setAllModuleRotations(new Rotation2d(Math.atan2(forward, strafe)));
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
 

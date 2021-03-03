@@ -102,6 +102,10 @@ public class SwerveDrivetrain extends SubsystemBase {
         return Rotation2d.fromDegrees(ypr[0]).minus(new Rotation2d());
     }
 
+    public void addVisionReading(Pose2d pose, double processingTime) {
+        this.poseEstimator.addVisionMeasurement(pose, processingTime);
+    }
+
     /**
      * @param speeds speed of the chassis with -1 to 1 on translation
      */

@@ -4,6 +4,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.subsystems.Intake;
+import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -90,6 +91,15 @@ public class Test extends RobotContainer implements OpMode {
 //        drivetrain.setAllModuleRotations(new Rotation2d());
 //        drivetrain.setAllModuleDriveVelocity(-Units.feetToMeters(4));
 
+        if (ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine)) {
+            shooter.setHoodAngle(15);
+        }
+
+        if (ControlsManager.getButton(ControlsManager.Control.ShooterTrenchLine)) {
+            shooter.setHoodAngle(30);
+        }
+
+        spindexer.setPower(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton) ? 1 : 0);
     }
 
     @Override
