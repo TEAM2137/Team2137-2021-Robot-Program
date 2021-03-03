@@ -125,6 +125,7 @@ public class SwerveDriveModule extends SubsystemBase {
 //        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
         double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
 
+        SmartDashboard.putNumber("Average Speed: ", output);
 //        double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward * Math.abs(Math.signum(Util.deadband(turningPID.getPositionError(), 0.5))) + pidEffort;
 //        double output = Constants.Drivetrain.turningFeedForward;
 

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -21,18 +22,31 @@ public class Test extends RobotContainer implements OpMode {
 //        shooter.zeroHoodAngle();
 
         Compressor c = new Compressor();
+
+        drivetrain.setAllModuleRotations(new Rotation2d(0));
 //        c.stop();
     }
 
+    boolean running = false;
+
     @Override
     public void periodic() {
+        drivetrain.setAllModuleRotations(new Rotation2d(0));
         double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2);
         double turn = (3 * -ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
 
-        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
+        if(ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine))
+            running = true;
+
+        //ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
+        ChassisSpeeds speeds;
+        if(running)
+            drivetrain.setAllModuleDriveVelocity(3);
+        else
+            drivetrain.setAllModuleDriveVelocity(0);
         // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
-        drivetrain.driveTranslationRotationRaw(speeds);
+//        drivetrain.driveTranslationRotationVelocity(spe);
 //
 //        // intake
 //

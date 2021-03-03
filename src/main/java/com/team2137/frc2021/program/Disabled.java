@@ -4,6 +4,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.subsystems.Intake;
 import com.team2137.frc2021.subsystems.LEDs;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Disabled extends RobotContainer implements OpMode {
@@ -12,6 +13,8 @@ public class Disabled extends RobotContainer implements OpMode {
 //        CommandScheduler.getInstance().cancelAll();
 //        LEDs.getInstance().setDefaultState(LEDs.State.RainbowCycle, true);
         limeLight.disableLED();
+
+        drivetrain.setAllModuleRotations(new Rotation2d(0));
 
         drivetrain.setAllModuleDriveRawPower(0);
         intake.setIntakeState(Intake.IntakeState.Retracted);
