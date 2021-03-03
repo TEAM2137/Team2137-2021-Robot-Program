@@ -207,6 +207,7 @@ public class Shooter extends SubsystemBase {
     public void setPreset(ShooterPresets preset) {
         setFlywheelVelocity(preset.flywheelSpeed);
         setHoodAngle(preset.hoodAngle);
+        setPreRollerPower(preset.prerollerPower);
     }
 
     /**
