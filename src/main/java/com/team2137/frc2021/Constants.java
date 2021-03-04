@@ -14,10 +14,12 @@ import org.opencv.core.Point;
 public class Constants {
 
     public enum ShooterPresets {
+        Off(0, 0, 0),
+
         InitiationLine (0, 5000, .5),
         Tench (0, 6000, .5),
 
-        AutoShoot(0, 3000, .5)
+        AutoShoot(17, 3800, 1)
         ;
 
         public double hoodAngle = 0;
@@ -79,12 +81,14 @@ public class Constants {
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 121.11, "Back Right");
 
         public static PID translationPIDConstants = new PID(.02, 0, 0.25);
-        public static PID teleopThetaPIDConstants = new PID(0.8, 0, 5); // new
+
+        public static PID teleopThetaPIDConstants = new PID(2.3, 0, 0.1);
         public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
-        public static PID autoThetaPIDConstants = new PID(2, 0, 0); // old
+
+        public static PID autoThetaPIDConstants = new PID(2, 0, 0);
         public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
 
-        public static PID purePIDTranslationConstants = new PID(0, 0, 0);
+        public static PID purePIDTranslationConstants = new PID(0.6, 0, 0);
 
         public static class SwerveModuleConstants {
             public final int driveID;

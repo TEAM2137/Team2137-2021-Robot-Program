@@ -3,10 +3,12 @@ package com.team2137.frc2021.subsystems;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.team2137.frc2021.subsystems.SwerveDrivetrain;
 
 import org.opencv.core.Point;
 
@@ -58,6 +60,8 @@ public class LimeLight extends SubsystemBase {
     private Point targetFieldCentricPosition;
     private Point robotCentricCameraPosition;
 
+    private SwerveDrivetrain drivetrain;
+
     public LimeLight(double _cameraAngleShoot, Point _robotCentricCameraPosition, Point _feildCentricTargetPosition, PID pidValues) {
         limeLightTableShoot = NetworkTableInstance.getDefault().getTable("limelight");
         cameraAngleShoot = Math.toRadians(_cameraAngleShoot);
@@ -67,7 +71,7 @@ public class LimeLight extends SubsystemBase {
     /**
      * Create a new LimeLight object for the Subsystem using the default values in {@link com.team2137.frc2021.Constants}
      */
-    public LimeLight() {
+    public LimeLight(SwerveDrivetrain drivetrain) {
         limeLightTableShoot = NetworkTableInstance.getDefault().getTable("limelight");
         limeLightTableIntake = NetworkTableInstance.getDefault().getTable("test"); //TODO fix
 
@@ -77,6 +81,8 @@ public class LimeLight extends SubsystemBase {
         robotCentricCameraPosition = Constants.Shooter.LimeLightShootingCameraPosition;
 
         targetFieldCentricPosition = Constants.Shooter.LimeLightTargetFieldPosition;
+
+        this.drivetrain = drivetrain;
     }
 
     @Override
@@ -92,6 +98,12 @@ public class LimeLight extends SubsystemBase {
         tvBall = limeLightTableIntake.getEntry(LimeLightValues.TV.getTableName()).getDouble(0) >= 1.0;
 
         SmartDashboard.putNumber("Robot X: ", getCameraXPosition());
+
+        if(hasTarget()) {
+//            drivetrain.addVisionMeasurement(new Pose2d(
+//                    getRobotPosition(drivetrain.getRobotAngle()), drivetrain.getRobotAngle()),
+//                    System.currentTimeMillis() - getProcessTime());
+        }
     }
 
     /**
@@ -212,5 +224,9 @@ public class LimeLight extends SubsystemBase {
 
     public Translation2d getBallPosition(double robotAngle) {
         return new Translation2d(Math.cos(robotAngle) * cameraIntakeHypot, Math.sin(robotAngle) * cameraIntakeHypot);
+    }
+
+    public double getTx() {
+        return txShoot;
     }
 }

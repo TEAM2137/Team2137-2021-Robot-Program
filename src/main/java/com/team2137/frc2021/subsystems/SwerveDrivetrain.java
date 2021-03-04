@@ -59,6 +59,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 
         // the gyro
         pigeonIMU = new PigeonIMU(Constants.Drivetrain.gyroID);
+        pigeonIMU.configFactoryDefault();
+        calibrateGyro();
         pigeonIMU.setYaw(0);
 
         // create pose estimator
@@ -84,7 +86,7 @@ public class SwerveDrivetrain extends SubsystemBase {
         SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
 
         if(SmartDashboard.getBoolean("Reset Position", false)) {
-            resetOdometry();
+//            resetOdometry();
             SmartDashboard.putBoolean("Reset Position", false);
         }
 
@@ -100,6 +102,10 @@ public class SwerveDrivetrain extends SubsystemBase {
         double[] ypr = new double[3];
         pigeonIMU.getYawPitchRoll(ypr);
         return Rotation2d.fromDegrees(ypr[0]).minus(new Rotation2d());
+    }
+
+    public void calibrateGyro() {
+        pigeonIMU.enterCalibrationMode(PigeonIMU.CalibrationMode.Temperature);
     }
 
     public void addVisionReading(Pose2d pose, double processingTime) {

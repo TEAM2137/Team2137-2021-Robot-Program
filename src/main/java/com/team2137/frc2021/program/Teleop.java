@@ -78,7 +78,7 @@ public class Teleop extends RobotContainer implements OpMode {
 
         } else {
             if(!spindexer.isBallStopEnabled()) {
-                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 1));
+//                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 1));
             }
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));

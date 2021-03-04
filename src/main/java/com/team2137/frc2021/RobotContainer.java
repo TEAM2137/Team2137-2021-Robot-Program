@@ -21,7 +21,7 @@ public class RobotContainer {
 
         drivetrain = new SwerveDrivetrain();
         shooter = new Shooter();
-        limeLight = new LimeLight();
+        limeLight = new LimeLight(drivetrain);
         intake = new Intake();
         spindexer = new Spindexer();
     }

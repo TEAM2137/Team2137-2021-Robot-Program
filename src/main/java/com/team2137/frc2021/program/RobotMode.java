@@ -18,6 +18,7 @@ public class RobotMode extends RobotContainer implements OpMode {
         drivetrain.periodic();
         shooter.periodic();
         intake.periodic();
+        spindexer.periodic();
     }
 
     @Override

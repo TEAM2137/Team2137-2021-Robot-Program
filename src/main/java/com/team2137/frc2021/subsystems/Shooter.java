@@ -9,10 +9,13 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.team2137.frc2021.Constants;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 
 import static com.team2137.frc2021.Constants.*;
 import static com.team2137.frc2021.Constants.Shooter.*;
@@ -47,10 +50,12 @@ public class Shooter extends SubsystemBase {
     private double dblHoodMotorHomingCurrentLimit = HoodMotorHomingCurrentSignal; //The Current that is needed for the hood to be considered homed
     private double dblHoodMotorTargetAngle = 0; //The goal for the hood position and needed if homing is called during a movement
 
+    private Timer hoodHomingTimer;
+
     public Shooter() {
         //Make sure to add current limiting for the hood motor so that it does not burn
 //        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
-        this.dblHoodMotorHomingCurrentLimit = 5; //temp
+        this.dblHoodMotorHomingCurrentLimit = 10; //temp
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -93,6 +98,8 @@ public class Shooter extends SubsystemBase {
 
         this.hoodMotor.setSmartCurrentLimit(HoodMotorObject.getCurrentLimit());
         this.hoodMotor.setInverted(HoodMotorObject.inverted());
+
+        this.hoodHomingTimer = new Timer();
     }
 
     @Override
@@ -102,16 +109,19 @@ public class Shooter extends SubsystemBase {
          */
         switch (this.mStateHoodHoming) {
             case STATE_INIT: //Start the homing process of the hood
-                this.startTime = System.currentTimeMillis();
-                this.hoodMotor.set(-0.25); //Reverse the hood back to zero direction
-                this.mStateHoodHoming = StepState.STATE_RUNNING; //Move to the looping stage
+                if(DriverStation.getInstance().isEnabled()) {
+                    this.hoodHomingTimer.reset();
+                    this.hoodHomingTimer.start();
+                    this.hoodMotor.set(-0.25); //Reverse the hood back to zero direction
+                    this.mStateHoodHoming = StepState.STATE_RUNNING; //Move to the looping stage
+                }
                 break;
             case STATE_RUNNING: //Loop and check if the hood is a home yet
                 //If the motor is drawing to much power stop the power and set that as the home position and continue commands before it
                 SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
-                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit && System.currentTimeMillis() - startTime > 200) {
-                    this.hoodMotor.set(0);
+                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit && hoodHomingTimer.hasElapsed(.3)) {
                     this.hoodMotorEncoder.setPosition(-8.35917);
+                    this.hoodMotor.set(0);
                     this.hoodPIDController.setReference(dblHoodMotorTargetAngle, ControlType.kPosition);
                     this.mStateHoodHoming = Constants.StepState.STATE_FINISH;
                 }
@@ -120,10 +130,10 @@ public class Shooter extends SubsystemBase {
                 break;
         }
 
-        SmartDashboard.putNumber("Hood Angle", getHoodAngle());
-        SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
+//        SmartDashboard.putNumber("Hood Angle", getHoodAngle());
+//        SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
 
-        double flywheelPower = (flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12;
+        double flywheelPower = MathUtil.clamp((flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12, 0, 1);
 
         //.00083
         if(dblFlywheelVelocityGoal < getFlywheelVelocity() - 600) {

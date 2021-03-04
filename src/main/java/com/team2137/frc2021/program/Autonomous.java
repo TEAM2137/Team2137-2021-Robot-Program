@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpiutil.math.MathUtil;
 
 import java.util.ArrayList;
 
@@ -50,11 +51,11 @@ public class Autonomous extends RobotContainer implements OpMode {
     Timer switchTimer = new Timer();
     Timer shootTimer = new Timer();
 
-    PIDController xController = new PIDController(Constants.Drivetrain.translationPIDConstants.getP(), Constants.Drivetrain.translationPIDConstants.getI(), Constants.Drivetrain.translationPIDConstants.getD());
-    PIDController yController = new PIDController(Constants.Drivetrain.translationPIDConstants.getP(), Constants.Drivetrain.translationPIDConstants.getI(), Constants.Drivetrain.translationPIDConstants.getD());
-    ProfiledPIDController thetaController = new ProfiledPIDController(Constants.Drivetrain.teleopThetaPIDConstants.getP(), Constants.Drivetrain.teleopThetaPIDConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstants.getD(), Constants.Drivetrain.autoThetaPIDConstraints);
+    PIDController xController;
+    PIDController yController;
+    ProfiledPIDController thetaController;
 
-    Pose2d shootingPosition = new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(180));
+    Pose2d shootingPosition = new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0));
 
     @Override
     public void init() {
@@ -65,13 +66,26 @@ public class Autonomous extends RobotContainer implements OpMode {
         switchTimer.stop();
         switchTimer.reset();
 
-        xController.setTolerance(0.1);
-        yController.setTolerance(0.1);
-        thetaController.setTolerance(0.1);
-
         spindexer.setPower(0);
 
         hasHadTarget = false;
+
+        thetaController = new ProfiledPIDController(Constants.Drivetrain.teleopThetaPIDConstants.getP(),
+                Constants.Drivetrain.teleopThetaPIDConstants.getI(),
+                Constants.Drivetrain.teleopThetaPIDConstants.getD(),
+                Constants.Drivetrain.teleopThetaPIDConstraints);
+
+        xController = new PIDController(Constants.Drivetrain.purePIDTranslationConstants.getP(),
+                Constants.Drivetrain.purePIDTranslationConstants.getI(),
+                Constants.Drivetrain.purePIDTranslationConstants.getD());
+
+        yController = new PIDController(Constants.Drivetrain.purePIDTranslationConstants.getP(),
+                Constants.Drivetrain.purePIDTranslationConstants.getI(),
+                Constants.Drivetrain.purePIDTranslationConstants.getD());
+
+        xController.setTolerance(0.1);
+        yController.setTolerance(0.1);
+        thetaController.setTolerance(Math.toRadians(2.5));
 
 //        llTable.getEntry("tv").addListener((table) -> {
 //            hasTarget = table.getEntry().getDouble(0) >= 1.0;
@@ -103,7 +117,7 @@ public class Autonomous extends RobotContainer implements OpMode {
                     SmartDashboard.putString("status", "seen");
                     double turn = 0;
                     if(hasTarget && ballY < 0) {
-                        turn = ballSearchTurnController.calculate(-ballX, -5);
+                        turn = ballSearchTurnController.calculate(-ballX, -6);
                     }
                     double drive = 0.2;
                     drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(drive, 0, -turn));
@@ -114,7 +128,7 @@ public class Autonomous extends RobotContainer implements OpMode {
                     drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(0, 0, 0.5));
                 }
 
-                if(intake.getIntakeCurrentDraw() > 5 && intakeStartTimer.hasElapsed(0.5)) {
+                if(intake.getIntakeCurrentDraw() > 10 && intakeStartTimer.hasElapsed(1)) {
                     intakeTimer.reset();
                     intakeTimer.start();
                     switchTimer.reset();
@@ -131,39 +145,44 @@ public class Autonomous extends RobotContainer implements OpMode {
                     state = State.DrivingToGoal;
                     switchTimer.stop();
                     switchTimer.reset();
+                    shooter.setPreset(Constants.ShooterPresets.AutoShoot);
                 }
                 break;
             case DrivingToGoal:
                 intake.setIntakeState(Intake.IntakeState.Retracted);
 
-                double xPower = xController.calculate(drivetrain.getPose().getX(), 0);
-                double yPower = yController.calculate(drivetrain.getPose().getY(), 0);
-                double thetaPower = thetaController.calculate(drivetrain.getPose().getRotation().getRadians(), 180);
+                double xPower = MathUtil.clamp(xController.calculate(-drivetrain.getPose().getX(), 0), -0.45, 0.45);
+                double yPower = MathUtil.clamp(yController.calculate(-drivetrain.getPose().getY(), 0), -0.45, 0.45);
+                double thetaPower;
 
-                drivetrain.driveTranslationRotationRaw(new ChassisSpeeds());
+//                if(limeLight.hasTarget()) {
+//                    thetaPower = Math.toDegrees(limeLight.getTx()) / 25.0;
+//                } else {
+                    thetaPower = thetaController.calculate(drivetrain.getPose().getRotation().getRadians(), 0);
+//                }
 
-                spindexer.setPower(1);
-                shooter.setPreset(Constants.ShooterPresets.AutoShoot);
+                drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(xPower, yPower, thetaPower));
 
-//                shooter.setPreset(Constants.ShooterPresets.AutoShoot);
+                spindexer.setPower(0);
 
-//                drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(xPower, yPower, thetaPower));
+                shooter.setPreRollerPower(1);
 
                 if(xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint()) {
-                    spindexer.setBallStop(Spindexer.BallStopState.Disabled);
+                    DriverStation.reportError("at target", false);
                     shootTimer.start();
+                    spindexer.setPower(1);
                 }
 
-                if(shootTimer.hasElapsed(.5)) {
+                if(shootTimer.hasElapsed(6)) {
 //                    spindexer.setBallStop(Spindexer.BallStopState.Enabled);
-//                    shooter.setFlywheelVelocity(0);
-                    shooter.setHoodAngle(0);
-//                    shooter.setPreRollerPower(0);
+                    spindexer.setPower(0);
+                    shooter.setPreset(Constants.ShooterPresets.Off);
                     state = State.Searching;
                     shootTimer.stop();
                     shootTimer.reset();
                     intakeStartTimer.stop();
                     intakeStartTimer.reset();
+                    hasHadTarget = false;
                 }
                 break;
         }
