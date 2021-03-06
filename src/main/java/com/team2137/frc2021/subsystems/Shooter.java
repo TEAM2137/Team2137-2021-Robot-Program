@@ -118,8 +118,7 @@ public class Shooter extends SubsystemBase {
                 break;
             case STATE_RUNNING: //Loop and check if the hood is a home yet
                 //If the motor is drawing to much power stop the power and set that as the home position and continue commands before it
-                SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
-                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit && hoodHomingTimer.hasElapsed(.3)) {
+                if (this.hoodMotor.getOutputCurrent() > this.dblHoodMotorHomingCurrentLimit && System.currentTimeMillis() - startTime > 200) {
                     this.hoodMotorEncoder.setPosition(-8.35917);
                     this.hoodMotor.set(0);
                     this.hoodPIDController.setReference(dblHoodMotorTargetAngle, ControlType.kPosition);
@@ -135,7 +134,6 @@ public class Shooter extends SubsystemBase {
 
         double flywheelPower = MathUtil.clamp((flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12, 0, 1);
 
-        //.00083
         if(dblFlywheelVelocityGoal < getFlywheelVelocity() - 600) {
             flywheelPower = 0;
         }
@@ -159,8 +157,12 @@ public class Shooter extends SubsystemBase {
         return Constants.withinClip(getFlywheelVelocity(), dblFlywheelVelocityGoal, width);
     }
 
-    public void setFlyWheelIdle() {
+    public void idleFlyWheel() {
         setFlywheelVelocity(dblFlywheelVelocityGoal * FlywheelIdlePercent);
+    }
+
+    public void revFlywheel() {
+        setFlywheelVelocity(dblFlywheelVelocityGoal);
     }
 
     /**
@@ -172,29 +174,27 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * Sets the velocity goal of the flywheel using {@link #setFlywheelVelocity(double)}
-     * @param preset Preset desired {@link com.team2137.frc2021.Constants.ShooterPresets}
-     */
-    public void setFlywheelSpeed(ShooterPresets preset) {
-        setFlywheelVelocity(preset.flywheelSpeed);
-        setHoodAngle(preset.hoodAngle);
-    }
-
-    /**
      * Sets raw power to the PreRoller on the shooter
      * @param speed 0~1 value for PreRoller Speed
      */
     public void setPreRollerPower(double speed) {
-        SmartDashboard.putNumber("PreRoller Power", preRollerMotor.get());
         this.preRollerMotor.set(speed);
     }
 
     /**
      * Sets raw power to the PreRoller on the shooter using {@link #setPreRollerPower(double)} to default power of 1
      */
-    public void setPreRollerPower() {
+    public void enablePreRoller() {
         setPreRollerPower(1);
     }
+
+    /**
+     * Sets raw power to the PreRoller on the shooter using {@link #setPreRollerPower(double)} to default power of 0
+     */
+    public void disablePreRoller() {
+        setPreRollerPower(0);
+    }
+
 
     /**
      * Using the built in Hood motor encoder returns the position of the hood
@@ -234,4 +234,5 @@ public class Shooter extends SubsystemBase {
     public boolean isHoodZeroed() {
         return this.mStateHoodHoming != StepState.STATE_NOT_STARTED;
     }
+
 }

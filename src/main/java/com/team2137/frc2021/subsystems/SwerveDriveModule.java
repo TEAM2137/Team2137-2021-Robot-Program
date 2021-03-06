@@ -219,6 +219,10 @@ public class SwerveDriveModule extends SubsystemBase {
         setTurningTarget(getModuleRotation());
     }
 
+    public void setDriveMode(boolean brake) {
+        driveMotor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
+    }
+
     private enum DriveMode {
         RawPower, Velocity
     }

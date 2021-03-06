@@ -4,6 +4,7 @@ import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.util.PID;
 import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,7 +74,7 @@ public class LimeLight extends SubsystemBase {
      */
     public LimeLight(SwerveDrivetrain drivetrain) {
         limeLightTableShoot = NetworkTableInstance.getDefault().getTable("limelight");
-        limeLightTableIntake = NetworkTableInstance.getDefault().getTable("test"); //TODO fix
+        limeLightTableIntake = NetworkTableInstance.getDefault().getTable("limelight-two");
 
         cameraAngleShoot = Math.toRadians(Constants.Shooter.LimeLightShootingCameraAngleDegree);
         cameraAngleBall = Math.toRadians(0);
@@ -224,9 +225,5 @@ public class LimeLight extends SubsystemBase {
 
     public Translation2d getBallPosition(double robotAngle) {
         return new Translation2d(Math.cos(robotAngle) * cameraIntakeHypot, Math.sin(robotAngle) * cameraIntakeHypot);
-    }
-
-    public double getTx() {
-        return txShoot;
     }
 }

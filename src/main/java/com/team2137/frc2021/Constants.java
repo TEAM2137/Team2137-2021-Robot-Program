@@ -43,7 +43,7 @@ public class Constants {
         public static final Point LimeLightShootingCameraPosition = new Point(0, 0);
         public static final Point LimeLightTargetFieldPosition = new Point(0, 7.5);
         public static final double LimeLightShootingCameraAngleDegree = 35;
-        public static final double FlywheelIdlePercent = 0.7;
+        public static final double FlywheelIdlePercent = 0.6;
         public static final int HoodMotorHomingCurrentSignal = 20;
     }
 
@@ -88,7 +88,7 @@ public class Constants {
         public static PID autoThetaPIDConstants = new PID(2, 0, 0);
         public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
 
-        public static PID purePIDTranslationConstants = new PID(0.6, 0, 0);
+        public static PID purePIDTranslationConstants = new PID(0, 0, 0);
 
         public static class SwerveModuleConstants {
             public final int driveID;
@@ -118,6 +118,10 @@ public class Constants {
 
         StepState(String name) {
             this.name = name;
+        }
+
+        public boolean isFinished() {
+            return this == STATE_FINISH;
         }
 
         public String toString() {

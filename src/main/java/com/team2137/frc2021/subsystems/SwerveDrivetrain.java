@@ -255,4 +255,11 @@ public class SwerveDrivetrain extends SubsystemBase {
     public TrajectoryConfig getDefaultConstraint() {
         return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
     }
+
+    public void setBrakeMode(boolean brake) {
+        this.frontLeftModule.setDriveMode(brake);
+        this.backLeftModule.setDriveMode(brake);
+        this.frontRightModule.setDriveMode(brake);
+        this.backRightModule.setDriveMode(brake);
+    }
 }
