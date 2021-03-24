@@ -141,8 +141,8 @@ public class Constants {
 
     public static class Spindexer {
         public static int motorID = 35;
-        public static int solenoidForwardID = 4;
-        public static int solenoidReverseID = 3;
+        public static int solenoidForwardID = 3;
+        public static int solenoidReverseID = 4;
 
         public static boolean invertMotor = false;
 

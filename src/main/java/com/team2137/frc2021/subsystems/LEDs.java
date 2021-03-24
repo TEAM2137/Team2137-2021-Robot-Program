@@ -1,13 +1,13 @@
 package com.team2137.frc2021.subsystems;
 
 import com.ctre.phoenix.CANifier;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.team2137.libs.Util;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class LEDs implements Subsystem {
+public class LEDs extends SubsystemBase {
 
     private static LEDs instance;
 
@@ -24,6 +24,8 @@ public class LEDs implements Subsystem {
         this.currentState = State.Off;
 
         this.cycleTimer.start();
+
+        setLEDs(new Color(0 ,0, 0));
     }
 
     public static void initialize(CANifier canifier) {
@@ -36,21 +38,25 @@ public class LEDs implements Subsystem {
 
     @Override
     public void periodic() {
+//        System.out.println(currentState);
         switch(currentState.type) {
             case Static:
-                setLEDs(currentState.color.red, currentState.color.green, currentState.color.blue);
+                setLEDs(currentState.color);
                 break;
             case HSVCycle:
                 cycleCurrentHue += currentState.increment;
                 cycleCurrentHue %= 360;
 
                 double outputHue = (cycleCurrentHue + currentState.startingHue) % 360;
-                Color color = Color.fromHSV((int) Util.clamp(outputHue, 0, 360) / 2, (int) currentState.s, (int) currentState.v);
+                System.out.println(outputHue);
+                Color color = Color.fromHSV((int) Util.clamp(outputHue, 0, 360) / 2, (int) currentState.s * 255, (int) currentState.v * 255);
+                System.out.println(color.red + " " + color.green + " " + color.blue);
                 setLEDs(color);
                 break;
             case Blink:
+                System.out.println(cycleTimer.get() % (currentState.onTime + currentState.offTime));
                 if(cycleTimer.get() % (currentState.onTime + currentState.offTime) < currentState.onTime) {
-                    setLEDs(currentState.color.red, currentState.color.green, currentState.color.blue);
+                    setLEDs(currentState.color);
                 } else {
                     setLEDs(0, 0, 0);
                 }
@@ -59,6 +65,8 @@ public class LEDs implements Subsystem {
                 double currentTime = cycleTimer.get() % (currentState.colors.length * currentState.timePerColor);
 
                 Color currentColor = currentState.colors[(int) Math.floor(currentTime % currentState.timePerColor)];
+
+                System.out.println(Math.floor(currentTime % currentState.timePerColor));
 
                 setLEDs(currentColor);
                 break;
@@ -71,17 +79,17 @@ public class LEDs implements Subsystem {
      * @param g the green value of the color (0-1)
      * @param b the blue value of the color (0-1)
      */
-    private void setLEDs(double r, double g, double b) {
-        canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelA);
+    public void setLEDs(double r, double g, double b) {
         canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelB);
-        canifier.setLEDOutput(r, CANifier.LEDChannel.LEDChannelC);
+        canifier.setLEDOutput(g, CANifier.LEDChannel.LEDChannelC);
+        canifier.setLEDOutput(b, CANifier.LEDChannel.LEDChannelA);
     }
 
     /**
      * Sets the LEDs to a certain color
      * @param color the color to be displayed
      */
-    private void setLEDs(Color color) {
+    public void setLEDs(Color color) {
         setLEDs(color.red, color.green, color.blue);
     }
 
@@ -121,9 +129,11 @@ public class LEDs implements Subsystem {
         Yellow(255, 255, 0),
         Orange(255, 165, 0),
 
+        BlinkBlue(0, 0, 255, 2, 1),
+
         RainbowCycle(0, 1, 1, 2),
 
-        TeamColorCycle(2, new Color(0, 0, 1), new Color(0, 0, 1));
+        TeamColorCycle(2, new Color(0, 0, 1), new Color(1, 0.647, 0));
         ;
 
         Color color;

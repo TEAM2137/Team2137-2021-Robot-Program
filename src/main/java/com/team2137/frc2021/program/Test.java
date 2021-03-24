@@ -5,6 +5,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.SetIntakeCommand;
 import com.team2137.frc2021.subsystems.Intake;
+import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -136,6 +137,8 @@ public class Test extends RobotContainer implements OpMode {
 
 //        shooter.setPreset(Constants.ShooterPresets.AutoShoot);
 //        spindexer.setPower(1);
+
+        LEDs.getInstance().setState(LEDs.State.Blue);
     }
 
     @Override

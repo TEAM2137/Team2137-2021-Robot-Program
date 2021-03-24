@@ -2,6 +2,7 @@ package com.team2137.frc2021.program;
 
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
+import com.team2137.frc2021.subsystems.LEDs;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class RobotMode extends RobotContainer implements OpMode {
@@ -13,12 +14,13 @@ public class RobotMode extends RobotContainer implements OpMode {
 
     @Override
     public void periodic() {
-//        CommandScheduler.getInstance().run();
-        limeLight.periodic();
-        drivetrain.periodic();
-        shooter.periodic();
-        intake.periodic();
-        spindexer.periodic();
+        CommandScheduler.getInstance().run();
+
+//        limeLight.periodic();
+//        drivetrain.periodic();
+//        shooter.periodic();
+//        intake.periodic();
+//        spindexer.periodic();
     }
 
     @Override

@@ -19,11 +19,18 @@ public class Disabled extends RobotContainer implements OpMode {
         spindexer.setPower(0);
         shooter.setPreset(Constants.ShooterPresets.Off);
         intake.setIntakeState(Intake.IntakeState.Retracted);
+
+        LEDs.getInstance().setState(LEDs.State.TeamColorCycle);
     }
 
     @Override
     public void periodic() {
-
+//        if(ControlsManager.getButton(ControlsManager.Control.HeadingTargetButton)) {
+//            LEDs.getInstance().setState(LEDs.State.Blue);
+//        }
+//        if(ControlsManager.getButton(ControlsManager.Control.IntakeButton)) {
+//            LEDs.getInstance().setState(LEDs.State.TeamColorCycle);
+//        }
     }
 
     @Override
