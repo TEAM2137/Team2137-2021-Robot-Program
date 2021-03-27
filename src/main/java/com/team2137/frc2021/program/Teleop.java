@@ -3,25 +3,35 @@ package com.team2137.frc2021.program;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
-import com.team2137.frc2021.commands.SetIntakeCommand;
-import com.team2137.frc2021.commands.SetSpindexerCommand;
 import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.frc2021.subsystems.LEDs;
+import com.team2137.frc2021.subsystems.LimeLight;
+import com.team2137.frc2021.subsystems.Spindexer;
 import com.team2137.frc2021.util.PID;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import com.team2137.frc2021.subsystems.Intake.IntakeState;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpiutil.math.MathUtil;
+
+import java.util.Timer;
+import java.util.TreeMap;
 
 public class Teleop extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
     private boolean intakePreviouslyDeployed = false;
 
     private ProfiledPIDController headingController;
+
+    private boolean boolDriverControlledTurning = true;
+    private Rotation2d dblDriveTrainTurnGoal = new Rotation2d();
 
     @Override
     public void init() {
@@ -31,78 +41,98 @@ public class Teleop extends RobotContainer implements OpMode {
         headingController = new ProfiledPIDController(headingConstants.getP(), headingConstants.getI(), headingConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstraints);
         headingController.enableContinuousInput(-Math.PI, Math.PI);
 
+        spindexer.setBallStop(Spindexer.BallStopState.Enabled);
+        spindexer.setPower(1);
+        drivetrain.setBrakeMode(true);
+
+        shooter.setFlywheelVelocity(3000);
+        shooter.idleFlyWheel();
+//        shooter.zeroHoodAngle();
 //        LEDs.getInstance().setDefaultState(LEDs.State.Blue, true);
+//        shooter.setHoodAngle(26.0);
     }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Limelight Robot Radius", shooterLimeLight.getRadialDistance());
+//        drivetrain.setAllModuleRotations(new Rotation2d(0));
+//        double forward = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
+        double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
+        double strafe = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
+        double turn = 3 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
 
-        // Drivetrain
-        double forward = 0.75 * -ControlsManager.getAxis(Control.DriveAxis, 0.2);
-        double strafe = 0.75 * -ControlsManager.getAxis(Control.StrafeAxis, 0.2);
-        double turn = (3 * -ControlsManager.getAxis(Control.RotationAxis, 0.2));
-
-//        if (limeLight.hasTarget() && ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
-//            turn += limeLight.getRotationVector();
-//        } else if (ControlsManager.getAxis(Control.LimeLightButton, 0) > 0.5) {
-//            turn += .5;
-//        }
-
-        SmartDashboard.putNumber("forward", forward);
-        SmartDashboard.putNumber("strafe", strafe);
-        SmartDashboard.putNumber("turn", turn);
         // ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, Math.PI / 2.0, Rotation2d.fromDegrees(45.0));
         if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
             drivetrain.xLock();
-        } else if(ControlsManager.getButton(Control.HeadingTargetButton)) {
+        }
+
+        if (ControlsManager.getButton(Control.ShooterStage1) && shooter.isIdle()) {
+            shooter.setShooterPosisition(5);
+            shooter.revFlywheel();
+        } else if (ControlsManager.getButton(Control.ShooterStage2) && shooter.isIdle()) {
+            shooter.setShooterPosisition(10);
+            shooter.revFlywheel();
+        } else if (ControlsManager.getButton(Control.ShooterStage3) && shooter.isIdle()) {
+            shooter.setShooterPosisition(15);
+            shooter.revFlywheel();
+        } else if (ControlsManager.getButton(Control.ShooterStage4) && shooter.isIdle()) {
+            shooter.setShooterPosisition(20);
+            shooter.revFlywheel();
+        } else if(ControlsManager.getButton(Control.HeadingTargetButton) && shooterLimeLight.hasValidTarget()) {
             //Set the flywheel velocity for the shooter and the angle for the hood
-            shooter.setFlywheelVelocity(ShooterMap.getFlywheelSpeed(limeLight.getRobotRadius()));
-            shooter.setHoodAngle(ShooterMap.getHoodAngle(limeLight.getRobotRadius()));
+            shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
+            shooter.setPreRollerPower(1);
 
-            Rotation2d angle = new Rotation2d(Constants.Shooter.LimeLightTargetFieldPosition.x, Constants.Shooter.LimeLightTargetFieldPosition.y);
-            //If the LimeLight has a target use that target if not use the estimated position using pose
-            if (limeLight.hasTarget())
-                drivetrain.addVisionReading(new Pose2d(limeLight.getRobotPosition(drivetrain.getRobotAngle()), drivetrain.getRobotAngle()), limeLight.getProcessTime());
+            double thetaPower = headingController.calculate(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX));
+            drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, thetaPower));
 
-            //Power for the robot to turn given the Robot Angle in Radians
-            double thetaPower = headingController.calculate(drivetrain.getRobotAngle().getRadians(), angle.getRadians());
-
-            if (thetaPower < 0.05 && shooter.isFlywheelAtTarget(50))
-                spindexer.setPower(0);
-
-            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe,
-                    Constants.applyDeadBand(thetaPower, 0.05),
-                    drivetrain.getRobotAngle());
-
-            drivetrain.driveTranslationRotationRaw(speeds);
+//            if(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) < 3 && shooter.isFlywheelAtTarget(100))
+//                spindexer.setBallStop(Spindexer.BallStopState.Disabled);
 
         } else {
-            if(!spindexer.isBallStopEnabled()) {
-//                CommandScheduler.getInstance().schedule(new SetSpindexerCommand(spindexer, 1));
-            }
+            if(!shooter.isIdle())
+                shooter.idleFlyWheel();
+
+//            if(Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
+//                turn = headingController.calculate(drivetrain.getRobotAngle().getRadians(), dblDriveTrainTurnGoal.getRadians());
+//            } else if(Constants.withinClip(turn, 0, 0.05) && boolDriverControlledTurning) {
+//                boolDriverControlledTurning = false;
+//                SmartDashboard.putBoolean("TURNING", false);
+//                dblDriveTrainTurnGoal = drivetrain.getRobotAngle();
+//            } else if(!Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
+//                boolDriverControlledTurning = true;
+//                SmartDashboard.putBoolean("TURNING", true);
+//            }
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
-            // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
             drivetrain.driveTranslationRotationRaw(speeds);
+        }
+
+        if (shooter.isFlywheelAtTarget(300)) {
+            spindexer.setBallStop(Spindexer.BallStopState.Disabled);
+            SmartDashboard.putBoolean("Ball Stopper", false);
+        } else {
+            spindexer.setBallStop(Spindexer.BallStopState.Enabled);
+            SmartDashboard.putBoolean("Ball Stopper", true);
         }
 
 //        drivetrain.setAllModuleRotations(new Rotation2d(Math.atan2(forward, strafe)));
 //        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
 
-
         // Intake
 
         if(ControlsManager.getButton(Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
             if(intakePreviouslyDeployed) {
-                new SetIntakeCommand(intake, IntakeState.Retracted).schedule();
+                intake.setIntakeState(IntakeState.Retracted);
                 intakePreviouslyDeployed = false;
 //                LEDs.getInstance().setState(LEDs.State.Yellow);
             } else {
-                new SetIntakeCommand(intake, IntakeState.Running).schedule();
+                intake.setIntakeState(IntakeState.Running);
                 intakePreviouslyDeployed = true;
 //                LEDs.getInstance().enableDefaultState();
             }
         }
         intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);
+        spindexer.setPower(1);
     }
 
     @Override

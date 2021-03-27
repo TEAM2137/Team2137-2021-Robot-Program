@@ -1,5 +1,6 @@
 package com.team2137.frc2021.program;
 
+import com.team2137.frc2021.Constants;
 import com.team2137.libs.GamePad;
 import com.team2137.libs.GamePad.Axis;
 import com.team2137.libs.GamePad.Button;
@@ -22,14 +23,14 @@ public class ControlsManager {
         RotationAxis            (Axis.kRightX, driverController),
         XLockButton             (Button.kBumperRight, driverController),
 
-        HeadingTargetButton     (Button.kBumperLeft, driverController),
+        HeadingTargetButton     (Button.kBumperLeft, operatorController),
 
         IntakeButton            (Button.kA, driverController),
 
-        ShooterInitiationLine   (Button.kA, driverController),
-        ShooterTrenchLine       (Button.kB, driverController),
-        LimeLightButton         (Axis.kRightTrigger, driverController)
-        ;
+        ShooterStage1           (Button.kBumperRight, operatorController),
+        ShooterStage2           (Button.kY, operatorController),
+        ShooterStage3           (Button.kB, operatorController),
+        ShooterStage4           (Button.kA, operatorController);
 
         private int id;
         private GenericHID controller;

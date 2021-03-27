@@ -60,8 +60,7 @@ public class SwerveDrivetrain extends SubsystemBase {
         // the gyro
         pigeonIMU = new PigeonIMU(Constants.Drivetrain.gyroID);
         pigeonIMU.configFactoryDefault();
-        calibrateGyro();
-        pigeonIMU.setYaw(0);
+        pigeonIMU.setFusedHeading(0);
 
         // create pose estimator
         poseEstimator = new SwerveDrivePoseEstimator(new Rotation2d(), new Pose2d(), kinematics,
@@ -99,13 +98,10 @@ public class SwerveDrivetrain extends SubsystemBase {
      * @return the angle of the robot (CCW positive (normal))
      */
     public Rotation2d getRobotAngle() {
-        double[] ypr = new double[3];
-        pigeonIMU.getYawPitchRoll(ypr);
-        return Rotation2d.fromDegrees(ypr[0]).minus(new Rotation2d());
-    }
-
-    public void calibrateGyro() {
-        pigeonIMU.enterCalibrationMode(PigeonIMU.CalibrationMode.Temperature);
+//        double[] ypr = new double[3];
+//        pigeonIMU.getYawPitchRoll(ypr);
+        return Rotation2d.fromDegrees(pigeonIMU.getFusedHeading());
+//        return Rotation2d.fromDegrees(ypr[0]).minus(new Rotation2d());
     }
 
     public void addVisionReading(Pose2d pose, double processingTime) {

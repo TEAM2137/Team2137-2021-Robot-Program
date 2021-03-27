@@ -88,8 +88,6 @@ public class SwerveDriveModule extends SubsystemBase {
         this.driveFeedForward = Constants.Drivetrain.driveFeedforward;
 
         this.selfTargetAngle();
-
-
     }
 
     /**
@@ -108,11 +106,10 @@ public class SwerveDriveModule extends SubsystemBase {
         // if robot is disabled, target modules to their current angle
         // if you're doing some types of debugging, disable this
         if(DriverStation.getInstance().isDisabled()) {
-//            selfTargetAngle();
+            selfTargetAngle();
         }
 
         // prevents the module from doing a >90 degree flip to get to a target, instead reverse wheel direction
-
         //optimization now done in SwerveDrivetrain's methods, so this is obsolete
         if (Math.abs(turningSetpointRaw.minus(getModuleRotation()).getDegrees()) > 90) {
             turningSetpointCorrected = turningSetpointRaw.plus(Rotation2d.fromDegrees(180));
@@ -125,7 +122,6 @@ public class SwerveDriveModule extends SubsystemBase {
 //        double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointRaw.getDegrees());
         double output = turningPID.calculate(getModuleRotation().getDegrees(), turningSetpointCorrected.getDegrees());
 
-        SmartDashboard.putNumber("Average Speed: ", output);
 //        double output = Math.signum(pidEffort) * Constants.Drivetrain.turningFeedForward * Math.abs(Math.signum(Util.deadband(turningPID.getPositionError(), 0.5))) + pidEffort;
 //        double output = Constants.Drivetrain.turningFeedForward;
 
@@ -134,12 +130,10 @@ public class SwerveDriveModule extends SubsystemBase {
         switch(driveMode) {
             case RawPower: //for use in teleop
                 driveMotor.set(ControlMode.PercentOutput, driveRawPower * (reverseWheel ? -1 : 1));
-//                driveMotor.set(driveRawPower);
                 break;
             case Velocity: //for use in auto and autonomous trajectories
                 double driveOutput = driveFeedForward.calculate(driveVelocityTarget * (reverseWheel ? -1 : 1)) +
                     drivePID.calculate(getDriveVelocity(), driveVelocityTarget * (reverseWheel ? -1 : 1));
-                System.out.println(driveOutput);
                 driveMotor.set(ControlMode.PercentOutput, driveOutput / 12);
 
 //                driveMotor.set(ControlMode.PercentOutput, (driveFeedForward.calculate(driveVelocityTarget) +
@@ -147,16 +141,14 @@ public class SwerveDriveModule extends SubsystemBase {
                 break;
         }
 
-        SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
-        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
-        SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
-        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
-
-        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
-
-        SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
-        SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
-
+//        SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
+//        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
+//        SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
+//        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
+//
+//        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
+//        SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
+//        SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
     }
 
     /**

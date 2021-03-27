@@ -2,6 +2,7 @@ package com.team2137.frc2021.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.revrobotics.CANEncoder;
@@ -13,9 +14,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
+
+import java.util.TreeMap;
 
 import static com.team2137.frc2021.Constants.*;
 import static com.team2137.frc2021.Constants.Shooter.*;
@@ -52,16 +56,28 @@ public class Shooter extends SubsystemBase {
 
     private Timer hoodHomingTimer;
 
+    private TreeMap<Double, Translation2d> shooterSampleValues = new TreeMap<>();
+
+    private boolean boolFlywheelIdled = false;
+
     public Shooter() {
         //Make sure to add current limiting for the hood motor so that it does not burn
 //        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
-        this.dblHoodMotorHomingCurrentLimit = 10; //temp
+        this.dblHoodMotorHomingCurrentLimit = 20; //temp
+
+        shooterSampleValues.put(5.0, new Translation2d(4000.0, 7.0));
+        shooterSampleValues.put(10.0 , new Translation2d(4700.0, 18.0));
+        shooterSampleValues.put(15.0 , new Translation2d(5100.0, 27.0));
+        shooterSampleValues.put(20.0 , new Translation2d(5400.0, 31.5));
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
         this.flywheelMotor2     = new TalonFX(FlyWheelMotorObject2.getMotorID());
         this.preRollerMotor     = new CANSparkMax(PreRollerMotorObject.getMotorID(), PreRollerMotorObject.getMotorType().getREVType());
         this.hoodMotor          = new CANSparkMax(HoodMotorObject.getMotorID(), HoodMotorObject.getMotorType().getREVType());
+
+        this.preRollerMotor.restoreFactoryDefaults();
+        this.hoodMotor.restoreFactoryDefaults();
 
         // Get and store the encoder and add teh Conversion Factor so the units while setting position is in degrees
         this.hoodMotorEncoder   = this.hoodMotor.getEncoder();
@@ -78,16 +94,20 @@ public class Shooter extends SubsystemBase {
 
         //Configure the Flywheel motor with al of the values
         this.flywheelMotor1.configFactoryDefault();
-        this.flywheelMotor1.configOpenloopRamp(FlyWheelMotorObject1.getRampRate()); //Using Ramp to stop the belt from skipping and it is in Second to full speed
+        this.flywheelMotor1.configClosedloopRamp(FlyWheelMotorObject1.getRampRate()); //Using Ramp to stop the belt from skipping and it is in Second to full speed
         this.flywheelMotor1.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         this.flywheelMotor1.configSupplyCurrentLimit(this.flywheelCurrentLimit);
         this.flywheelMotor1.setInverted(FlyWheelMotorObject1.inverted());
+        this.flywheelMotor1.setNeutralMode(NeutralMode.Coast);
 
         this.flywheelMotor2.configFactoryDefault();
-        this.flywheelMotor2.configOpenloopRamp(FlyWheelMotorObject1.getRampRate());
+        this.flywheelMotor2.configClosedloopRamp(FlyWheelMotorObject1.getRampRate());
         this.flywheelMotor2.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         this.flywheelMotor2.configSupplyCurrentLimit(this.flywheelCurrentLimit);
         this.flywheelMotor2.setInverted(FlyWheelMotorObject2.inverted());
+        this.flywheelMotor2.setNeutralMode(NeutralMode.Coast);
+
+        this.flywheelMotor2.follow(flywheelMotor1);
 
         this.flywheelPIDController = FlyWheelMotorObject1.getPID().getWPIPIDController();
         this.flywheelFeedForward = FlyWheelMotorObject1.getMotorFeedForwardController();
@@ -109,7 +129,7 @@ public class Shooter extends SubsystemBase {
          */
         switch (this.mStateHoodHoming) {
             case STATE_INIT: //Start the homing process of the hood
-                if(DriverStation.getInstance().isEnabled()) {
+                if (DriverStation.getInstance().isEnabled()) {
                     this.hoodHomingTimer.reset();
                     this.hoodHomingTimer.start();
                     this.hoodMotor.set(-0.25); //Reverse the hood back to zero direction
@@ -132,14 +152,18 @@ public class Shooter extends SubsystemBase {
 //        SmartDashboard.putNumber("Hood Angle", getHoodAngle());
 //        SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
 
-        double flywheelPower = MathUtil.clamp((flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12, 0, 1);
+//        double flywheelPower = MathUtil.clamp((flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12, 0, 1);
+        double flywheelPower = .75;
 
-        if(dblFlywheelVelocityGoal < getFlywheelVelocity() - 600) {
+        if (isIdle())
+            flywheelPower *= FlywheelIdlePercent;
+
+        if (flywheelPower < 0)
             flywheelPower = 0;
-        }
 
-        SmartDashboard.putNumber("FlyWheel Power", flywheelPower);
-        SmartDashboard.putNumber("FlyWheel Velocity", getFlywheelVelocity());
+//        SmartDashboard.putNumber("FlyWheel Power", flywheelPower);
+//        SmartDashboard.putNumber("FlyWheel Velocity", getFlywheelVelocity());
+        SmartDashboard.putNumber("Ablied Output", flywheelMotor1.getMotorOutputPercent());
         this.flywheelMotor1.set(ControlMode.PercentOutput, flywheelPower);
         this.flywheelMotor2.set(ControlMode.PercentOutput, flywheelPower);
     }
@@ -150,19 +174,27 @@ public class Shooter extends SubsystemBase {
      */
     public double getFlywheelVelocity() {
         //Get the Integrated Sensor velocity divide by 2048 counts per rotation to get rotations per 100 milliseconds and times by 600 to get RPM
-        return (this.flywheelMotor1.getSensorCollection().getIntegratedSensorVelocity() / 2048) * 600;
+        SmartDashboard.putNumber("Encoder Speed", (this.flywheelMotor1.getSensorCollection().getIntegratedSensorVelocity() / 2048) * 600);
+//        return (this.flywheelMotor1.getSensorCollection().getIntegratedSensorVelocity() / 2048) * 600;
+        return (this.flywheelMotor1.getSelectedSensorVelocity() / 2048) * 600;
     }
 
     public boolean isFlywheelAtTarget(double width) {
-        return Constants.withinClip(getFlywheelVelocity(), dblFlywheelVelocityGoal, width);
+//        return Constants.withinClip(getFlywheelVelocity(), dblFlywheelVelocityGoal, width);
+        SmartDashboard.putNumber("Flywheel velocity Diff", Math.abs(getFlywheelVelocity() - dblFlywheelVelocityGoal));
+        SmartDashboard.putNumber("Flywheel Velocity", getFlywheelVelocity());
+        SmartDashboard.putNumber("Flywheel Goal", dblFlywheelVelocityGoal);
+        return Math.abs(getFlywheelVelocity() - dblFlywheelVelocityGoal) < width;
     }
 
     public void idleFlyWheel() {
-        setFlywheelVelocity(dblFlywheelVelocityGoal * FlywheelIdlePercent);
+        preRollerMotor.set(0);
+        boolFlywheelIdled = true;
     }
 
     public void revFlywheel() {
-        setFlywheelVelocity(dblFlywheelVelocityGoal);
+        preRollerMotor.set(1);
+        boolFlywheelIdled = false;
     }
 
     /**
@@ -235,4 +267,49 @@ public class Shooter extends SubsystemBase {
         return this.mStateHoodHoming != StepState.STATE_NOT_STARTED;
     }
 
+    private double getHoodAngle(double distanceFeet) {
+        var min = shooterSampleValues.floorEntry(distanceFeet);
+        var max = shooterSampleValues.ceilingEntry(distanceFeet);
+        if(min == null)
+            return max.getValue().getY();
+        else if(max == null)
+            return min.getValue().getY();
+        else if (min.getKey() == distanceFeet)
+            return min.getValue().getY();
+        else if (max.getKey() == distanceFeet)
+            return max.getValue().getY();
+        else {
+            double amp = max.getKey() - min.getKey();
+            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
+                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
+        }
+    }
+
+    private double getFlywheelSpeed(double distanceFeet) {
+        var min = shooterSampleValues.floorEntry(distanceFeet);
+        var max = shooterSampleValues.ceilingEntry(distanceFeet);
+        if(min == null)
+            return max.getValue().getX();
+        else if(max == null)
+            return min.getValue().getX();
+        else if (min.getKey() == distanceFeet)
+            return min.getValue().getX();
+        else if (max.getKey() == distanceFeet)
+            return max.getValue().getX();
+        else {
+            double amp = max.getKey() - min.getKey();
+            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
+                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
+        }
+    }
+
+    public void setShooterPosisition(double distanceFeet) {
+        setFlywheelVelocity(getFlywheelSpeed(distanceFeet));
+        SmartDashboard.putNumber("Flywheel Goal", getFlywheelSpeed(distanceFeet));
+        setHoodAngle(getHoodAngle(distanceFeet));
+    }
+
+    public boolean isIdle() {
+        return boolFlywheelIdled;
+    }
 }

@@ -3,21 +3,13 @@ package com.team2137.frc2021.program;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
-import com.team2137.frc2021.commands.SetIntakeCommand;
-import com.team2137.frc2021.subsystems.Intake;
-import com.team2137.frc2021.subsystems.LEDs;
-import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Test extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
@@ -52,22 +44,34 @@ public class Test extends RobotContainer implements OpMode {
                 Constants.Drivetrain.purePIDTranslationConstants.getI(),
                 Constants.Drivetrain.purePIDTranslationConstants.getD());
 
-//        drivetrain.calibrateGyro();
-    }
+        spindexer.setPower(1);
+        spindexer.setBallStop(Spindexer.BallStopState.Disabled);
+        shooter.setPreRollerPower(1);
+        shooter.zeroHoodAngle();
+        shooter.setHoodAngle(31.5);
 
-    boolean running = false;
+//        SmartDashboard.putNumber("Hood Angle", 10.0);
+        SmartDashboard.putNumber("Flywheel Velocity Goal", 5400.0);
+    }
 
     @Override
     public void periodic() {
-//        drivetrain.setAllModuleRotations(new Rotation2d(0));
-//        double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
-//        double strafe = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2);
-//        double turn = (3 * -ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
+        SmartDashboard.putNumber("Limelight Robot Radius", shooterLimeLight.getRadialDistance());
+        spindexer.setPower(1);
+        spindexer.setBallStop(Spindexer.BallStopState.Disabled);
+        shooter.setFlywheelVelocity(SmartDashboard.getNumber("Flywheel Velocity Goal", 5400));
+        SmartDashboard.putNumber("Flywheel Velocity", shooter.getFlywheelVelocity());
+//        shooter.setHoodAngle(SmartDashboard.getNumber("Hood Angle", 10.0));
+
+        drivetrain.setAllModuleRotations(new Rotation2d(0));
+        double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
+        double strafe = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2);
+        double turn = (3 * -ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
 //
 //        if(ControlsManager.getButton(ControlsManager.Control.ShooterInitiationLine))
 //            running = true;
 
-        //ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
 //        ChassisSpeeds speeds;
 //        if(running)
 //            drivetrain.setAllModuleDriveVelocity(3);
@@ -137,8 +141,6 @@ public class Test extends RobotContainer implements OpMode {
 
 //        shooter.setPreset(Constants.ShooterPresets.AutoShoot);
 //        spindexer.setPower(1);
-
-        LEDs.getInstance().setState(LEDs.State.Blue);
     }
 
     @Override

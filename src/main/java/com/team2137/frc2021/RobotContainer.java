@@ -12,7 +12,7 @@ public class RobotContainer {
     public static Intake intake;
     public static Spindexer spindexer;
     public static Shooter shooter;
-    public static LimeLight limeLight;
+    public static ShooterLimeLight shooterLimeLight;
 
     public static void initialize() {
         canifier = new CANifier(Constants.canifierID);
@@ -21,7 +21,7 @@ public class RobotContainer {
 
         drivetrain = new SwerveDrivetrain();
         shooter = new Shooter();
-        limeLight = new LimeLight(drivetrain);
+        shooterLimeLight = new ShooterLimeLight();
         intake = new Intake();
         spindexer = new Spindexer();
     }

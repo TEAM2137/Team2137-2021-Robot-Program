@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Robot extends TimedRobot {
-
     OpMode autonomous = new Autonomous();
     OpMode teleop = new Teleop();
     OpMode disabled = new Disabled();
@@ -23,6 +22,10 @@ public class Robot extends TimedRobot {
     private static List<Runnable> onDisabled = new ArrayList<>();
 
     OpMode currentOpMode;
+
+    public Robot() {
+        super(0.025);
+    }
 
     @Override
     public void robotInit() {

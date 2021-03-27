@@ -3,16 +3,9 @@ package com.team2137.frc2021.program;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
-import com.team2137.frc2021.commands.SetIntakeCommand;
-import com.team2137.frc2021.commands.TrajectoryFollowCommand;
-import com.team2137.frc2021.commands.TrajectoryFollowCommand.HeadingControlThreshold;
 import com.team2137.frc2021.subsystems.Intake;
-import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.subsystems.Spindexer;
-import com.team2137.libs.TrajectoryUtility;
-import com.team2137.libs.UnitsExtra;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -23,11 +16,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpiutil.math.MathUtil;
-
-import java.util.ArrayList;
 
 public class Autonomous extends RobotContainer implements OpMode {
 
@@ -134,11 +123,6 @@ public class Autonomous extends RobotContainer implements OpMode {
                     switchTimer.reset();
                     switchTimer.start();
                     DriverStation.reportError("HIT", false);
-                }
-
-                SmartDashboard.putNumber("timer", intakeTimer.get());
-                if(intakeTimer.hasElapsed(0.01) && intakeStartTimer.hasElapsed(0.5)) {
-
                 }
 
                 if(switchTimer.hasElapsed(.5)) {

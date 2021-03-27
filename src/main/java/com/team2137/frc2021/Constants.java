@@ -35,15 +35,15 @@ public class Constants {
 
     public static class Shooter {
         //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Vel
-        public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 1.5, new PID(0.15, 0.06, 0.0005, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
-        public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 1.5, null);
+        public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 5.0, new PID(0.10, 0.00, 0.00, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
+        public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 5.0, null);
         public static final Motor PreRollerMotorObject = new Motor("preRollerMotor", 44, Motor.MotorTypes.NEO550, true, 35, 1, 0, null);
         public static final Motor HoodMotorObject = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 35, ((1.0/90.0) * (32.0/70.0)) * 360.0, 0, new PID(0.03, 0, 0), "45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
 
-        public static final Point LimeLightShootingCameraPosition = new Point(0, 0);
+        public static final Point LimeLightShootingCameraPosition = new Point(0, 1.5);
         public static final Point LimeLightTargetFieldPosition = new Point(0, 7.5);
-        public static final double LimeLightShootingCameraAngleDegree = 35;
-        public static final double FlywheelIdlePercent = 0.6;
+        public static final double LimeLightShootingCameraAngleDegree = 43.56;
+        public static final double FlywheelIdlePercent = 0.0;//0.6;
         public static final int HoodMotorHomingCurrentSignal = 20;
     }
 
@@ -68,9 +68,9 @@ public class Constants {
         public static final double driveMotorRamp = 0.5;
 
         public static double turningFeedForward = 0.5; //0.8
-        public static PID turningPIDConstants = new PID(0.21, 0, 0.0015); // in the air
+//        public static PID turningPIDConstants = new PID(0.21, 0, 0.0015); // in the air
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
-//        public static PID turningPIDConstants = new PID(0.08, 0, 0); // carpet
+        public static PID turningPIDConstants = new PID(0.08, 0, 0); // carpet
 
         public static PID drivePIDConstants = new PID(.5, 0, .2);//.5 0 .2
         public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.225, 0);
@@ -146,20 +146,17 @@ public class Constants {
 
         public static boolean invertMotor = false;
 
-        public static int currentLimit = 30;
-        public static double voltageRamp = 0.25;
+//        public static int currentLimit = 30;
+//        public static double voltageRamp = 0.25;
     }
 
     public static int canifierID = 9;
 
     public static boolean withinClip(double num, double goal, double width) {
-        return Math.abs(goal - num) < width;
+        return Math.abs(goal - num) <= width;
     }
 
-    public static double applyDeadBand(double width, double goal) {
-        if(Math.abs(goal) < width)
-            return 0;
-        else
-            return goal;
+    public static double squareWithSign(double number) {
+        return Math.pow(number, 2) * (number < 0 ? -1 : 1);
     }
 }

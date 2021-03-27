@@ -24,18 +24,15 @@ public class Spindexer extends SubsystemBase {
     public Spindexer() {
         this.motor = new TalonSRX(Constants.Spindexer.motorID);
         this.motor.setInverted(Constants.Spindexer.invertMotor);
-        this.motor.configContinuousCurrentLimit(Constants.Spindexer.currentLimit);
         this.motor.setNeutralMode(NeutralMode.Brake);
-        this.motor.configClosedloopRamp(Constants.Spindexer.voltageRamp);
-        this.motor.configOpenloopRamp(Constants.Spindexer.voltageRamp);
 
         this.ballStop = new DoubleSolenoid(Constants.Spindexer.solenoidForwardID, Constants.Spindexer.solenoidReverseID);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Spindexer Power", motor.getMotorOutputPercent());
-        SmartDashboard.putBoolean("Spindexer Ball Stop On", isBallStopEnabled());
+//        SmartDashboard.putNumber("Spindexer Power", motor.getMotorOutputPercent());
+//        SmartDashboard.putBoolean("Spindexer Ball Stop On", isBallStopEnabled());
     }
 
     /**
@@ -54,8 +51,8 @@ public class Spindexer extends SubsystemBase {
     }
 
     public enum BallStopState {
-        Enabled(DoubleSolenoid.Value.kForward),
-        Disabled(DoubleSolenoid.Value.kReverse),
+        Enabled(DoubleSolenoid.Value.kReverse),
+        Disabled(DoubleSolenoid.Value.kForward),
         ;
 
         DoubleSolenoid.Value value;
