@@ -2,8 +2,9 @@ package com.team2137.frc2021.subsystems;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public abstract class LimeLight {
+public abstract class LimeLight extends SubsystemBase {
     public enum LimeLightValues {
         TX ("tx"),
         TY ("ty"),
@@ -49,6 +50,7 @@ public abstract class LimeLight {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }
 
+    @Override
     public abstract void periodic();
 
     public double getLimeLightValue(LimeLightValues values) {

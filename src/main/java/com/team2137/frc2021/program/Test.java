@@ -44,11 +44,11 @@ public class Test extends RobotContainer implements OpMode {
                 Constants.Drivetrain.purePIDTranslationConstants.getI(),
                 Constants.Drivetrain.purePIDTranslationConstants.getD());
 
-        spindexer.setPower(1);
-        spindexer.setBallStop(Spindexer.BallStopState.Disabled);
-        shooter.setPreRollerPower(1);
-        shooter.zeroHoodAngle();
-        shooter.setHoodAngle(31.5);
+//        spindexer.setPower(1);
+//        spindexer.setBallStop(Spindexer.BallStopState.Disabled);
+//        shooter.setPreRollerPower(1);
+//        shooter.zeroHoodAngle();
+//        shooter.setHoodAngle(31.5);
 
 //        SmartDashboard.putNumber("Hood Angle", 10.0);
         SmartDashboard.putNumber("Flywheel Velocity Goal", 5400.0);
@@ -59,11 +59,11 @@ public class Test extends RobotContainer implements OpMode {
         SmartDashboard.putNumber("Limelight Robot Radius", shooterLimeLight.getRadialDistance());
         spindexer.setPower(1);
         spindexer.setBallStop(Spindexer.BallStopState.Disabled);
-        shooter.setFlywheelVelocity(SmartDashboard.getNumber("Flywheel Velocity Goal", 5400));
+//        shooter.setFlywheelVelocity(SmartDashboard.getNumber("Flywheel Velocity Goal", 5400));
         SmartDashboard.putNumber("Flywheel Velocity", shooter.getFlywheelVelocity());
 //        shooter.setHoodAngle(SmartDashboard.getNumber("Hood Angle", 10.0));
 
-        drivetrain.setAllModuleRotations(new Rotation2d(0));
+//        drivetrain.setAllModuleRotations(new Rotation2d(0));
         double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
         double strafe = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2);
         double turn = (3 * -ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
@@ -78,7 +78,7 @@ public class Test extends RobotContainer implements OpMode {
 //        else
 //            drivetrain.setAllModuleDriveVelocity(0);
         // drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, turn));
-//        drivetrain.driveTranslationRotationVelocity(spe);
+        drivetrain.driveTranslationRotationRaw(speeds);
 //
 //        // intake
 //

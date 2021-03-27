@@ -153,7 +153,7 @@ public class Shooter extends SubsystemBase {
 //        SmartDashboard.putNumber("Hood Current", this.hoodMotor.getOutputCurrent());
 
 //        double flywheelPower = MathUtil.clamp((flywheelFeedForward.calculate(dblFlywheelVelocityGoal / 60) + flywheelPIDController.calculate(getFlywheelVelocity() / 60, dblFlywheelVelocityGoal / 60)) / 12, 0, 1);
-        double flywheelPower = .75;
+        double flywheelPower = 0;
 
         if (isIdle())
             flywheelPower *= FlywheelIdlePercent;
