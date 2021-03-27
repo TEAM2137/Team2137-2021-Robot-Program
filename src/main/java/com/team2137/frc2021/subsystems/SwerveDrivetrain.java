@@ -68,8 +68,8 @@ public class SwerveDrivetrain extends SubsystemBase {
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(Units.degreesToRadians(0.01)), // Local measurement standard deviations. Gyro.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.5, 0.5, Units.degreesToRadians(30))); // Vision measurement standard deviations. X, Y, and theta.
 
-        SmartDashboard.putData("Field", field2d);
-        SmartDashboard.putBoolean("Reset Position", false);
+//        SmartDashboard.putData("Field", field2d);
+//        SmartDashboard.putBoolean("Reset Position", false);
     }
 
     /**
@@ -77,31 +77,40 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
+//        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
 
-        SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
-        field2d.setRobotPose(getPose());
-        SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
-        SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
+//        SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
+//        field2d.setRobotPose(getPose());
+//        SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
+//        SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
 
-        if(SmartDashboard.getBoolean("Reset Position", false)) {
+//        if(SmartDashboard.getBoolean("Reset Position", false)) {
 //            resetOdometry();
-            SmartDashboard.putBoolean("Reset Position", false);
-        }
+//            SmartDashboard.putBoolean("Reset Position", false);
+//        }
 
         for(SwerveDriveModule module : swerveArray) {
             module.periodic();
         }
+
+        SmartDashboard.putNumber("FusedHeading", getRobotAngle().getDegrees());
     }
 
     /**
      * @return the angle of the robot (CCW positive (normal))
      */
     public Rotation2d getRobotAngle() {
-//        double[] ypr = new double[3];
-//        pigeonIMU.getYawPitchRoll(ypr);
-        return Rotation2d.fromDegrees(pigeonIMU.getFusedHeading());
-//        return Rotation2d.fromDegrees(ypr[0]).minus(new Rotation2d());
+        double value = Math.abs(pigeonIMU.getFusedHeading() % 360);
+        if (value > 180)
+            return Rotation2d.fromDegrees(value - 360);
+        else
+            return Rotation2d.fromDegrees(value);
+    }
+
+    public double getThetaVelocity() {
+        double[] tmp = new double[3];
+        pigeonIMU.getRawGyro(tmp);
+        return tmp[2];
     }
 
     public void addVisionReading(Pose2d pose, double processingTime) {

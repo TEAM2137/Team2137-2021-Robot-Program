@@ -141,14 +141,14 @@ public class SwerveDriveModule extends SubsystemBase {
                 break;
         }
 
-//        SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
-//        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
-//        SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
-//        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
-//
-//        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
-//        SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
-//        SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
+        SmartDashboard.putNumber(moduleName + " Heading Position", getModuleRotation().getDegrees());
+        SmartDashboard.putNumber(moduleName + " Heading Target", turningSetpointCorrected.getDegrees());
+        SmartDashboard.putNumber(moduleName + " Heading Error", turningPID.getPositionError());
+        SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
+
+        SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
+        SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
+        SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
     }
 
     /**

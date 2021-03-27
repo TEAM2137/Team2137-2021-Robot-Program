@@ -82,7 +82,8 @@ public class Constants {
 
         public static PID translationPIDConstants = new PID(.02, 0, 0.25);
 
-        public static PID teleopThetaPIDConstants = new PID(2.3, 0, 0.1);
+//        public static PID teleopThetaPIDConstants = new PID(2.3, 0, 0.1);
+        public static PID teleopThetaPIDConstants = new PID(0.3, 0, 0.19);
         public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
 
         public static PID autoThetaPIDConstants = new PID(2, 0, 0);
