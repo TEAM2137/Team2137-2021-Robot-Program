@@ -67,10 +67,10 @@ public class Constants {
 
         public static final double driveMotorRamp = 0.5;
 
-        public static double turningFeedForward = 0.5; //0.8
+        public static double turningFeedForward = 0.75; //0.8
 //        public static PID turningPIDConstants = new PID(0.21, 0, 0.0015); // in the air
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
-        public static PID turningPIDConstants = new PID(0.08, 0, 0); // carpet
+        public static PID turningPIDConstants = new PID(0.03, 0, 0.000883); // carpet
 
         public static PID drivePIDConstants = new PID(.5, 0, .2);//.5 0 .2
         public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.225, 0);

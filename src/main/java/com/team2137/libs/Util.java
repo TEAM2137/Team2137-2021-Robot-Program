@@ -18,4 +18,12 @@ public class Util {
             return value;
         }
     }
+
+    public static double deadband(double value, double deadband) {
+        if(Math.abs(value) < deadband) {
+            return 0;
+        } else {
+            return value;
+        }
+    }
 }
