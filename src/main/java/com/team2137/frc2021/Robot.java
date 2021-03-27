@@ -18,9 +18,6 @@ public class Robot extends TimedRobot {
     OpMode robotMode = new RobotMode();
     OpMode test = new Test();
 
-    private static List<Runnable> onEnable = new ArrayList<>();
-    private static List<Runnable> onDisabled = new ArrayList<>();
-
     OpMode currentOpMode;
 
     public Robot() {
@@ -89,29 +86,4 @@ public class Robot extends TimedRobot {
         test.periodic();
     }
 
-    public static void addOnEnabled(Runnable run) {
-        onEnable.add(run);
-    }
-    public static void removeOnEnabled(Runnable run) {
-        onEnable.remove(run);
-    }
-
-    private void runOnEnabledFunctions() {
-        for (Runnable a : onEnable) {
-            a.run();
-        }
-    }
-
-    public static void addOnDisabled(Runnable run) {
-        onDisabled.add(run);
-    }
-    public static void removeOnDisabled(Runnable run) {
-        onDisabled.remove(run);
-    }
-
-    private void runOnDisabledFunctions() {
-        for (Runnable a : onDisabled) {
-            a.run();
-        }
-    }
 }

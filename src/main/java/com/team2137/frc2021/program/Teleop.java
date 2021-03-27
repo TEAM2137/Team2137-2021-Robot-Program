@@ -28,7 +28,7 @@ public class Teleop extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
     private boolean intakePreviouslyDeployed = false;
 
-    private ProfiledPIDController headingController;
+    private ProfiledPIDController thetaController;
 
     private boolean boolDriverControlledTurning = true;
     private Rotation2d dblDriveTrainTurnGoal = new Rotation2d();
@@ -37,9 +37,13 @@ public class Teleop extends RobotContainer implements OpMode {
     public void init() {
         drivetrain.selfTargetAllModuleAngles();
 
-        PID headingConstants = Constants.Drivetrain.teleopThetaPIDConstants;
-        headingController = new ProfiledPIDController(headingConstants.getP(), headingConstants.getI(), headingConstants.getD(), Constants.Drivetrain.teleopThetaPIDConstraints);
-        headingController.enableContinuousInput(-Math.PI, Math.PI);
+        thetaController = new ProfiledPIDController(Constants.Drivetrain.teleopThetaPIDConstants.getP(),
+                Constants.Drivetrain.teleopThetaPIDConstants.getI(),
+                Constants.Drivetrain.teleopThetaPIDConstants.getD(),
+                Constants.Drivetrain.teleopThetaPIDConstraints);
+
+        thetaController.setTolerance(Math.toRadians(2.5));
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         spindexer.setBallStop(Spindexer.BallStopState.Enabled);
         spindexer.setPower(1);
@@ -83,26 +87,32 @@ public class Teleop extends RobotContainer implements OpMode {
             shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
             shooter.setPreRollerPower(1);
 
-            double thetaPower = headingController.calculate(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX));
+            double thetaPower = thetaController.calculate(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX));
             drivetrain.driveTranslationRotationRaw(new ChassisSpeeds(forward, strafe, thetaPower));
 
 //            if(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) < 3 && shooter.isFlywheelAtTarget(100))
 //                spindexer.setBallStop(Spindexer.BallStopState.Disabled);
 
         } else {
+            //Non shooting condition (normal driver mode)
+
             if(!shooter.isIdle())
                 shooter.idleFlyWheel();
 
-//            if(Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
-//                turn = headingController.calculate(drivetrain.getRobotAngle().getRadians(), dblDriveTrainTurnGoal.getRadians());
-//            } else if(Constants.withinClip(turn, 0, 0.05) && boolDriverControlledTurning) {
-//                boolDriverControlledTurning = false;
-//                SmartDashboard.putBoolean("TURNING", false);
-//                dblDriveTrainTurnGoal = drivetrain.getRobotAngle();
-//            } else if(!Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
-//                boolDriverControlledTurning = true;
-//                SmartDashboard.putBoolean("TURNING", true);
-//            }
+            SmartDashboard.putNumber("DriveTurn Angle", dblDriveTrainTurnGoal.getDegrees());
+
+            if(Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
+                turn = thetaController.calculate(drivetrain.getRobotAngle().getRadians()) * 0.25;
+            } else if(Constants.withinClip(turn, 0, 0.05) && boolDriverControlledTurning && drivetrain.getThetaVelocity() < 5) {
+                boolDriverControlledTurning = false;
+                SmartDashboard.putBoolean("TURNING", false);
+                thetaController.setGoal(dblDriveTrainTurnGoal.getRadians());
+                dblDriveTrainTurnGoal = drivetrain.getRobotAngle();
+            } else if(!Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
+                boolDriverControlledTurning = true;
+                SmartDashboard.putBoolean("TURNING", true);
+            }
+
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             drivetrain.driveTranslationRotationRaw(speeds);
         }

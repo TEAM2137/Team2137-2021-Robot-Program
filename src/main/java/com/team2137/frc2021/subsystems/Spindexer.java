@@ -3,14 +3,18 @@ package com.team2137.frc2021.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.Robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix.CANifier;
+
+import java.sql.Driver;
 
 public class Spindexer extends SubsystemBase {
 
@@ -23,6 +27,7 @@ public class Spindexer extends SubsystemBase {
      */
     public Spindexer() {
         this.motor = new TalonSRX(Constants.Spindexer.motorID);
+        this.motor.configFactoryDefault();
         this.motor.setInverted(Constants.Spindexer.invertMotor);
         this.motor.setNeutralMode(NeutralMode.Brake);
 
