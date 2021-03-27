@@ -20,78 +20,12 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 
 public class Autonomous extends RobotContainer implements OpMode {
 
-    private State state = State.Searching;
-    NetworkTable llTable = NetworkTableInstance.getDefault().getTable("limelight-two");
-//    NetworkTableEntry hasTarget = llTable.getEntry("tv");
-//    NetworkTableEntry ballX = llTable.getEntry("tx");
-//    NetworkTableEntry ballY = llTable.getEntry("ty");
-
-    boolean hasTarget = false;
-    double ballX = 0;
-    double ballY = 0;
-
-    boolean hasHadTarget = false;
-    double prevY = 0;
-
-    PIDController ballSearchTurnController = new PIDController(0.03, 0 ,0);
-
-    Timer intakeStartTimer = new Timer();
-    Timer intakeTimer = new Timer();
-    Timer switchTimer = new Timer();
-    Timer shootTimer = new Timer();
-
-    PIDController xController;
-    PIDController yController;
-    ProfiledPIDController thetaController;
-
-    Pose2d shootingPosition = new Pose2d(new Translation2d(0, 0), Rotation2d.fromDegrees(0));
-
     @Override
     public void init() {
-        state = State.Searching;
-
-        intakeStartTimer.reset();
-        intakeTimer.reset();
-        switchTimer.stop();
-        switchTimer.reset();
-
-        spindexer.setPower(0);
-
-        hasHadTarget = false;
-
-        thetaController = new ProfiledPIDController(Constants.Drivetrain.teleopThetaPIDConstants.getP(),
-                Constants.Drivetrain.teleopThetaPIDConstants.getI(),
-                Constants.Drivetrain.teleopThetaPIDConstants.getD(),
-                Constants.Drivetrain.teleopThetaPIDConstraints);
-
-        xController = new PIDController(Constants.Drivetrain.purePIDTranslationConstants.getP(),
-                Constants.Drivetrain.purePIDTranslationConstants.getI(),
-                Constants.Drivetrain.purePIDTranslationConstants.getD());
-
-        yController = new PIDController(Constants.Drivetrain.purePIDTranslationConstants.getP(),
-                Constants.Drivetrain.purePIDTranslationConstants.getI(),
-                Constants.Drivetrain.purePIDTranslationConstants.getD());
-
-        xController.setTolerance(0.1);
-        yController.setTolerance(0.1);
-        thetaController.setTolerance(Math.toRadians(2.5));
-
-//        llTable.getEntry("tv").addListener((table) -> {
-//            hasTarget = table.getEntry().getDouble(0) >= 1.0;
-//        }, 0);
-//        llTable.getEntry("tx").addListener((table) -> {
-//            ballX = table.getEntry().getDouble(0);
-//        }, 0);
-//        llTable.getEntry("ty").addListener((table) -> {
-//            ballY = table.getEntry().getDouble(0);
-//        }, 0);
     }
 
     @Override
     public void periodic() {
-        hasTarget = llTable.getEntry("tv").getDouble(0) > 0;
-        ballX = llTable.getEntry("tx").getDouble(0);
-        ballY = llTable.getEntry("ty").getDouble(0);
 
         SmartDashboard.putString("state", state.toString());
 
@@ -176,14 +110,6 @@ public class Autonomous extends RobotContainer implements OpMode {
 
     @Override
     public void end() {
-        drivetrain.driveTranslationRotationRaw(new ChassisSpeeds());
-        shooter.setHoodAngle(0);
-        shooter.setFlywheelVelocity(0);
-        shooter.setPreRollerPower(0);
-    }
 
-    private enum State {
-        Searching,
-        DrivingToGoal
     }
 }
