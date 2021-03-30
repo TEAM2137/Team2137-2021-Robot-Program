@@ -76,6 +76,11 @@ public class CommandRunner {
         threadPoolExecutor = new ScheduledThreadPoolExecutor(4);
     }
 
+    public static void executeCommandGroup(CommandBase... base) {
+        for(CommandBase a : base)
+            executeCommand(a);
+    }
+
     public static void executeCommand(CommandBase base) {
         ConcurrentCommandBundle bundle = new ConcurrentCommandBundle(base);
         commandBundleList.add(bundle);
@@ -87,11 +92,12 @@ public class CommandRunner {
                 bundle.flagInit();
             }
 
-            bundle.getCommand().execute();
-
             if (bundle.getCommand().isFinished()) {
                 threadPoolExecutor.remove(bundle.getRunnable());
                 commandBundleList.remove(bundle);
+                bundle.getCommand().end(false);
+            } else {
+                bundle.getCommand().execute();
             }
 
             if (System.currentTimeMillis() - start > watchdogTimer)
@@ -101,7 +107,7 @@ public class CommandRunner {
         threadPoolExecutor.scheduleAtFixedRate(bundle.getRunnable(), 0, 25, TimeUnit.MILLISECONDS);
     }
 
-    private static void executeCommandGroup(int index, CommandBase... commands) {
+    private static void executeCommandSequence(int index, CommandBase... commands) {
         ConcurrentCommandBundle bundle = new ConcurrentCommandBundle(commands[index]);
         commandBundleList.add(bundle);
 
@@ -130,8 +136,8 @@ public class CommandRunner {
         threadPoolExecutor.scheduleAtFixedRate(bundle.getRunnable(), 0, 25, TimeUnit.MILLISECONDS);
     }
 
-    public static void executeCommandGroup(CommandBase... commands) {
-        executeCommandGroup(0, commands);
+    public static void executeCommandSequence(CommandBase... commands) {
+        executeCommandSequence(0, commands);
     }
 
     public static void registerSubSystem(SubsystemBase subsystem) {

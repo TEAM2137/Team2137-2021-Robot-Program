@@ -4,14 +4,23 @@ import com.team2137.frc2021.autonomous.BarrelRacing;
 import com.team2137.frc2021.autonomous.BouncePath;
 import com.team2137.frc2021.autonomous.GalacticSearch;
 import com.team2137.frc2021.autonomous.SlalomPath;
+import com.team2137.frc2021.program.Autonomous;
 import com.team2137.frc2021.subsystems.*;
 
 import com.ctre.phoenix.CANifier;
 import com.team2137.frc2021.util.CommandRunner;
+import edu.wpi.first.networktables.EntryListenerFlags;
+import edu.wpi.first.networktables.EntryNotification;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import com.team2137.frc2021.program.Autonomous.Challenge;
+
+import java.sql.Driver;
+import java.util.function.Consumer;
 
 public class RobotContainer {
 
@@ -26,9 +35,12 @@ public class RobotContainer {
     public static BallLimeLight ballLimelight;
     public static LEDs leds;
 
-    public static SendableChooser<Command> autoSelector;
+    public static RobotContainer robotInstance;
+    public static SendableChooser<Autonomous.Challenge> autoSelector;
 
-    public static void initialize() {
+    public RobotContainer() {
+        robotInstance = this;
+
         canifier = new CANifier(Constants.canifierID);
 
         leds = new LEDs(canifier);
@@ -51,12 +63,34 @@ public class RobotContainer {
         CommandRunner.registerSubSystem(leds);
 
         autoSelector = new SendableChooser<>();
-        autoSelector.setDefaultOption("Nothing", new InstantCommand(() -> LEDs.getInstance().setState(LEDs.State.Red)));
-        autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
-        autoSelector.addOption("Barrel Racing", new BarrelRacing(drivetrain));
-        autoSelector.addOption("Slalom Path", new SlalomPath(drivetrain));
-        autoSelector.addOption("Bounce Path", new BouncePath(drivetrain));
+        autoSelector.setDefaultOption("Nothing", Challenge.Unknown);
+        autoSelector.addOption("Galactic Search", Challenge.GalacticSearch);
+        autoSelector.addOption("Barrel Racing", Challenge.BarrelRacing);
+        autoSelector.addOption("Slalom Path", Challenge.SlalomPath);
+        autoSelector.addOption("Bounce Path", Challenge.BouncePath);
 
         SmartDashboard.putData("Auto Selector", autoSelector);
+        NetworkTableInstance.getDefault().addEntryListener("Auto Selector", entryNotification -> {
+            switch (entryNotification.name) {
+                case "Nothing":
+                    break;
+                case "Galactic Search":
+                    new GalacticSearch(robotInstance);
+                    DriverStation.reportWarning("Running Galactic", false);
+                    break;
+                case "Barrel Racing":
+                    new BarrelRacing(robotInstance);
+                    DriverStation.reportWarning("Running Barrel", false);
+                    break;
+                case "Slalom Path":
+                    new SlalomPath(robotInstance);
+                    DriverStation.reportWarning("Running Slalom", false);
+                    break;
+                case "Bounce Path":
+                    new BouncePath(robotInstance);
+                    DriverStation.reportWarning("Running Bounce", false);
+                    break;
+            }
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }
 }

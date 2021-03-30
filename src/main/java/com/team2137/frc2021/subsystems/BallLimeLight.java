@@ -1,8 +1,14 @@
 package com.team2137.frc2021.subsystems;
 
+import com.team2137.frc2021.autonomous.GalacticSearchABlue;
+import com.team2137.frc2021.autonomous.GalacticSearchARed;
+import com.team2137.frc2021.autonomous.GalacticSearchBBlue;
+import com.team2137.frc2021.autonomous.GalacticSearchBRed;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,10 +50,20 @@ public class BallLimeLight extends LimeLight {
     public static final Translation2d B_Blue_Point = new Translation2d(1, 1);
 
     public enum Path {
-        A_Red,
-        A_Blue,
-        B_Red,
-        B_Blue,
-        Unknown
+        A_Red (GalacticSearchARed.class),
+        A_Blue (GalacticSearchABlue.class),
+        B_Red (GalacticSearchBRed.class),
+        B_Blue (GalacticSearchBBlue.class),
+        Unknown (null);
+
+        public Class<? extends ParallelCommandGroup> commandGroup;
+
+        Path(Class<? extends ParallelCommandGroup> command) {
+            commandGroup = command;
+        }
+
+        public Class<? extends ParallelCommandGroup> getCommand() {
+            return commandGroup;
+        }
     }
 }
