@@ -1,11 +1,17 @@
 package com.team2137.frc2021;
 
+import com.team2137.frc2021.autonomous.BarrelRacing;
+import com.team2137.frc2021.autonomous.BouncePath;
+import com.team2137.frc2021.autonomous.GalacticSearch;
+import com.team2137.frc2021.autonomous.SlalomPath;
 import com.team2137.frc2021.subsystems.*;
 
 import com.ctre.phoenix.CANifier;
 import com.team2137.frc2021.util.CommandRunner;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 public class RobotContainer {
 
@@ -41,9 +47,16 @@ public class RobotContainer {
         CommandRunner.registerSubSystem(ballLimelight);
         CommandRunner.registerSubSystem(intake);
         CommandRunner.registerSubSystem(spindexer);
+        CommandRunner.registerSubSystem(ballLimelight);
         CommandRunner.registerSubSystem(leds);
 
-//        autoSelector = new SendableChooser<>();
-//        autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
+        autoSelector = new SendableChooser<>();
+        autoSelector.setDefaultOption("Nothing", new InstantCommand(() -> LEDs.getInstance().setState(LEDs.State.Red)));
+        autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
+        autoSelector.addOption("Barrel Racing", new BarrelRacing(drivetrain));
+        autoSelector.addOption("Slalom Path", new SlalomPath(drivetrain));
+        autoSelector.addOption("Bounce Path", new BouncePath(drivetrain));
+
+        SmartDashboard.putData("Auto Selector", autoSelector);
     }
 }

@@ -35,6 +35,8 @@ public class TrajectoryFollowCommand extends CommandBase {
     private HeadingControlThreshold[] thresholds;
     private LineSide previousSide;
     private int thresholdIndex = 0;
+    private ThresholdType currentType = ThresholdType.Static;
+    private HeadingControlThreshold activeThreshold;
 
     private TrajectoryMode trajectoryMode;
 
@@ -122,10 +124,16 @@ public class TrajectoryFollowCommand extends CommandBase {
                     var currentSide = currentThreshold.getLineSide(drivetrain.getPose().getTranslation());
                     if (currentSide != previousSide) {
                         currentHeadingTarget = currentThreshold.getTarget();
+                        currentType = currentThreshold.type;
+                        activeThreshold = currentThreshold;
                         thresholdIndex++;
                         if(thresholdIndex < thresholds.length) {
                             previousSide = thresholds[thresholdIndex].getLineSide(drivetrain.getPose().getTranslation());
                         }
+                    }
+
+                    if (currentType == ThresholdType.Dynamic) {
+                        currentHeadingTarget = drivetrain.getPose().getRotation().plus(activeThreshold.getOffset());
                     }
                 }
                 SmartDashboard.putNumber("current threshold", thresholdIndex);
@@ -153,6 +161,8 @@ public class TrajectoryFollowCommand extends CommandBase {
         private double m;
         private double b;
         private Rotation2d target;
+        private Rotation2d offset;
+        public ThresholdType type;
 
         /**
          * @param m the constant m of y=mx+b
@@ -163,14 +173,16 @@ public class TrajectoryFollowCommand extends CommandBase {
             this.m = m;
             this.b = b;
             this.target = target;
+            this.type = ThresholdType.Static;
         }
 
         /**
          * @param point1 the first point of the threshold line
          * @param point2 the second point of the threshold line
-         * @param target the angle to turn to after passing this line
+         * @param value the angle to turn to after passing this line
+         * @param type the type of heading threshold
          */
-        public HeadingControlThreshold(Translation2d point1, Translation2d point2, Rotation2d target) {
+        public HeadingControlThreshold(Translation2d point1, Translation2d point2, Rotation2d value, ThresholdType type) {
             // prevent a vertical line with an infinite/undefined slope, divide by zero error
             if(point1.getX() == point2.getX()) {
                 point1 = point1.plus(new Translation2d(0.0001, 0));
@@ -180,7 +192,14 @@ public class TrajectoryFollowCommand extends CommandBase {
             this.m = (point1.getY() - point2.getY()) / (point1.getX() - point2.getX());
             //determine y-intercept by rearranging y=mx+b
             this.b = point2.getY() - (this.m * point2.getX());
-            this.target = target;
+
+            if (type == ThresholdType.Static) {
+                this.target = value;
+                this.type = ThresholdType.Static;
+            } else if (type == ThresholdType.Dynamic) {
+                this.offset = value;
+                this.type = ThresholdType.Dynamic;
+            }
         }
 
         /**
@@ -198,6 +217,24 @@ public class TrajectoryFollowCommand extends CommandBase {
         public Rotation2d getTarget() {
             return target;
         }
+
+        /**
+         * @return the heading offset for dynamic targets
+         */
+        public Rotation2d getOffset() {
+            return target;
+        }
+    }
+
+    public enum ThresholdType {
+        /**
+         * Where the heading target for the robot is static and doesn't change, it simply targets a single value
+         */
+        Static,
+        /**
+         * Where the heading target is based off of the trajectory's heading, plus an offset
+         */
+        Dynamic
     }
 
     public enum LineSide {
