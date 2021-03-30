@@ -35,15 +35,16 @@ public class Constants {
 
     public static class Shooter {
         //Parm 0 - Ramp Speed ~ Parm 1 - P ~ Parm 2 - I ~ Parm 3 - D ~ Parm 4 - Max Vel
-        public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 5.0, new PID(0.10, 0.00, 0.00, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
-        public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 5.0, null);
+//        public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 5.0, new PID(0.10, 0.00, 0.00, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
+        public static final Motor FlyWheelMotorObject1 = new Motor("flyWheelMotor1", 42, Motor.MotorTypes.FALCON, false, 60, 1, 1.5, new PID(5.0, 0.0, 0.55, 0.4, 0.106, 0.0225), "6000"); //Parm 4 - Max Vel
+        public static final Motor FlyWheelMotorObject2 = new Motor("flyWheelMotor2", 43, Motor.MotorTypes.FALCON, true, 60, 1, 1.5, null);
         public static final Motor PreRollerMotorObject = new Motor("preRollerMotor", 44, Motor.MotorTypes.NEO550, true, 35, 1, 0, null);
         public static final Motor HoodMotorObject = new Motor("hoodMotor", 41, Motor.MotorTypes.NEO550, false, 35, ((1.0/90.0) * (32.0/70.0)) * 360.0, 0, new PID(0.03, 0, 0), "45", "0"); //Parm 4 - Max Position deg ~ Parm 5 Min Position deg  TODO fix gear ratio for hood motor (Rotation Per Degree)
 
         public static final Point LimeLightShootingCameraPosition = new Point(0, 1.5);
         public static final Point LimeLightTargetFieldPosition = new Point(0, 7.5);
         public static final double LimeLightShootingCameraAngleDegree = 43.56;
-        public static final double FlywheelIdlePercent = 0.0;//0.6;
+        public static final double FlywheelIdlePercent = 0.0; //0.5;
         public static final int HoodMotorHomingCurrentSignal = 20;
     }
 
@@ -83,7 +84,7 @@ public class Constants {
         public static PID translationPIDConstants = new PID(.02, 0, 0.25);
 
 //        public static PID teleopThetaPIDConstants = new PID(2.3, 0, 0.1);
-        public static PID teleopThetaPIDConstants = new PID(0.3, 0, 0.19);
+        public static PID teleopThetaPIDConstants = new PID(0.9, 0.0, 0.4);
         public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
 
         public static PID autoThetaPIDConstants = new PID(2, 0, 0);

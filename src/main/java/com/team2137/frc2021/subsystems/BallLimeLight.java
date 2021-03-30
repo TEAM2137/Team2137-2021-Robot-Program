@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.*;
 
-public class BallLimelight extends LimeLight {
-
-    public BallLimelight() {
+public class BallLimeLight extends LimeLight {
+    
+    public BallLimeLight() {
         super(NetworkTableInstance.getDefault().getTable("limelight-2"));
     }
 

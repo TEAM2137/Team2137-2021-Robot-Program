@@ -4,6 +4,7 @@
 
 package com.team2137.frc2021;
 
+import com.team2137.frc2021.util.CommandRunner;
 import edu.wpi.first.wpilibj.RobotBase;
 
 /**
@@ -21,5 +22,8 @@ public final class Main {
      */
     public static void main(String... args) {
         RobotBase.startRobot(Robot::new);
+        CommandRunner.purgeSubSystems();
+        CommandRunner.purgeCommands();
+        CommandRunner.shutdownNow();
     }
 }

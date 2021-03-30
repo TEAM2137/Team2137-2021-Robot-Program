@@ -7,22 +7,13 @@ import com.team2137.frc2021.program.ControlsManager.Control;
 import com.team2137.frc2021.subsystems.LEDs;
 import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.subsystems.Spindexer;
-import com.team2137.frc2021.util.PID;
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import com.team2137.frc2021.subsystems.Intake.IntakeState;
-
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpiutil.math.MathUtil;
-
-import java.util.Timer;
-import java.util.TreeMap;
 
 public class Teleop extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
@@ -30,8 +21,8 @@ public class Teleop extends RobotContainer implements OpMode {
 
     private ProfiledPIDController thetaController;
 
-    private boolean boolDriverControlledTurning = true;
-    private Rotation2d dblDriveTrainTurnGoal = new Rotation2d();
+    private boolean boolHeadingControlEnabled = true;
+    private boolean boolDriverTurnedRobot = false;
 
     @Override
     public void init() {
@@ -42,7 +33,7 @@ public class Teleop extends RobotContainer implements OpMode {
                 Constants.Drivetrain.teleopThetaPIDConstants.getD(),
                 Constants.Drivetrain.teleopThetaPIDConstraints);
 
-        thetaController.setTolerance(Math.toRadians(2.5));
+        thetaController.setTolerance(Math.toRadians(4));
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         spindexer.setBallStop(Spindexer.BallStopState.Enabled);
@@ -51,38 +42,49 @@ public class Teleop extends RobotContainer implements OpMode {
 
         shooter.setFlywheelVelocity(3000);
         shooter.idleFlyWheel();
+
+        thetaController.reset(0);
+
+        SmartDashboard.putNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP());
+        SmartDashboard.putNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI());
+        SmartDashboard.putNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD());
+
 //        shooter.zeroHoodAngle();
-//        LEDs.getInstance().setDefaultState(LEDs.State.Blue, true);
+        LEDs.getInstance().setDefaultState(LEDs.State.BlinkBlue, true);
+
+//        SmartDashboard.getEntry("thetaController").addListener((table, key, entry, value, flags) -> {
+//            thetaController.
+//        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 //        shooter.setHoodAngle(26.0);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Limelight Robot Radius", shooterLimeLight.getRadialDistance());
-//        drivetrain.setAllModuleRotations(new Rotation2d(0));
-//        double forward = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
-        double forward = 0.75 * -ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2);
+
+        thetaController.setP(SmartDashboard.getNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP()));
+        thetaController.setI(SmartDashboard.getNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI()));
+        thetaController.setD(SmartDashboard.getNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD()));
+
+        double forward = 0.80 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
         double strafe = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
         double turn = 3 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
 
-        // ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, Math.PI / 2.0, Rotation2d.fromDegrees(45.0));
         if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
             drivetrain.xLock();
         }
 
-        if (ControlsManager.getButton(Control.ShooterStage1) && shooter.isIdle()) {
+        if (ControlsManager.getButton(Control.ShooterStage1)) {
             shooter.setShooterPosisition(5);
-            shooter.revFlywheel();
-        } else if (ControlsManager.getButton(Control.ShooterStage2) && shooter.isIdle()) {
+        } else if (ControlsManager.getButton(Control.ShooterStage2)) {
             shooter.setShooterPosisition(10);
-            shooter.revFlywheel();
-        } else if (ControlsManager.getButton(Control.ShooterStage3) && shooter.isIdle()) {
+        } else if (ControlsManager.getButton(Control.ShooterStage3)) {
             shooter.setShooterPosisition(15);
-            shooter.revFlywheel();
-        } else if (ControlsManager.getButton(Control.ShooterStage4) && shooter.isIdle()) {
+        } else if (ControlsManager.getButton(Control.ShooterStage4)) {
             shooter.setShooterPosisition(20);
-            shooter.revFlywheel();
-        } else if(ControlsManager.getButton(Control.HeadingTargetButton) && shooterLimeLight.hasValidTarget()) {
+        } else {
+            shooter.idleFlyWheel();
+        }
+        if(ControlsManager.getButton(Control.HeadingTargetButton) && shooterLimeLight.hasValidTarget()) {
             //Set the flywheel velocity for the shooter and the angle for the hood
             shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
             shooter.setPreRollerPower(1);
@@ -96,28 +98,30 @@ public class Teleop extends RobotContainer implements OpMode {
         } else {
             //Non shooting condition (normal driver mode)
 
-            if(!shooter.isIdle())
-                shooter.idleFlyWheel();
+            double tmp = thetaController.calculate(drivetrain.getRobotAngle().getRadians());
 
-            SmartDashboard.putNumber("DriveTurn Angle", dblDriveTrainTurnGoal.getDegrees());
+            if(!Constants.withinClip(ControlsManager.getAxis(ControlsManager.Control.RotationAxis), 0, 0.1)) {
+                boolDriverTurnedRobot = true;
+                boolHeadingControlEnabled = false;
+            } else if (boolHeadingControlEnabled) {
+                if(!thetaController.atGoal())
+                    turn = tmp;
+                else
+                    turn = 0;
+            }
 
-            if(Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
-                turn = thetaController.calculate(drivetrain.getRobotAngle().getRadians()) * 0.25;
-            } else if(Constants.withinClip(turn, 0, 0.05) && boolDriverControlledTurning && drivetrain.getThetaVelocity() < 5) {
-                boolDriverControlledTurning = false;
-                SmartDashboard.putBoolean("TURNING", false);
-                thetaController.setGoal(dblDriveTrainTurnGoal.getRadians());
-                dblDriveTrainTurnGoal = drivetrain.getRobotAngle();
-            } else if(!Constants.withinClip(turn, 0, 0.05) && !boolDriverControlledTurning) {
-                boolDriverControlledTurning = true;
-                SmartDashboard.putBoolean("TURNING", true);
+            if (Math.abs(drivetrain.getThetaVelocity()) < 2 && boolDriverTurnedRobot) {
+                boolHeadingControlEnabled = true;
+                thetaController.reset(drivetrain.getRobotAngle().getRadians());
+                thetaController.setGoal(drivetrain.getRobotAngle().getRadians());
+                boolDriverTurnedRobot = false;
             }
 
             ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
             drivetrain.driveTranslationRotationRaw(speeds);
         }
 
-        if (shooter.isFlywheelAtTarget(300)) {
+        if (shooter.isFlywheelAtTarget(100) && !shooter.isIdle()) {
             spindexer.setBallStop(Spindexer.BallStopState.Disabled);
             SmartDashboard.putBoolean("Ball Stopper", false);
         } else {
@@ -125,11 +129,7 @@ public class Teleop extends RobotContainer implements OpMode {
             SmartDashboard.putBoolean("Ball Stopper", true);
         }
 
-//        drivetrain.setAllModuleRotations(new Rotation2d(Math.atan2(forward, strafe)));
-//        drivetrain.setAllModuleRotations(Rotation2d.fromDegrees(0));
-
         // Intake
-
         if(ControlsManager.getButton(Control.IntakeButton) && !intakeButtonPreviouslyPressed) {
             if(intakePreviouslyDeployed) {
                 intake.setIntakeState(IntakeState.Retracted);
@@ -141,6 +141,7 @@ public class Teleop extends RobotContainer implements OpMode {
 //                LEDs.getInstance().enableDefaultState();
             }
         }
+
         intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);
         spindexer.setPower(1);
     }

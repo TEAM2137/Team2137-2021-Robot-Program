@@ -19,17 +19,15 @@ public class LEDs extends SubsystemBase {
     private double cycleCurrentHue = 0;
     private Timer cycleTimer = new Timer();
 
-    private LEDs(CANifier canifier) {
+    public LEDs(CANifier canifier) {
         this.canifier = canifier;
         this.currentState = State.Off;
 
         this.cycleTimer.start();
 
-        setLEDs(new Color(0 ,0, 0));
-    }
+        instance = this;
 
-    public static void initialize(CANifier canifier) {
-        instance = new LEDs(canifier);
+        setLEDs(new Color(0 ,0, 0));
     }
 
     public static LEDs getInstance() {

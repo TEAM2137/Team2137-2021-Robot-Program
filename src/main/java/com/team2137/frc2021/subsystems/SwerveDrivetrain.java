@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MatBuilder;
 import edu.wpi.first.wpiutil.math.Nat;
 
+import static com.ctre.phoenix.sensors.PigeonIMU.CalibrationMode.BootTareGyroAccel;
+
 // Everything in this file will be done in the order front left, front right, back left, back right
 public class SwerveDrivetrain extends SubsystemBase {
 
@@ -100,11 +102,27 @@ public class SwerveDrivetrain extends SubsystemBase {
      * @return the angle of the robot (CCW positive (normal))
      */
     public Rotation2d getRobotAngle() {
-        double value = Math.abs(pigeonIMU.getFusedHeading() % 360);
-        if (value > 180)
-            return Rotation2d.fromDegrees(value - 360);
-        else
-            return Rotation2d.fromDegrees(value);
+        double raw = pigeonIMU.getFusedHeading(); // % 360;
+        while (raw <= -180) raw += 360;
+        while (raw > 180) raw -= 360;
+        return Rotation2d.fromDegrees(raw);
+
+//        if (raw < 0 && raw > -180) {
+//            return Rotation2d.fromDegrees()
+//        }
+//        if( raw > 180) {
+//            raw = raw - 360;
+//            pigeonIMU.setFusedHeading(raw);
+//        }else if( raw < -180) {
+//            raw = raw + 360;
+//            pigeonIMU.setFusedHeading(raw);
+//        }
+//        return Rotation2d.fromDegrees(raw);
+//        if (value > 180)
+//            return Rotation2d.fromDegrees(value - 360);
+//        else
+//            return Rotation2d.fromDegrees(value);
+//        return Rotation2d.fromDegrees(Math.abs(pigeonIMU.getFusedHeading()) % 360);
     }
 
     public double getThetaVelocity() {
