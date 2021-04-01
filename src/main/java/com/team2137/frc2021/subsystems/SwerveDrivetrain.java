@@ -70,7 +70,7 @@ public class SwerveDrivetrain extends SubsystemBase {
                 new MatBuilder<>(Nat.N1(), Nat.N1()).fill(Units.degreesToRadians(0.01)), // Local measurement standard deviations. Gyro.
                 new MatBuilder<>(Nat.N3(), Nat.N1()).fill(0.5, 0.5, Units.degreesToRadians(30))); // Vision measurement standard deviations. X, Y, and theta.
 
-//        SmartDashboard.putData("Field", field2d);
+        SmartDashboard.putData("Field", field2d);
 //        SmartDashboard.putBoolean("Reset Position", false);
     }
 
@@ -79,12 +79,13 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-//        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
+        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
 
-//        SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
-//        field2d.setRobotPose(getPose());
-//        SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
-//        SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
+        field2d.setRobotPose(getPose());
+
+        SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
+        SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
+        SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
 
 //        if(SmartDashboard.getBoolean("Reset Position", false)) {
 //            resetOdometry();
@@ -202,7 +203,9 @@ public class SwerveDrivetrain extends SubsystemBase {
      * @return the pose of the robot in meters
      */
     public Pose2d getPose() {
-        return poseEstimator.getEstimatedPosition();
+        var initialPose = poseEstimator.getEstimatedPosition();
+
+        return new Pose2d(-initialPose.getX(), -initialPose.getY(), initialPose.getRotation());
     }
 
     /**
@@ -254,7 +257,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        poseEstimator.resetPosition(pose, pose.getRotation());
+        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), pose.getRotation());
     }
 
     public void resetOdometry() {
@@ -276,7 +279,8 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     public TrajectoryConfig getDefaultConstraint() {
-        return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
+//        return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
+        return new TrajectoryConfig(Units.feetToMeters(12), Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
     }
 
     public void setBrakeMode(boolean brake) {

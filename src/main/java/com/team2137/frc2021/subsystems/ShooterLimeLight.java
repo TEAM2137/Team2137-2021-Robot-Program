@@ -2,6 +2,7 @@ package com.team2137.frc2021.subsystems;
 
 import com.team2137.frc2021.Constants;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShooterLimeLight extends LimeLight {
 
@@ -15,6 +16,6 @@ public class ShooterLimeLight extends LimeLight {
 
     @Override
     public void periodic() {
-
+        SmartDashboard.putNumber("Limelight distance", getRadialDistance());
     }
 }

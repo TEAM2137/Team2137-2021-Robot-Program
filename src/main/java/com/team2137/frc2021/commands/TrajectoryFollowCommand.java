@@ -133,8 +133,9 @@ public class TrajectoryFollowCommand extends CommandBase {
                     }
 
                     if (currentType == ThresholdType.Dynamic) {
-                        currentHeadingTarget = drivetrain.getPose().getRotation().plus(activeThreshold.getOffset());
+                        currentHeadingTarget = desiredState.poseMeters.getRotation().plus(activeThreshold.getOffset());
                     }
+                    SmartDashboard.putString("side", currentSide.toString());
                 }
                 SmartDashboard.putNumber("current threshold", thresholdIndex);
                 break;
@@ -208,6 +209,7 @@ public class TrajectoryFollowCommand extends CommandBase {
          */
         public LineSide getLineSide(Translation2d position) {
             double lineY = m * position.getX() + b;
+            SmartDashboard.putNumber("liney", lineY);
             return position.getY() >= lineY ? LineSide.Positive : LineSide.Negative;
         }
 

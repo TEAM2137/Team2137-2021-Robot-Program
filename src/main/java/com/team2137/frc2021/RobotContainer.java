@@ -14,7 +14,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import com.team2137.frc2021.program.Autonomous.Challenge;
 
 
 public class RobotContainer {
@@ -52,7 +51,7 @@ public class RobotContainer {
 
         autoSelector = new SendableChooser<>();
         autoSelector.setDefaultOption("Nothing", new Object());
-        autoSelector.addOption("Galactic Search", new GalacticSearch(this));
+        autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
         autoSelector.addOption("Barrel Racing", new BarrelRacing(this));
         autoSelector.addOption("Slalom Path", new SlalomPath(this));
         autoSelector.addOption("Bounce Path", new BouncePath(this));

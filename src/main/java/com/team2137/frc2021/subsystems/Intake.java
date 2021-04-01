@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
 
-    //CANSparkMax motor;
-    TalonSRX motor;
+    CANSparkMax motor;
+//    TalonSRX motor;
     
     DoubleSolenoid cylinder;
     DoubleSolenoid cylinder2;
@@ -22,18 +22,17 @@ public class Intake extends SubsystemBase {
     private IntakeState state;
 
     public Intake() {
-        this.motor = new TalonSRX(Constants.Intake.motorID);
-        this.motor.configFactoryDefault();
+        this.motor = new CANSparkMax(Constants.Intake.motorID, MotorType.kBrushless);
         this.motor.setInverted(Constants.Intake.invertMotor);
+        this.motor.setSmartCurrentLimit(Constants.Intake.currentLimit);
 
-        //CANSparkMax(Constants.Intake.motorID, MotorType.kBrushless);
         this.cylinder = new DoubleSolenoid(Constants.Intake.cylinderForwardID, Constants.Intake.cylinderReverseID);
         this.cylinder2 = new DoubleSolenoid(Constants.Intake.cylinder2ForwardID, Constants.Intake.cylinder2ReverseID);
     }
     
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("IntakeSpeed", motor.getMotorOutputPercent());
+        SmartDashboard.putNumber("IntakeSpeed", motor.get());
         SmartDashboard.putString("Cylinder State", cylinder.get().toString());
         SmartDashboard.putNumber("Intake Current", getIntakeCurrentDraw());
     }
@@ -45,7 +44,7 @@ public class Intake extends SubsystemBase {
     }
 
     public void setMotorPowerRaw(double power) {
-        motor.set(ControlMode.PercentOutput, power);
+        motor.set(power);
     }
 
     public void setIntakeState(IntakeState state) {
@@ -55,7 +54,7 @@ public class Intake extends SubsystemBase {
     }
 
     public double getIntakeCurrentDraw() {
-        return motor.getStatorCurrent();
+        return motor.getOutputCurrent();
     }
 
     public IntakeState getIntakeState() {
@@ -65,6 +64,7 @@ public class Intake extends SubsystemBase {
     public enum IntakeState {
         Retracted(0, DoubleSolenoid.Value.kReverse),
         Running(1, DoubleSolenoid.Value.kForward),
+        Deployed(0, DoubleSolenoid.Value.kForward),
         ;
 
         public final double motorPower;

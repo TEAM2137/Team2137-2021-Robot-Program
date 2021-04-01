@@ -23,9 +23,11 @@ public class ControlsManager {
         RotationAxis            (Axis.kRightX, driverController),
         XLockButton             (Button.kBumperRight, driverController),
 
-        HeadingTargetButton     (Button.kBumperLeft, operatorController),
+        HeadingTargetButton     (Button.kBumperLeft, driverController),
+        PreRoller               (Button.kX, driverController),
 
         IntakeButton            (Button.kA, driverController),
+        IntakeDeploy            (Button.kB, driverController),
 
         ShooterStage1           (Button.kBumperRight, operatorController),
         ShooterStage2           (Button.kY, operatorController),

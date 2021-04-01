@@ -63,12 +63,12 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         //Make sure to add current limiting for the hood motor so that it does not burn
 //        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
-        this.dblHoodMotorHomingCurrentLimit = 20; //temp
+        this.dblHoodMotorHomingCurrentLimit = 25; //temp
 
-        shooterSampleValues.put(5.0, new Translation2d(4000.0, 7.0));
-        shooterSampleValues.put(10.0 , new Translation2d(4700.0, 18.0));
-        shooterSampleValues.put(15.0 , new Translation2d(5100.0, 27.0));
-        shooterSampleValues.put(20.0 , new Translation2d(5400.0, 31.5));
+        shooterSampleValues.put(5.0, new Translation2d(4000.0, 4.0));
+        shooterSampleValues.put(10.0 , new Translation2d(4700.0, 20.0));
+        shooterSampleValues.put(15.0 , new Translation2d(5100.0, 28.0));
+        shooterSampleValues.put(20.0 , new Translation2d(6000.0, 30));
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -268,9 +268,10 @@ public class Shooter extends SubsystemBase {
         else if (max.getKey() == distanceFeet)
             return max.getValue().getY();
         else {
-            double amp = max.getKey() - min.getKey();
-            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
-                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
+//            double amp = max.getKey() - min.getKey();
+//            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
+//                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
+            return (max.getValue().getY() * (min.getKey() - distanceFeet) + min.getValue().getY() * (distanceFeet - max.getKey())) / (min.getKey() - max.getKey());
         }
     }
 

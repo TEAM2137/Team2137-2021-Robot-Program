@@ -56,7 +56,7 @@ public class Constants {
 
         public static final double motorToWheelConversionFactor = (1 / 6.86) * Units.inchesToMeters(4 * Math.PI);
 
-        public static final double driveMaxSpeed = Units.feetToMeters(13.5); // temp value
+        public static final double driveMaxSpeed = Units.feetToMeters(15); // temp value
         public static final double driveMaxAccel = Units.feetToMeters(8.0); // temp value
 
         public static final boolean invertDriveMotor = true;
@@ -73,22 +73,22 @@ public class Constants {
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
         public static PID turningPIDConstants = new PID(0.03, 0, 0.000883); // carpet
 
-        public static PID drivePIDConstants = new PID(.5, 0, .2);//.5 0 .2
-        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.225, 0);
+        public static PID drivePIDConstants = new PID(0.1, 0, 0);//.5 0 .2
+        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.15, 0);
 
         public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -173.58, "Front Left");
         public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 80.51, "Front Right");
         public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, -52.99, "Back Left");
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 121.11, "Back Right");
 
-        public static PID translationPIDConstants = new PID(.02, 0, 0.25);
+        public static PID translationPIDConstants = new PID(.05, 0, 0);
 
 //        public static PID teleopThetaPIDConstants = new PID(2.3, 0, 0.1);
         public static PID teleopThetaPIDConstants = new PID(0.9, 0.0, 0.4);
         public static TrapezoidProfile.Constraints teleopThetaPIDConstraints = new TrapezoidProfile.Constraints(6, 4); // new
 
-        public static PID autoThetaPIDConstants = new PID(2, 0, 0);
-        public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(8, 8); // old
+        public static PID autoThetaPIDConstants = new PID(2.75, 0, 0);
+        public static TrapezoidProfile.Constraints autoThetaPIDConstraints = new TrapezoidProfile.Constraints(16, 16); // old
 
         public static PID purePIDTranslationConstants = new PID(0, 0, 0);
 
@@ -133,7 +133,8 @@ public class Constants {
 
     public static class Intake {
         public static int motorID = 30;
-        public static final boolean invertMotor = true;
+        public static final boolean invertMotor = false;
+        public static int currentLimit = 20;
 
         public static final int cylinderForwardID = 2;
         public static final int cylinderReverseID = 1;

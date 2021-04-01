@@ -147,8 +147,8 @@ public class SwerveDriveModule extends SubsystemBase {
         SmartDashboard.putNumber(moduleName + " Heading Power", turningMotor.getMotorOutputPercent());
 
         SmartDashboard.putNumber(moduleName + " Drive Power", driveMotor.getMotorOutputPercent());
-        SmartDashboard.putNumber(moduleName + " Velocity Target", Units.metersToFeet(driveVelocityTarget));
-        SmartDashboard.putNumber(moduleName + " Velocity", Units.metersToFeet(getDriveVelocity()));
+        SmartDashboard.putNumber(moduleName + " Velocity Target", Math.abs(Units.metersToFeet(driveVelocityTarget)));
+        SmartDashboard.putNumber(moduleName + " Velocity", Math.abs(Units.metersToFeet(getDriveVelocity())));
     }
 
     /**

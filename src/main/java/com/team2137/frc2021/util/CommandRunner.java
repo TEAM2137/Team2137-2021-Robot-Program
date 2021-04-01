@@ -16,23 +16,34 @@ public class CommandRunner {
         private Object command;
         private Runnable runnable;
         private boolean initFlag;
+        private boolean endFlag;
 
         public ConcurrentCommandBundle(CommandBase _base) {
             command = _base;
             initFlag = false;
+            endFlag = false;
         }
 
         public ConcurrentCommandBundle(SubsystemBase _base) {
             command = _base;
             initFlag = false;
+            endFlag = false;
         }
 
         public void flagInit() {
             initFlag = true;
         }
 
+        public void flagEnd() {
+            endFlag = true;
+        }
+
         public boolean hasInitStarted() {
             return initFlag;
+        }
+
+        public boolean hasEndStarted() {
+            return endFlag;
         }
 
         public void setRunnable(Runnable run) {
@@ -96,6 +107,10 @@ public class CommandRunner {
                 threadPoolExecutor.remove(bundle.getRunnable());
                 commandBundleList.remove(bundle);
                 bundle.getCommand().end(false);
+                if (!bundle.hasEndStarted()) {
+                    bundle.getCommand().end(false);
+                    bundle.flagEnd();
+                }
             } else {
                 bundle.getCommand().execute();
             }

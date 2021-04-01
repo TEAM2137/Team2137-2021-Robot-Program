@@ -48,7 +48,7 @@ public class Spindexer extends SubsystemBase {
     }
 
     public void setBallStop(BallStopState state) {
-        ballStop.set(state.value);
+//        ballStop.set(state.value);
     }
 
     public boolean isBallStopEnabled() {
