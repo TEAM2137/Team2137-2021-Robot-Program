@@ -14,11 +14,12 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 
 public class RobotContainer {
 
-    public CANifier canifier;
+    public static CANifier canifier;
 
     public static SwerveDrivetrain drivetrain;
     public static Intake intake;
@@ -29,12 +30,9 @@ public class RobotContainer {
     public static BallLimeLight ballLimelight;
     public static LEDs leds;
 
-    public static RobotContainer robotInstance;
-    public SendableChooser<Object> autoSelector;
+    public static SendableChooser<Object> autoSelector;
 
-    public RobotContainer() {
-        robotInstance = this;
-
+    public static void initialize() {
         canifier = new CANifier(Constants.canifierID);
 
         leds = new LEDs(canifier);
@@ -50,11 +48,11 @@ public class RobotContainer {
         CommandRunner.registerSubSystem(drivetrain, shooter, shooterLimeLight, ballLimelight, intake, spindexer, ballLimelight, leds);
 
         autoSelector = new SendableChooser<>();
-        autoSelector.setDefaultOption("Nothing", new Object());
+        autoSelector.setDefaultOption("Nothing", new InstantCommand(() -> DriverStation.reportWarning("Doing nothing for auto", false)));
         autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
-        autoSelector.addOption("Barrel Racing", new BarrelRacing(this));
-        autoSelector.addOption("Slalom Path", new SlalomPath(this));
-        autoSelector.addOption("Bounce Path", new BouncePath(this));
+        autoSelector.addOption("Barrel Racing", new BarrelRacing(drivetrain));
+        autoSelector.addOption("Slalom Path", new SlalomPath(drivetrain));
+        autoSelector.addOption("Bounce Path", new BouncePath(drivetrain));
 
         SmartDashboard.putData("Auto Selector", autoSelector);
     }
