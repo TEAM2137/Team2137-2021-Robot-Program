@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotMode extends RobotContainer implements OpMode {
     @Override
     public void init() {
-        RobotContainer.initialize();
+        new RobotContainer();
     }
 
     @Override

@@ -108,4 +108,9 @@ public class PID {
     public SimpleMotorFeedforward getWPIFeedForwardController() {
         return new SimpleMotorFeedforward(S, V, A);
     }
+
+    @Override
+    public String toString() {
+        return "P: " + P + " I: " + I + " D: " + D;
+    }
 }

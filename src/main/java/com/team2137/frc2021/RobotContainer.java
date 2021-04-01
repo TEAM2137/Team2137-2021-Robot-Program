@@ -10,21 +10,16 @@ import com.team2137.frc2021.subsystems.*;
 import com.ctre.phoenix.CANifier;
 import com.team2137.frc2021.util.CommandRunner;
 import edu.wpi.first.networktables.EntryListenerFlags;
-import edu.wpi.first.networktables.EntryNotification;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import com.team2137.frc2021.program.Autonomous.Challenge;
 
-import java.sql.Driver;
-import java.util.function.Consumer;
 
 public class RobotContainer {
 
-    public static CANifier canifier;
+    public CANifier canifier;
 
     public static SwerveDrivetrain drivetrain;
     public static Intake intake;
@@ -36,7 +31,7 @@ public class RobotContainer {
     public static LEDs leds;
 
     public static RobotContainer robotInstance;
-    public static SendableChooser<Autonomous.Challenge> autoSelector;
+    public SendableChooser<Object> autoSelector;
 
     public RobotContainer() {
         robotInstance = this;
@@ -53,44 +48,15 @@ public class RobotContainer {
         intake = new Intake();
         spindexer = new Spindexer();
 
-        CommandRunner.registerSubSystem(drivetrain);
-        CommandRunner.registerSubSystem(shooter);
-        CommandRunner.registerSubSystem(shooterLimeLight);
-        CommandRunner.registerSubSystem(ballLimelight);
-        CommandRunner.registerSubSystem(intake);
-        CommandRunner.registerSubSystem(spindexer);
-        CommandRunner.registerSubSystem(ballLimelight);
-        CommandRunner.registerSubSystem(leds);
+        CommandRunner.registerSubSystem(drivetrain, shooter, shooterLimeLight, ballLimelight, intake, spindexer, ballLimelight, leds);
 
         autoSelector = new SendableChooser<>();
-        autoSelector.setDefaultOption("Nothing", Challenge.Unknown);
-        autoSelector.addOption("Galactic Search", Challenge.GalacticSearch);
-        autoSelector.addOption("Barrel Racing", Challenge.BarrelRacing);
-        autoSelector.addOption("Slalom Path", Challenge.SlalomPath);
-        autoSelector.addOption("Bounce Path", Challenge.BouncePath);
+        autoSelector.setDefaultOption("Nothing", new Object());
+        autoSelector.addOption("Galactic Search", new GalacticSearch(this));
+        autoSelector.addOption("Barrel Racing", new BarrelRacing(this));
+        autoSelector.addOption("Slalom Path", new SlalomPath(this));
+        autoSelector.addOption("Bounce Path", new BouncePath(this));
 
         SmartDashboard.putData("Auto Selector", autoSelector);
-        NetworkTableInstance.getDefault().addEntryListener("Auto Selector", entryNotification -> {
-            switch (entryNotification.name) {
-                case "Nothing":
-                    break;
-                case "Galactic Search":
-                    new GalacticSearch(robotInstance);
-                    DriverStation.reportWarning("Running Galactic", false);
-                    break;
-                case "Barrel Racing":
-                    new BarrelRacing(robotInstance);
-                    DriverStation.reportWarning("Running Barrel", false);
-                    break;
-                case "Slalom Path":
-                    new SlalomPath(robotInstance);
-                    DriverStation.reportWarning("Running Slalom", false);
-                    break;
-                case "Bounce Path":
-                    new BouncePath(robotInstance);
-                    DriverStation.reportWarning("Running Bounce", false);
-                    break;
-            }
-        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }
 }

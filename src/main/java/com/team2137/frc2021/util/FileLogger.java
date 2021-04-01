@@ -31,6 +31,8 @@ public class FileLogger {
     private FileWriter writer;
     private DriverStation dStation;
     private final String logName;
+    private String logFileDirectory;
+    private int maxLogFiles;
 
     public FileLogger(int _debug){
         this.debug = _debug;
@@ -99,7 +101,7 @@ public class FileLogger {
     
     /**
      * Internal function that writes a single line to the file and able to handle errors thrown
-     * @param toWrite
+     * @param toWrite - String to write
      */
     private synchronized void writeLine(String toWrite) {
         try {
@@ -111,17 +113,25 @@ public class FileLogger {
     }
 
     /**
+     * Function that writes the Parameter value of a motor to the log file
+     * @param motor - Motor object to print
+     */
+    private synchronized void writeMotorParameterLog(Motor motor) {
+        writeLine(motor.toString());
+    }
+
+    /**
      * List all the files in the Log directory
      * Then if there is more than the max log amount then delete
      */
     public void cleanLogs(){
-//        File[] fileList = new File(Constants.strLogDirectory).listFiles();
-//
-//        if (fileList.length > Constants.intMaxLogFiles) {
-//            for (int i = Constants.intMaxLogFiles; i < fileList.length; i++) {
-//                fileList[i].delete();
-//            }
-//        }
+        File[] fileList = new File(logFileDirectory).listFiles();
+
+        if (fileList.length > maxLogFiles) {
+            for (int i = maxLogFiles; i < fileList.length; i++) {
+                fileList[i].delete();
+            }
+        }
     }
 
     /**

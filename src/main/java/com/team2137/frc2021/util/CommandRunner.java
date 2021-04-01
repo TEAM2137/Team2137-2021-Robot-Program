@@ -154,6 +154,11 @@ public class CommandRunner {
         threadPoolExecutor.scheduleAtFixedRate(bundle.getRunnable(), 0, 25, TimeUnit.MILLISECONDS);
     }
 
+    public static void registerSubSystem(SubsystemBase... subsystemBases) {
+        for (SubsystemBase a : subsystemBases)
+            registerSubSystem(a);
+    }
+
     public static void purgeSubSystems() {
         subsystemBundleList.forEach((commandBundle -> threadPoolExecutor.remove(commandBundle.getRunnable())));
         subsystemBundleList.clear();

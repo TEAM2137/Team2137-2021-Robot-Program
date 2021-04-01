@@ -8,15 +8,15 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import javax.annotation.Nullable;
 
 public class Motor {
-    String name;
-    int id;
-    MotorTypes type;
-    boolean inverted;
-    String[] parms;
-    int currentLimit;
-    double gearRatio = 1;
-    double rampRate = 0;
-    PID pidValues;
+    private String name;
+    private int id;
+    private MotorTypes type;
+    private boolean inverted;
+    private String[] parms;
+    private int currentLimit;
+    private double gearRatio = 1;
+    private double rampRate = 0;
+    private PID pidValues;
 
     /**
      * Create a new Motor Object for debug and better storage
@@ -110,6 +110,12 @@ public class Motor {
 
     public void setRampRate(double rampRate) {
         this.rampRate = rampRate;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + "\nID: " + id + "\nType: " + type.toString() + "\nInverted: " + inverted + "\nCurrent Limit: " + currentLimit
+                + "\nGear Ratio: " + gearRatio + "\nRamp Rate: " + rampRate + "\nPID: " + pidValues.toString();
     }
 
     public enum MotorTypes {
