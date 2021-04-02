@@ -41,14 +41,15 @@ public class Teleop extends RobotContainer implements OpMode {
         spindexer.setPower(0);
         drivetrain.setBrakeMode(true);
 
-        shooter.setFlywheelVelocity(3000);
+        shooter.setFlywheelVelocity(5000);
         shooter.idleFlyWheel();
+        shooter.zeroHoodAngle();
 
         thetaController.reset(0);
 
-        SmartDashboard.putNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP());
-        SmartDashboard.putNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI());
-        SmartDashboard.putNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD());
+//        SmartDashboard.putNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP());
+//        SmartDashboard.putNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI());
+//        SmartDashboard.putNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD());
 
 //        shooter.zeroHoodAngle();
         LEDs.getInstance().setDefaultState(LEDs.State.BlinkBlue, true);
@@ -64,9 +65,9 @@ public class Teleop extends RobotContainer implements OpMode {
     @Override
     public void periodic() {
 
-        thetaController.setP(SmartDashboard.getNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP()));
-        thetaController.setI(SmartDashboard.getNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI()));
-        thetaController.setD(SmartDashboard.getNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD()));
+//        thetaController.setP(SmartDashboard.getNumber("PTheta", Constants.Drivetrain.teleopThetaPIDConstants.getP()));
+//        thetaController.setI(SmartDashboard.getNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI()));
+//        thetaController.setD(SmartDashboard.getNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD()));
 
         double forward = 0.80 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
         double strafe = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
@@ -84,11 +85,13 @@ public class Teleop extends RobotContainer implements OpMode {
             shooter.setShooterPosisition(15);
         } else if (ControlsManager.getButton(Control.ShooterStage4)) {
             shooter.setShooterPosisition(20);
+        } else if (ControlsManager.getButton(Control.ShooterLimeLight)) {
+            shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
         } else {
             shooter.idleFlyWheel();
         }
 
-        boolean isPoweringShooter = ControlsManager.getButton(Control.ShooterStage1) || ControlsManager.getButton(Control.ShooterStage2) || ControlsManager.getButton(Control.ShooterStage3) || ControlsManager.getButton(Control.ShooterStage4);
+//        boolean isPoweringShooter = ControlsManager.getButton(Control.ShooterStage1) || ControlsManager.getButton(Control.ShooterStage2) || ControlsManager.getButton(Control.ShooterStage3) || ControlsManager.getButton(Control.ShooterStage4);
 
         if(ControlsManager.getButton(Control.HeadingTargetButton) && shooterLimeLight.hasValidTarget()) {
             //Set the flywheel velocity for the shooter and the angle for the hood
@@ -138,13 +141,14 @@ public class Teleop extends RobotContainer implements OpMode {
 
         }
 
-        if (ControlsManager.getButton(Control.PreRoller)) {
-            shooter.setPreRollerPower(1);
-        } else {
-            shooter.setPreRollerPower(0);
-        }
+//        if (ControlsManager.getButton(Control.PreRoller)) {
+//            shooter.setPreRollerPower(1);
+//        } else {
+//            shooter.setPreRollerPower(0);
+//        }
 
-        if (shooter.isFlywheelAtTarget(200) && !shooter.isIdle() && (ControlsManager.getButton(Control.HeadingTargetButton) || ControlsManager.getButton(Control.PreRoller)) && isPoweringShooter) {
+//        if (shooter.isFlywheelAtTarget(200) && !shooter.isIdle() && (ControlsManager.getButton(Control.HeadingTargetButton) || ControlsManager.getButton(Control.PreRoller)) && isPoweringShooter) {
+        if (shooter.isFlywheelAtTarget(150)) {
             spindexer.setBallStop(Spindexer.BallStopState.Disabled);
             spindexer.setPower(1);
             SmartDashboard.putBoolean("Ball Stopper", false);

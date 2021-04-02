@@ -49,10 +49,10 @@ public abstract class LimeLight extends SubsystemBase {
             tv = value.getDouble() >= 1;
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
-        tx = Math.toRadians(LimeLightValues.TX.getValue(_table));
-        ty = Math.toRadians(LimeLightValues.TY.getValue(_table));
-        tv = LimeLightValues.TV.getValue(_table) == 1;
-        ta = Math.toRadians(LimeLightValues.TX.getValue(_table));
+//        tx = Math.toRadians(LimeLightValues.TX.getValue(_table));
+//        ty = Math.toRadians(LimeLightValues.TY.getValue(_table));
+//        tv = LimeLightValues.TV.getValue(_table) == 1;
+//        ta = Math.toRadians(LimeLightValues.TX.getValue(_table));
     }
 
     @Override

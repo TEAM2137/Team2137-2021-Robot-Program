@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
+import java.sql.Driver;
 import java.util.TreeMap;
 
 import static com.team2137.frc2021.Constants.*;
@@ -65,10 +66,10 @@ public class Shooter extends SubsystemBase {
 //        this.dblHoodMotorHomingCurrentLimit = Double.parseDouble(HoodMotorObject.getParm(6));
         this.dblHoodMotorHomingCurrentLimit = 25; //temp
 
-        shooterSampleValues.put(5.0, new Translation2d(4000.0, 4.0));
-        shooterSampleValues.put(10.0 , new Translation2d(4700.0, 20.0));
-        shooterSampleValues.put(15.0 , new Translation2d(5100.0, 28.0));
-        shooterSampleValues.put(20.0 , new Translation2d(6000.0, 30));
+        shooterSampleValues.put(5.0, new Translation2d(4000.0, 3.0));
+        shooterSampleValues.put(10.0 , new Translation2d(4700.0, 17.0));
+        shooterSampleValues.put(15.0 , new Translation2d(5300.0, 25.0));
+        shooterSampleValues.put(20.0 , new Translation2d(5700.0, 30));
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -173,7 +174,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean isFlywheelAtTarget(double width) {
-        return Math.abs(getFlywheelVelocity() - dblFlywheelVelocityGoal) < width;
+        return (Math.abs(getFlywheelVelocity() - dblFlywheelVelocityGoal) < width) && !isIdle();
     }
 
     public void idleFlyWheel() {
@@ -268,10 +269,10 @@ public class Shooter extends SubsystemBase {
         else if (max.getKey() == distanceFeet)
             return max.getValue().getY();
         else {
-//            double amp = max.getKey() - min.getKey();
-//            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
-//                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
-            return (max.getValue().getY() * (min.getKey() - distanceFeet) + min.getValue().getY() * (distanceFeet - max.getKey())) / (min.getKey() - max.getKey());
+            double amp = max.getKey() - min.getKey();
+            double high = ((max.getKey() - distanceFeet) / amp) * max.getValue().getY();
+            double low = ((distanceFeet - min.getKey()) / amp) * min.getValue().getY();
+            return high + low;
         }
     }
 
@@ -288,8 +289,9 @@ public class Shooter extends SubsystemBase {
             return max.getValue().getX();
         else {
             double amp = max.getKey() - min.getKey();
-            return ((max.getValue().getY() * (max.getKey() - distanceFeet / amp))
-                    + (min.getValue().getY() * (distanceFeet - min.getKey() / amp)));
+            double high = ((max.getKey() - distanceFeet) / amp) * max.getValue().getX();
+            double low = ((distanceFeet - min.getKey()) / amp) * min.getValue().getX();
+            return high + low;
         }
     }
 

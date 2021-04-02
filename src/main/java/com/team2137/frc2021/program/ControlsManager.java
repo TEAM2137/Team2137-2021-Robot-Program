@@ -32,7 +32,8 @@ public class ControlsManager {
         ShooterStage1           (Button.kBumperRight, operatorController),
         ShooterStage2           (Button.kY, operatorController),
         ShooterStage3           (Button.kB, operatorController),
-        ShooterStage4           (Button.kA, operatorController);
+        ShooterStage4           (Button.kA, operatorController),
+        ShooterLimeLight        (Button.kBumperLeft, operatorController);
 
         private int id;
         private GenericHID controller;
