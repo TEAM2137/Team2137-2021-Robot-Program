@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.List;
 
-public class BouncePath {
+public class BouncePath extends SequentialCommandGroup {
     public BouncePath(SwerveDrivetrain drivetrain) {
         var startPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
 
@@ -29,6 +29,6 @@ public class BouncePath {
 
         var trajectoryCommand = new TrajectoryFollowCommand(drivetrain, trajectory, Rotation2d.fromDegrees(0));
 
-        CommandRunner.executeCommandSequence(setPoseCommand, trajectoryCommand);
+        addCommands(setPoseCommand, trajectoryCommand);
     }
 }

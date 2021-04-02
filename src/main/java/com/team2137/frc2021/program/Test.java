@@ -153,13 +153,16 @@ public class Test extends RobotContainer implements OpMode {
 //        shooter.setPreset(Constants.ShooterPresets.AutoShoot);
 //        spindexer.setPower(1);
 
-//        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(Units.feetToMeters(8), 0, 0));
+        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0));
 
-        double turn = thetaController.calculate(drivetrain.getRobotAngle().getRadians(), target.getRadians());
+//        double turn = thetaController.calculate(drivetrain.getRobotAngle().getRadians(), target.getRadians());
+//
+//        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(0, 0, turn));
+//
+//        SmartDashboard.putNumber("Angle Target", target.getDegrees());
 
-        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(0, 0, turn));
-
-        SmartDashboard.putNumber("Angle Target", target.getDegrees());
+//        drivetrain.setAllModuleDriveRawPower(0);
+//        drivetrain.setAllModuleRotations(new Rotation2d());
     }
 
     @Override

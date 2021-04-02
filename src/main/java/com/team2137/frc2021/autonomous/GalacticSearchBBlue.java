@@ -28,9 +28,9 @@ public class GalacticSearchBBlue extends ParallelCommandGroup {
         var trajectory = TrajectoryUtility.generateTrajectoryFeet(
                 new Pose2d(1.5, 9.08, Rotation2d.fromDegrees(0)),
                 List.of(
-                        new Translation2d(13.25, 4.25),
-                        new Translation2d(18.25, 10.75),
-                        new Translation2d(23.25, 5)),
+                        new Translation2d(13.25, 5.0),
+                        new Translation2d(18.25, 11.5),
+                        new Translation2d(23.25, 6)),
                 new Pose2d(27, 4, Rotation2d.fromDegrees(0)),
                 drivetrain.getDefaultConstraint()
         );

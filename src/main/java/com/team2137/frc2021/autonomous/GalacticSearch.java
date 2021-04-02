@@ -22,7 +22,7 @@ public class GalacticSearch extends SequentialCommandGroup {
                         Map.entry(Path.B_Red, new GalacticSearchBRed(drivetrain, intake, spindexer)),
                         Map.entry(Path.B_Blue, new GalacticSearchBBlue(drivetrain, intake, spindexer))
                 ),
-                limelight::getCurrentPath
+                limelight::getClosestPath
         );
 
         addCommands(command);

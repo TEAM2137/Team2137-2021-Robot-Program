@@ -73,8 +73,8 @@ public class Constants {
 //        public staticPID turningPIDConstants = new PID(0.1, 0, -0.0000000000000000000000001); // carpet
         public static PID turningPIDConstants = new PID(0.03, 0, 0.000883); // carpet
 
-        public static PID drivePIDConstants = new PID(0.1, 0, 0);//.5 0 .2
-        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.7, 2.15, 0);
+        public static PID drivePIDConstants = new PID(0.07, 0, 0);// 0.1
+        public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.5, 2.15, 0); //0.7, 2.15
 
         public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -173.58, "Front Left");
         public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 80.51, "Front Right");

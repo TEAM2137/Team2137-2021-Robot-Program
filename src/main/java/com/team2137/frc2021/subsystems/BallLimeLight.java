@@ -13,15 +13,15 @@ public class BallLimeLight extends LimeLight {
 
     public BallLimeLight() {
         super(NetworkTableInstance.getDefault().getTable("limelight-2"));
-        limelightSampleSpace.put(new Translation2d(17.3, -10.7), Path.A_Red);
-        limelightSampleSpace.put(new Translation2d(26.0, -1.75), Path.A_Blue);
-        limelightSampleSpace.put(new Translation2d(-16.3, -9.8), Path.B_Red);
-        limelightSampleSpace.put(new Translation2d(16.3, -1.4), Path.B_Blue);
+        limelightSampleSpace.put(new Translation2d(-17.3, -10.7), Path.A_Red);
+        limelightSampleSpace.put(new Translation2d(-26.0, -1.75), Path.A_Blue);
+        limelightSampleSpace.put(new Translation2d(16.3, -9.8), Path.B_Red);
+        limelightSampleSpace.put(new Translation2d(-16.3, -1.4), Path.B_Blue);
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putString("Current Path", getCurrentPath().toString());
+        SmartDashboard.putString("Current Path", getClosestPath().toString());
     }
 
     //Maybe look at this change that allows for more data to be added to the sample space and it more RAM conservative and less complicated
@@ -49,10 +49,10 @@ public class BallLimeLight extends LimeLight {
         return min.getKey();
     }
 
-    public static final Translation2d A_Red_Point = new Translation2d(17.3, -10.7);
-    public static final Translation2d A_Blue_Point = new Translation2d(26, -1.75);
-    public static final Translation2d B_Red_Point = new Translation2d(-16.3, -9.8);
-    public static final Translation2d B_Blue_Point = new Translation2d(16.3, -1.4);
+    public static final Translation2d A_Red_Point = new Translation2d(-17.3, -10.7);
+    public static final Translation2d A_Blue_Point = new Translation2d(-26, -1.75);
+    public static final Translation2d B_Red_Point = new Translation2d(16.3, -9.8);
+    public static final Translation2d B_Blue_Point = new Translation2d(-16.3, -1.4);
 
     public enum Path {
         A_Red,

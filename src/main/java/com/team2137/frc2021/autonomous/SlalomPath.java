@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import java.util.List;
 
-public class SlalomPath {
+public class SlalomPath extends SequentialCommandGroup {
     public SlalomPath(SwerveDrivetrain drivetrain) {
         var startPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
 
@@ -30,6 +30,6 @@ public class SlalomPath {
 
         var trajectoryCommand = new TrajectoryFollowCommand(drivetrain, trajectory, Rotation2d.fromDegrees(0));
 
-        CommandRunner.executeCommandSequence(setPoseCommand, trajectoryCommand);
+        addCommands(setPoseCommand, trajectoryCommand);
     }
 }

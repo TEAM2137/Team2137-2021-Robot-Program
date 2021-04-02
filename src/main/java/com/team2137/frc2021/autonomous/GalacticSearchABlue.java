@@ -40,6 +40,6 @@ public class GalacticSearchABlue extends SequentialCommandGroup {
         var spindexerCommand = new SetSpindexerCommand(spindexer,1);
         var trajectoryCommand = new TrajectoryFollowCommand(drivetrain, trajectory, Rotation2d.fromDegrees(0));
 
-        addCommands(new ParallelCommandGroup(resetPoseCommand, intakeCommand), trajectoryCommand);
+        addCommands(new ParallelCommandGroup(resetPoseCommand, intakeCommand, spindexerCommand), trajectoryCommand);
     }
 }

@@ -5,6 +5,7 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.subsystems.Intake;
 import com.team2137.frc2021.subsystems.LEDs;
+import com.team2137.frc2021.util.CommandRunner;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,6 +31,8 @@ public class Disabled extends RobotContainer implements OpMode {
          shooter.setPreset(Constants.ShooterPresets.Off);
 
          LEDs.getInstance().setDefaultState(LEDs.State.RainbowCycle, true);
+
+        CommandRunner.purgeCommands();
     }
 
     @Override

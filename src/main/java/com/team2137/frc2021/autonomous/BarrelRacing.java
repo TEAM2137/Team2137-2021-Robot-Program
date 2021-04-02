@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.List;
 
-public class BarrelRacing {
+public class BarrelRacing extends SequentialCommandGroup {
     public BarrelRacing(SwerveDrivetrain drivetrain) {
         var startPose = new Pose2d(0, 0, Rotation2d.fromDegrees(0));
 
@@ -29,6 +29,6 @@ public class BarrelRacing {
 
         var trajectoryCommand = new TrajectoryFollowCommand(drivetrain, trajectory, Rotation2d.fromDegrees(0));
 
-        CommandRunner.executeCommandSequence(setPoseCommand, trajectoryCommand);
+        addCommands(setPoseCommand, trajectoryCommand);
     }
 }
