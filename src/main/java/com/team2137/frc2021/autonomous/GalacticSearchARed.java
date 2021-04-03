@@ -27,10 +27,10 @@ public class GalacticSearchARed extends ParallelCommandGroup {
 
         var trajectory = TrajectoryUtility.generateTrajectoryFeet(
                 startPose,
-                List.of(new Translation2d(7.5, 7.5),
-                        new Translation2d(12.5, 5.0),
-                        new Translation2d(13.0, 12.5)),
-                new Pose2d(27.136, 12.56, Rotation2d.fromDegrees(0)),
+                List.of(new Translation2d(7.5, 7.25),
+                        new Translation2d(12.5, 6.0),
+                        new Translation2d(13.0, 14.0)),
+                new Pose2d(32, 12.56, Rotation2d.fromDegrees(0)),
                 drivetrain.getDefaultConstraint()
         );
 

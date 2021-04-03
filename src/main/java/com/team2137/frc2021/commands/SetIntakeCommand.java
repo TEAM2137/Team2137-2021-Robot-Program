@@ -12,7 +12,7 @@ public class SetIntakeCommand extends CommandBase {
         this.intake = intake;
         this.state = state;
 
-        addRequirements(intake);
+//        addRequirements(intake);
     }
 
     @Override

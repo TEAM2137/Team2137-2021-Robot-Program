@@ -53,7 +53,7 @@ public class RobotContainer {
         autoSelector.addOption("Galactic Search", new GalacticSearch(drivetrain, intake, spindexer, ballLimelight));
         autoSelector.addOption("Barrel Racing", new BarrelRacing(drivetrain));
         autoSelector.addOption("Slalom Path", new SlalomPath(drivetrain));
-        autoSelector.addOption("Bounce Path", new BouncePath(drivetrain));
+        autoSelector.addOption("Bounce Path", new BouncePath(drivetrain, intake));
 
         SmartDashboard.putData("Auto Selector", autoSelector);
     }

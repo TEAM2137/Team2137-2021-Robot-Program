@@ -12,6 +12,8 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import com.team2137.frc2021.subsystems.Intake.IntakeState;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -69,13 +71,23 @@ public class Teleop extends RobotContainer implements OpMode {
 //        thetaController.setI(SmartDashboard.getNumber("ITheta", Constants.Drivetrain.teleopThetaPIDConstants.getI()));
 //        thetaController.setD(SmartDashboard.getNumber("DTheta", Constants.Drivetrain.teleopThetaPIDConstants.getD()));
 
-        double forward = 0.80 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
-        double strafe = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
-        double turn = 0.7 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
+        double forward;
+        double strafe;
+        double turn;
 
-        if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
-            drivetrain.xLock();
+        if(!ControlsManager.getButton(Control.SlowButton)) {
+            forward = 0.80 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
+            strafe = 0.75 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
+            turn = 0.7 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
+        } else {
+            forward = 0.50 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
+            strafe = 0.50 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
+            turn = 0.7 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
         }
+
+//        if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
+//            drivetrain.xLock();
+//        }
 
         if (ControlsManager.getButton(Control.ShooterStage1)) {
             shooter.setShooterPosisition(5);
@@ -107,7 +119,7 @@ public class Teleop extends RobotContainer implements OpMode {
                 thetaPower += Math.signum(-shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX)) * 0.1;
             }
             SmartDashboard.putNumber("theta", thetaPower);
-            drivetrain.driveTranslationRotationRaw(ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, thetaPower, drivetrain.getRobotAngle()));
+            drivetrain.driveTranslationRotationRaw(ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, thetaPower, drivetrain.getPose().getRotation()));
 
 //            if(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) < 3 && shooter.isFlywheelAtTarget(100))
 //                spindexer.setBallStop(Spindexer.BallStopState.Disabled);
@@ -136,7 +148,7 @@ public class Teleop extends RobotContainer implements OpMode {
                 boolDriverTurnedRobot = false;
             }
 
-            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getRobotAngle());
+            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getPose().getRotation());
             drivetrain.driveTranslationRotationRaw(speeds);
 
         }

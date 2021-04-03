@@ -27,10 +27,10 @@ public class GalacticSearchABlue extends SequentialCommandGroup {
         var trajectory = TrajectoryUtility.generateTrajectoryFeet(
                 new Pose2d(1.5, 9.08, Rotation2d.fromDegrees(0)),
                 List.of(
-                        new Translation2d(13.6, 2.5),
-                        new Translation2d(15.0, 10.75),
-                        new Translation2d(21.0, 7.75)),
-                new Pose2d(26, 6.75, Rotation2d.fromDegrees(0)),
+                        new Translation2d(14.25, 2.25),
+                        new Translation2d(15.0, 11.0),
+                        new Translation2d(21.0, 8.25)),
+                new Pose2d(30, 6.75, Rotation2d.fromDegrees(0)),
                 drivetrain.getDefaultConstraint()
         );
 

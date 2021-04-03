@@ -28,9 +28,9 @@ public class GalacticSearchBRed extends SequentialCommandGroup {
                 new Pose2d(1.5, 9.08, Rotation2d.fromDegrees(0)),
                 List.of(
                         new Translation2d(6.25, 11.5),
-                        new Translation2d(11.6, 3),
-                        new Translation2d(16.6, 9.5)),
-                new Pose2d(26, 11.8, Rotation2d.fromDegrees(0)),
+                        new Translation2d(11.6, 3.5),
+                        new Translation2d(16.6, 11.0)),
+                new Pose2d(30, 11.8, Rotation2d.fromDegrees(0)),
                 drivetrain.getDefaultConstraint()
         );
 

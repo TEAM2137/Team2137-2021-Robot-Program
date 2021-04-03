@@ -2,6 +2,7 @@ package com.team2137.frc2021.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.team2137.frc2021.Constants;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -36,6 +37,8 @@ public class SwerveDrivetrain extends SubsystemBase {
     private SwerveDrivePoseEstimator poseEstimator;
 
     private Field2d field2d = new Field2d();
+
+    private Rotation2d gyroOffset = new Rotation2d();
 
     /**
      * Creates a swerve drivetrain (uses values from constants)
@@ -72,6 +75,8 @@ public class SwerveDrivetrain extends SubsystemBase {
 
         SmartDashboard.putData("Field", field2d);
 //        SmartDashboard.putBoolean("Reset Position", false);
+
+        resetOdometry();
     }
 
     /**
@@ -79,11 +84,11 @@ public class SwerveDrivetrain extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
+        poseEstimator.update(getRobotAngle().plus(gyroOffset), getSwerveModuleStates());
 
         field2d.setRobotPose(getPose());
 
-        SmartDashboard.putNumber("Drivetrain Angle", getRobotAngle().getDegrees());
+        SmartDashboard.putNumber("Drivetrain Angle", getPose().getRotation().getDegrees());
         SmartDashboard.putNumber("Drivetrain X", Units.metersToFeet(getPose().getX()));
         SmartDashboard.putNumber("Drivetrain Y", Units.metersToFeet(getPose().getY()));
 
@@ -257,7 +262,13 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     public void resetOdometry(Pose2d pose) {
-        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), pose.getRotation());
+        gyroOffset = pose.getRotation().minus(getRobotAngle());
+//        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), pose.getRotation());
+        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), getRobotAngle());
+//        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(0));
+        DriverStation.reportError("Resetting pose: X: " + -pose.getX() + " Y: " + -pose.getY(), false);
+        DriverStation.reportError("Rotation: " + pose.getRotation().getDegrees(), false);
+        DriverStation.reportError("Measured: " + getPose().getRotation().getDegrees(), false);
     }
 
     public void resetOdometry() {
@@ -279,8 +290,11 @@ public class SwerveDrivetrain extends SubsystemBase {
     }
 
     public TrajectoryConfig getDefaultConstraint() {
-//        return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
-        return new TrajectoryConfig(Units.feetToMeters(12), Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
+        return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel).setKinematics(kinematics);
+//        return new TrajectoryConfig(Units.feetToMeters(13), Constants.Drivetrain.driveMaxAccel).s
+//        etKinematics(kinematics);
+//        return new TrajectoryConfig(Units.feetToMeters(13), Constants.Drivetrain.driveMaxAccel);
+//        return new TrajectoryConfig(Constants.Drivetrain.driveMaxSpeed, Constants.Drivetrain.driveMaxAccel);
     }
 
     public void setBrakeMode(boolean brake) {
