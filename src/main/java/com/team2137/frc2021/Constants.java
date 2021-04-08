@@ -56,7 +56,7 @@ public class Constants {
 
         public static final double motorToWheelConversionFactor = (1 / 6.86) * Units.inchesToMeters(4 * Math.PI);
 
-        public static final double driveMaxSpeed = Units.feetToMeters(13); // temp value
+        public static final double driveMaxSpeed = Units.feetToMeters(15); // temp value
         public static final double driveMaxAccel = Units.feetToMeters(9.0); // temp value
 
         public static final boolean invertDriveMotor = true;
