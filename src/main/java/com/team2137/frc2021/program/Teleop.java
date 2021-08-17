@@ -85,22 +85,49 @@ public class Teleop extends RobotContainer implements OpMode {
             turn = 0.7 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
         }
 
+        if (SmartDashboard.getBoolean("Baby Mode", false)) {
+            forward *= 0.5;
+            strafe *= 0.5;
+        }
+
 //        if(forward == 0 && strafe == 0 && turn == 0 && ControlsManager.getButton(Control.XLockButton)) {
 //            drivetrain.xLock();
 //        }
 
-        if (ControlsManager.getButton(Control.ShooterStage1)) {
-            shooter.setShooterPosisition(5);
-        } else if (ControlsManager.getButton(Control.ShooterStage2)) {
-            shooter.setShooterPosisition(10);
-        } else if (ControlsManager.getButton(Control.ShooterStage3)) {
-            shooter.setShooterPosisition(15);
-        } else if (ControlsManager.getButton(Control.ShooterStage4)) {
-            shooter.setShooterPosisition(20);
-        } else if (ControlsManager.getButton(Control.ShooterLimeLight)) {
-            shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
+        if (SmartDashboard.getBoolean("Baby Mode", false)) {
+            if (ControlsManager.getButton(Control.ShooterStage1)) {
+                shooter.setFlywheelVelocity(3500);
+                shooter.setHoodAngle(0);
+                shooter.revFlywheel();
+            } else if (ControlsManager.getButton(Control.ShooterStage2)) {
+                shooter.setFlywheelVelocity(3500);
+                shooter.setHoodAngle(15);
+                shooter.revFlywheel();
+            } else if (ControlsManager.getButton(Control.ShooterStage3)) {
+                shooter.setFlywheelVelocity(4500);
+                shooter.setHoodAngle(0);
+                shooter.revFlywheel();
+            } else if (ControlsManager.getButton(Control.ShooterStage4)) {
+                shooter.setFlywheelVelocity(4500);
+                shooter.setHoodAngle(15);
+                shooter.revFlywheel();
+            } else {
+                shooter.idleFlyWheel();
+            }
         } else {
-            shooter.idleFlyWheel();
+            if (ControlsManager.getButton(Control.ShooterStage1)) {
+                shooter.setShooterPosisition(5);
+            } else if (ControlsManager.getButton(Control.ShooterStage2)) {
+                shooter.setShooterPosisition(10);
+            } else if (ControlsManager.getButton(Control.ShooterStage3)) {
+                shooter.setShooterPosisition(15);
+            } else if (ControlsManager.getButton(Control.ShooterStage4)) {
+                shooter.setShooterPosisition(20);
+            } else if (ControlsManager.getButton(Control.ShooterLimeLight)) {
+                shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
+            } else {
+                shooter.idleFlyWheel();
+            }
         }
 
 //        boolean isPoweringShooter = ControlsManager.getButton(Control.ShooterStage1) || ControlsManager.getButton(Control.ShooterStage2) || ControlsManager.getButton(Control.ShooterStage3) || ControlsManager.getButton(Control.ShooterStage4);

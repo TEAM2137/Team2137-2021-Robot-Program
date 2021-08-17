@@ -3,6 +3,7 @@ package com.team2137.frc2021.program;
 import com.team2137.frc2021.Constants;
 import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
+import com.team2137.frc2021.subsystems.Intake;
 import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -153,7 +154,7 @@ public class Test extends RobotContainer implements OpMode {
 //        shooter.setPreset(Constants.ShooterPresets.AutoShoot);
 //        spindexer.setPower(1);
 
-        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0));
+//        drivetrain.driveTranslationRotationVelocity(new ChassisSpeeds(Units.feetToMeters(4), 0, 0));
 
 //        double turn = thetaController.calculate(drivetrain.getRobotAngle().getRadians(), target.getRadians());
 //
@@ -163,6 +164,8 @@ public class Test extends RobotContainer implements OpMode {
 
 //        drivetrain.setAllModuleDriveRawPower(0);
 //        drivetrain.setAllModuleRotations(new Rotation2d());
+
+        intake.setIntakeState(Intake.IntakeState.RetractedSpinning);
     }
 
     @Override

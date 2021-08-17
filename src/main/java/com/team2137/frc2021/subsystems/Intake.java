@@ -65,6 +65,7 @@ public class Intake extends SubsystemBase {
         Retracted(0, DoubleSolenoid.Value.kReverse),
         Running(1, DoubleSolenoid.Value.kForward),
         Deployed(0, DoubleSolenoid.Value.kForward),
+        RetractedSpinning(1, DoubleSolenoid.Value.kReverse),
         ;
 
         public final double motorPower;
