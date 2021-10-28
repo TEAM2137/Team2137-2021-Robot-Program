@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Teleop extends RobotContainer implements OpMode {
     private boolean intakeButtonPreviouslyPressed = false;
     private boolean intakePreviouslyDeployed = false;
+    private boolean secondIntakePreviouslyPressed = false;
 
     private ProfiledPIDController thetaController;
 
@@ -115,16 +116,17 @@ public class Teleop extends RobotContainer implements OpMode {
                 shooter.idleFlyWheel();
             }
         } else {
-            if (ControlsManager.getButton(Control.ShooterStage1)) {
-                shooter.setShooterPosisition(5);
-            } else if (ControlsManager.getButton(Control.ShooterStage2)) {
+//            if (ControlsManager.getButton(Control.ShooterStage1)) {
+//                shooter.setShooterPosisition(5);
+//            } else
+                if (ControlsManager.getButton(Control.ShooterStage2)) {
                 shooter.setShooterPosisition(10);
             } else if (ControlsManager.getButton(Control.ShooterStage3)) {
                 shooter.setShooterPosisition(15);
             } else if (ControlsManager.getButton(Control.ShooterStage4)) {
                 shooter.setShooterPosisition(20);
-            } else if (ControlsManager.getButton(Control.ShooterLimeLight)) {
-                shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
+//            } else if (ControlsManager.getButton(Control.ShooterLimeLight)) {
+//                shooter.setShooterPosisition(shooterLimeLight.getRadialDistance());
             } else {
                 shooter.idleFlyWheel();
             }
@@ -141,7 +143,16 @@ public class Teleop extends RobotContainer implements OpMode {
 
 //            double thetaPower = thetaController.calculate(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX), 0);
 //            double thetaPower = -shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) * 1.8 + 0.5 * Math.signum(Util.deadband(-shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX), 0.5));
-            double thetaPower = -shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) * 1.4;
+//            double thetaPower = -shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) * 1.4;
+            double thetaPower;
+
+            //far shot inner compensation
+            if (ControlsManager.getButton(Control.ShooterStage4)) {
+                thetaPower = -shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) * 1.4;
+            } else {
+                thetaPower = (-shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) + Math.toRadians(20)) * 1.4;
+            }
+
             if (Math.abs(shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX)) < 0.5) {
                 thetaPower += Math.signum(-shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX)) * 0.1;
             }
@@ -187,13 +198,20 @@ public class Teleop extends RobotContainer implements OpMode {
 //        }
 
 //        if (shooter.isFlywheelAtTarget(200) && !shooter.isIdle() && (ControlsManager.getButton(Control.HeadingTargetButton) || ControlsManager.getButton(Control.PreRoller)) && isPoweringShooter) {
-        if (shooter.isFlywheelAtTarget(150)) {
+        if (shooter.isFlywheelAtTarget(100)) {
             spindexer.setBallStop(Spindexer.BallStopState.Disabled);
             spindexer.setPower(1);
             SmartDashboard.putBoolean("Ball Stopper", false);
         } else {
             spindexer.setBallStop(Spindexer.BallStopState.Enabled);
-            spindexer.setPower(0);
+
+            if(ControlsManager.getButton(Control.ManualSpindexer)) {
+                spindexer.setPower(1);
+            } else if (ControlsManager.getButton(Control.ShooterStage1)) {
+                spindexer.setPower(-1);
+            } else {
+                spindexer.setPower(0);
+            }
             SmartDashboard.putBoolean("Ball Stopper", true);
         }
 
@@ -210,25 +228,41 @@ public class Teleop extends RobotContainer implements OpMode {
             }
         }
 
-        if(ControlsManager.getButton(Control.IntakeDeploy) && !intakeButtonPreviouslyPressed) {
-            if(intakePreviouslyDeployed) {
+
+//        if(ControlsManager.getButton(Control.IntakeDeploy) && !intakeButtonPreviouslyPressed) {
+//            if(intakePreviouslyDeployed) {
+//                intake.setIntakeState(IntakeState.Retracted);
+//                intakePreviouslyDeployed = false;
+////                LEDs.getInstance().setState(LEDs.State.Yellow);
+//            } else {
+//                intake.setIntakeState(IntakeState.Deployed);
+//                intakePreviouslyDeployed = true;
+////                LEDs.getInstance().enableDefaultState();
+//            }
+//        }
+
+        if(ControlsManager.getButton(Control.IntakeDeploy) && !secondIntakePreviouslyPressed) {
+            if (intake.getIntakeState() == IntakeState.Deployed) {
                 intake.setIntakeState(IntakeState.Retracted);
-                intakePreviouslyDeployed = false;
-//                LEDs.getInstance().setState(LEDs.State.Yellow);
             } else {
                 intake.setIntakeState(IntakeState.Deployed);
-                intakePreviouslyDeployed = true;
-//                LEDs.getInstance().enableDefaultState();
             }
+            intakePreviouslyDeployed = false;
         }
 
-        intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton) || ControlsManager.getButton(Control.IntakeDeploy);
-//
-//        if(isPoweringShooter) {
-//            spindexer.setPower(1);
-//        } else {
-//            spindexer.setPower(0);
-//        }
+        secondIntakePreviouslyPressed = ControlsManager.getButton(Control.IntakeDeploy);
+
+//        intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton) || ControlsManager.getButton(Control.IntakeDeploy);
+
+        intakeButtonPreviouslyPressed = ControlsManager.getButton(Control.IntakeButton);
+
+        if (ControlsManager.getButton(Control.ZeroGyroButton)) {
+            drivetrain.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
+        }
+
+        if (ControlsManager.getButton(Control.ZeroHoodButton)) {
+            shooter.zeroHoodAngle();
+        }
     }
 
     @Override

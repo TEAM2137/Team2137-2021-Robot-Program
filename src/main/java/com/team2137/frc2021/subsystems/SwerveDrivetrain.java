@@ -85,6 +85,7 @@ public class SwerveDrivetrain extends SubsystemBase {
     @Override
     public void periodic() {
         poseEstimator.update(getRobotAngle().plus(gyroOffset), getSwerveModuleStates());
+//        poseEstimator.update(getRobotAngle(), getSwerveModuleStates());
 
         field2d.setRobotPose(getPose());
 
@@ -266,9 +267,9 @@ public class SwerveDrivetrain extends SubsystemBase {
 //        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), pose.getRotation());
         poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation()), getRobotAngle());
 //        poseEstimator.resetPosition(new Pose2d(-pose.getX(), -pose.getY(), Rotation2d.fromDegrees(90)), Rotation2d.fromDegrees(0));
-        DriverStation.reportError("Resetting pose: X: " + -pose.getX() + " Y: " + -pose.getY(), false);
-        DriverStation.reportError("Rotation: " + pose.getRotation().getDegrees(), false);
-        DriverStation.reportError("Measured: " + getPose().getRotation().getDegrees(), false);
+//        DriverStation.reportError("Resetting pose: X: " + -pose.getX() + " Y: " + -pose.getY(), false);
+//        DriverStation.reportError("Rotation: " + pose.getRotation().getDegrees(), false);
+//        DriverStation.reportError("Measured: " + getPose().getRotation().getDegrees(), false);
     }
 
     public void resetOdometry() {

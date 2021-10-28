@@ -32,9 +32,9 @@ public class Intake extends SubsystemBase {
     
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("IntakeSpeed", motor.get());
-        SmartDashboard.putString("Cylinder State", cylinder.get().toString());
-        SmartDashboard.putNumber("Intake Current", getIntakeCurrentDraw());
+//        SmartDashboard.putNumber("IntakeSpeed", motor.get());
+//        SmartDashboard.putString("Cylinder State", cylinder.get().toString());
+//        SmartDashboard.putNumber("Intake Current", getIntakeCurrentDraw());
     }
 
     public void setCylinderState(DoubleSolenoid.Value state) {
@@ -63,7 +63,7 @@ public class Intake extends SubsystemBase {
 
     public enum IntakeState {
         Retracted(0, DoubleSolenoid.Value.kReverse),
-        Running(1, DoubleSolenoid.Value.kForward),
+        Running(0.5, DoubleSolenoid.Value.kForward),
         Deployed(0, DoubleSolenoid.Value.kForward),
         RetractedSpinning(1, DoubleSolenoid.Value.kReverse),
         ;

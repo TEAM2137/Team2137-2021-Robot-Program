@@ -5,12 +5,15 @@ import com.team2137.frc2021.OpMode;
 import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.commands.TrajectoryFollowCommand;
 import com.team2137.frc2021.subsystems.Intake;
+import com.team2137.frc2021.subsystems.LimeLight;
 import com.team2137.frc2021.util.CommandRunner;
 import com.team2137.libs.TrajectoryUtility;
 import com.team2137.libs.UnitsExtra;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.trajectory.constraint.MaxVelocityConstraint;
 import edu.wpi.first.wpilibj.trajectory.constraint.RectangularRegionConstraint;
 import edu.wpi.first.wpilibj.util.Units;
@@ -21,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Autonomous extends RobotContainer implements OpMode {
+
+    Timer timer = new Timer();
 
     @Override
     public void init() {
@@ -45,16 +50,48 @@ public class Autonomous extends RobotContainer implements OpMode {
 //
 //        CommandRunner.executeCommand(trajectoryCommand);
 
-        CommandRunner.executeCommand(autoSelector.getSelected());
+//        CommandRunner.executeCommand(autoSelector.getSelected());
+
+        timer.reset();
+        timer.start();
+
+        drivetrain.resetOdometry(new Pose2d(0, 0, Rotation2d.fromDegrees(180)));
     }
 
     @Override
     public void periodic() {
+        double thetaPower = -shooterLimeLight.getLimeLightValue(LimeLight.LimeLightValues.TX) * 1.4;
+
+        double drivePower;
+
+        if (timer.hasElapsed(10)) {
+            shooter.idleFlyWheel();
+            drivePower = 0.2;
+
+            spindexer.setPower(0);
+        } else if (timer.hasElapsed(13)) {
+            shooter.idleFlyWheel();
+            drivePower = 0;
+            spindexer.setPower(0);
+        } else {
+            shooter.setShooterPosisition(10);
+            drivePower = 0;
+
+            if (shooter.isFlywheelAtTarget(100)) {
+                spindexer.setPower(1);
+            } else {
+                spindexer.setPower(0);
+            }
+        }
+
+        drivetrain.driveTranslationRotationRaw(ChassisSpeeds.fromFieldRelativeSpeeds(drivePower, 0, thetaPower, drivetrain.getRobotAngle()));
+
 
     }
 
     @Override
     public void end() {
+        drivetrain.setAllModuleDriveRawPower(0);
 
     }
 }

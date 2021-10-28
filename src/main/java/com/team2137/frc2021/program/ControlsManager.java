@@ -27,6 +27,8 @@ public class ControlsManager {
         HeadingTargetButton     (Button.kBumperLeft, driverController),
         PreRoller               (Button.kX, driverController),
 
+        ManualSpindexer         (Button.kBumperLeft, operatorController),
+
         IntakeButton            (Button.kA, driverController),
         IntakeDeploy            (Button.kB, driverController),
 
@@ -34,7 +36,11 @@ public class ControlsManager {
         ShooterStage2           (Button.kY, operatorController),
         ShooterStage3           (Button.kB, operatorController),
         ShooterStage4           (Button.kA, operatorController),
-        ShooterLimeLight        (Button.kBumperLeft, operatorController);
+        ShooterLimeLight        (Button.kBumperLeft, operatorController),
+
+        ZeroGyroButton          (Button.kX, driverController),
+        ZeroHoodButton          (Button.kX, operatorController),
+        ;
 
         private int id;
         private GenericHID controller;

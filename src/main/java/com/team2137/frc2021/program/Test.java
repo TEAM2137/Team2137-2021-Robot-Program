@@ -6,6 +6,7 @@ import com.team2137.frc2021.RobotContainer;
 import com.team2137.frc2021.subsystems.Intake;
 import com.team2137.frc2021.subsystems.Spindexer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -25,6 +26,10 @@ public class Test extends RobotContainer implements OpMode {
     ProfiledPIDController thetaController;
 
     Rotation2d target;
+
+    Timer timer = new Timer();
+    Timer preRollerCurrentTimer = new Timer();
+    Timer preRollerReverseTimer = new Timer();
 
     @Override
     public void init() {
@@ -64,6 +69,10 @@ public class Test extends RobotContainer implements OpMode {
         thetaController = new ProfiledPIDController(Constants.Drivetrain.autoThetaPIDConstants.getP(), Constants.Drivetrain.autoThetaPIDConstants.getI(), Constants.Drivetrain.autoThetaPIDConstants.getD(), Constants.Drivetrain.autoThetaPIDConstraints);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         thetaController.setTolerance(Math.toRadians(1.5));
+
+        timer.stop();
+        timer.reset();
+        timer.start();
     }
 
     @Override
@@ -165,7 +174,74 @@ public class Test extends RobotContainer implements OpMode {
 //        drivetrain.setAllModuleDriveRawPower(0);
 //        drivetrain.setAllModuleRotations(new Rotation2d());
 
-        intake.setIntakeState(Intake.IntakeState.RetractedSpinning);
+//        intake.setIntakeState(Intake.IntakeState.RetractedSpinning);
+
+        double forward = 0.50 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.DriveAxis, 0.2));
+        double strafe = 0.50 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.StrafeAxis, 0.2));
+        double turn = 0.7 * Constants.squareWithSign(-ControlsManager.getAxis(ControlsManager.Control.RotationAxis, 0.2));
+
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, turn, drivetrain.getPose().getRotation());
+        drivetrain.driveTranslationRotationRaw(speeds);
+
+        if (ControlsManager.getButton(ControlsManager.Control.ShooterStage1)) {
+            shooter.setFlywheelVelocity(3000);
+            shooter.revFlywheel();
+            shooter.setHoodAngle(0);
+        } else {
+            shooter.idleFlyWheel();
+            shooter.setHoodAngle(0);
+        }
+
+        boolean timerTrigger = timer.get() % 2 < 1;
+//        boolean revTrigger = !(shooter.isFlywheelAtTarget(700) && !shooter.isFlywheelAtTarget(400));
+        boolean revTrigger = shooter.isFlywheelAtTarget(400);
+
+        if (shooter.getPreRollerCurrent() > 11) {
+            preRollerCurrentTimer.start();
+        } else {
+            preRollerCurrentTimer.stop();
+            preRollerCurrentTimer.reset();
+        }
+
+        if (preRollerCurrentTimer.hasElapsed(0.4)) {
+            preRollerReverseTimer.start();
+        }
+
+        boolean currentTrigger;
+        if (preRollerReverseTimer.hasElapsed(1.5)) {
+            preRollerReverseTimer.stop();
+            preRollerReverseTimer.reset();
+
+            currentTrigger = true;
+        } else {
+            currentTrigger = false;
+        }
+
+        SmartDashboard.putNumber("Preroller current", shooter.getPreRollerCurrent());
+
+        SmartDashboard.putBoolean("Current Trigger", currentTrigger);
+
+        if ((timerTrigger || revTrigger) && !currentTrigger) {
+            spindexer.setPower(1);
+//            System.out.println("forward");
+        } else if (currentTrigger) {
+            spindexer.setPower(-1);
+        } else {
+            spindexer.setPower(-0.5);
+//            System.out.println("reverse");
+        }
+
+//        spindexer.setPower(-1);
+
+
+        if (shooter.isFlywheelAtTarget(200) && ControlsManager.getButton(ControlsManager.Control.ShooterStage1) && !currentTrigger) {
+            shooter.setPreRollerPower(1);
+//            System.out.println("going");
+        } else {
+            shooter.setPreRollerPower(0);
+        }
+
+//        System.out.println("vel " + shooter.getFlywheelVelocity());
     }
 
     @Override

@@ -46,13 +46,13 @@ public class LEDs extends SubsystemBase {
                 cycleCurrentHue %= 360;
 
                 double outputHue = (cycleCurrentHue + currentState.startingHue) % 360;
-                System.out.println(outputHue);
+//                System.out.println(outputHue);
                 Color color = Color.fromHSV((int) Util.clamp(outputHue, 0, 360) / 2, (int) currentState.s * 255, (int) currentState.v * 255);
-                System.out.println(color.red + " " + color.green + " " + color.blue);
+//                System.out.println(color.red + " " + color.green + " " + color.blue);
                 setLEDs(color);
                 break;
             case Blink:
-                System.out.println(cycleTimer.get() % (currentState.onTime + currentState.offTime));
+//                System.out.println(cycleTimer.get() % (currentState.onTime + currentState.offTime));
                 if(cycleTimer.get() % (currentState.onTime + currentState.offTime) < currentState.onTime) {
                     setLEDs(currentState.color);
                 } else {
@@ -64,7 +64,7 @@ public class LEDs extends SubsystemBase {
 
                 Color currentColor = currentState.colors[(int) Math.floor(currentTime % currentState.timePerColor)];
 
-                System.out.println(Math.floor(currentTime % currentState.timePerColor));
+//                System.out.println(Math.floor(currentTime % currentState.timePerColor));
 
                 setLEDs(currentColor);
                 break;

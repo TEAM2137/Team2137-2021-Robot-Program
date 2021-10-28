@@ -69,7 +69,7 @@ public class Shooter extends SubsystemBase {
         shooterSampleValues.put(5.0, new Translation2d(4000.0, 3.0));
         shooterSampleValues.put(10.0 , new Translation2d(4700.0, 17.0));
         shooterSampleValues.put(15.0 , new Translation2d(5300.0, 25.0));
-        shooterSampleValues.put(20.0 , new Translation2d(5700.0, 30));
+        shooterSampleValues.put(20.0 , new Translation2d(5300.0, 25));
 
         //Create the motor objects and store them to the respective variables
         this.flywheelMotor1     = new TalonFX(FlyWheelMotorObject1.getMotorID());
@@ -114,6 +114,7 @@ public class Shooter extends SubsystemBase {
         this.preRollerMotor.setSmartCurrentLimit(PreRollerMotorObject.getCurrentLimit());
         this.preRollerMotor.setOpenLoopRampRate(PreRollerMotorObject.getRampRate());
         this.preRollerMotor.setInverted(PreRollerMotorObject.inverted());
+        this.preRollerMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 
         this.hoodMotor.setSmartCurrentLimit(HoodMotorObject.getCurrentLimit());
         this.hoodMotor.setInverted(HoodMotorObject.inverted());
@@ -215,6 +216,10 @@ public class Shooter extends SubsystemBase {
      */
     public void disablePreRoller() {
         setPreRollerPower(0);
+    }
+
+    public double getPreRollerCurrent() {
+        return preRollerMotor.getOutputCurrent();
     }
 
 
