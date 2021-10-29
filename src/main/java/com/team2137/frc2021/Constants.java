@@ -76,7 +76,7 @@ public class Constants {
         public static PID drivePIDConstants = new PID(0.07, 0, 0);// 0.1
         public static SimpleMotorFeedforward driveFeedforward = new SimpleMotorFeedforward(0.5, 2.15, 0); //0.7, 2.15
 
-        public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -173.58, "Front Left");
+        public static SwerveModuleConstants frontLeft = new SwerveModuleConstants(10, 11, 12, -167.25, "Front Left");
         public static SwerveModuleConstants frontRight = new SwerveModuleConstants(15, 16, 17, 80.51, "Front Right");
         public static SwerveModuleConstants backLeft = new SwerveModuleConstants(20, 21, 22, -52.99, "Back Left");
         public static SwerveModuleConstants backRight = new SwerveModuleConstants(25, 26, 27, 121.11, "Back Right");

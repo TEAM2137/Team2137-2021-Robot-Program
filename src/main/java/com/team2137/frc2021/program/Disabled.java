@@ -43,9 +43,9 @@ public class Disabled extends RobotContainer implements OpMode {
 
     @Override
     public void periodic() {
-        if (disabledTimer.hasElapsed(5)) {
+        //if (disabledTimer.hasElapsed(5)) {
            drivetrain.setBrakeMode(false);
-        }
+        //}
     }
 
     @Override
