@@ -178,7 +178,7 @@ public class Teleop extends RobotContainer implements OpMode {
                 else
                     turn = 0;
             }
-
+            SmartDashboard.putNumber("TurnVal", turn);
             if (Math.abs(drivetrain.getThetaVelocity()) < 2 && boolDriverTurnedRobot) {
                 boolHeadingControlEnabled = true;
                 thetaController.reset(drivetrain.getRobotAngle().getRadians());
